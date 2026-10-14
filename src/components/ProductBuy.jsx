@@ -1,7 +1,7 @@
 // Product page buy box: size/flavour picker, live price and stock, quantity, add to cart.
 // In WhatsApp mode there is no price or stock; "Order on WhatsApp" sends just this item.
-import { useEffect, useState } from 'preact/hooks';
-import { addToCart, cartOpen, feed, liveVariant, loadFeed, useSignal } from '../client/store.js';
+import { useEffect, useRef, useState } from 'preact/hooks';
+import { addToCart, feed, liveVariant, loadFeed, showAddedToast, useSignal } from '../client/store.js';
 import { SHOW_PRICES, url } from '../lib/env.js';
 import { buildOrderListText, formatINR, percentOff, unitPrice, whatsappLink } from '../shared/order.js';
 
@@ -16,11 +16,13 @@ export default function ProductBuy({ product, settings, shop }) {
   const [id, setId] = useState(vs[0].id);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
+  const addedTimer = useRef();
 
   useEffect(() => {
     loadFeed();
     const want = new URLSearchParams(location.search).get('v');
     if (want && vs.some((v) => v.id === want)) setId(want);
+    return () => clearTimeout(addedTimer.current);
   }, []);
 
   const s = f?.settings ? { ...settings, ...f.settings } : settings;
@@ -54,8 +56,11 @@ export default function ProductBuy({ product, settings, shop }) {
     addToCart(SHOW_PRICES ? { ...line, price: live.price } : line, qty, maxQty);
     if (go) location.href = url('/checkout/');
     else {
+      // Stay on the page: a short "Added" on the button and a notice with "View cart".
+      showAddedToast([product.name, v.size].filter(Boolean).join(' · '));
       setAdded(true);
-      cartOpen.set(true);
+      clearTimeout(addedTimer.current);
+      addedTimer.current = setTimeout(() => setAdded(false), 1500);
     }
   }
 

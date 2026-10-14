@@ -89,6 +89,17 @@ export function cartCount(lines) {
   return lines.reduce((n, l) => n + l.qty, 0);
 }
 
+/* ---------- "Added to cart" notice ---------- */
+
+// { text, id } while showing, else null. The cart drawer opens only when the customer asks.
+export const toast = signal(null);
+let toastTimer;
+export function showAddedToast(text) {
+  clearTimeout(toastTimer);
+  toast.set({ text, id: Date.now() });
+  toastTimer = setTimeout(() => toast.set(null), 3500);
+}
+
 /* ---------- Live feed ---------- */
 
 // { items: { id: [price, mrp, stock, visible01] }, settings, delivery, at, live: bool }

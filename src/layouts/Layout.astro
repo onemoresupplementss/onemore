@@ -3,6 +3,7 @@ import { SHOW_PRICES, url } from '../lib/env.js';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Toast from '../components/Toast.jsx';
 import { absUrl, catalog, shop, waHref } from '../lib/site.js';
 
 interface Props {
@@ -57,7 +58,7 @@ const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <meta name="twitter:card" content="summary_large_image" />
     {ld.map((d) => <script type="application/ld+json" set:html={JSON.stringify(d).replace(/</g, '\\u003c')} />)}
   </head>
-  <body class="min-h-dvh">
+  <body class:list={['min-h-dvh', waRaised && 'wa-raised']}>
     <a href="#main" class="sr-only z-[60] rounded bg-lime px-4 py-2 font-bold text-ink focus:not-sr-only focus:fixed focus:left-2 focus:top-2">Skip to content</a>
     {
       preview && (
@@ -72,6 +73,7 @@ const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
       <slot />
     </main>
     <Footer />
+    <Toast client:idle />
     <a
       href={waHref(waText)}
       target="_blank"

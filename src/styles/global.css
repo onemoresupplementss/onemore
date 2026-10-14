@@ -34,6 +34,17 @@
     opacity: 0;
   }
 }
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+}
+@keyframes cart-pop {
+  50% {
+    transform: scale(1.45);
+  }
+}
 
 @layer base {
   html {
@@ -194,10 +205,30 @@
   .sheet-fade {
     animation: sheet-fade 0.22s ease-out;
   }
+  /* "Added to cart" notice: above the product page's sticky bar on phones. */
+  .toast {
+    bottom: 1.25rem;
+  }
+  .wa-raised .toast {
+    bottom: 6rem;
+  }
+  @media (min-width: 1024px) {
+    .wa-raised .toast {
+      bottom: 1.25rem;
+    }
+  }
+  .toast-in {
+    animation: toast-in 0.2s ease-out;
+  }
+  .cart-pop {
+    animation: cart-pop 0.4s ease-out;
+  }
   @media (prefers-reduced-motion: reduce) {
     .sheet-left,
     .sheet-right,
-    .sheet-fade {
+    .sheet-fade,
+    .toast-in,
+    .cart-pop {
       animation: none;
     }
   }

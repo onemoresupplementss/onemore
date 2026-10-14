@@ -1,5 +1,6 @@
+import { useEffect, useRef, useState } from 'preact/hooks';
 import ProductImage from './ProductImage.jsx';
-import { addToCart, cartOpen, liveVariant } from '../client/store.js';
+import { addToCart, liveVariant, showAddedToast } from '../client/store.js';
 import { SHOW_PRICES, url } from '../lib/env.js';
 import { formatINR, percentOff } from '../shared/order.js';
 
@@ -31,6 +32,9 @@ export default function ProductCard({ p, f, settings, eager = false }) {
   const maxQty = settings?.MaxQtyPerLine ?? 10;
   const sizes = [...new Set(p.variants.map((v) => v.size).filter(Boolean))];
   const tag = p.badge || (p.bestseller ? 'Bestseller' : '');
+  const [added, setAdded] = useState(false);
+  const timer = useRef();
+  useEffect(() => () => clearTimeout(timer.current), []);
 
   function add() {
     const v = s.single;
@@ -39,7 +43,11 @@ export default function ProductCard({ p, f, settings, eager = false }) {
       1,
       SHOW_PRICES ? Math.min(v.live.stock, maxQty) : maxQty,
     );
-    cartOpen.set(true);
+    // Stay on the page: a short "Added" on the button and a notice with "View cart".
+    showAddedToast([p.name, v.size].filter(Boolean).join(' · '));
+    setAdded(true);
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => setAdded(false), 1500);
   }
 
   return (
@@ -86,7 +94,7 @@ export default function ProductCard({ p, f, settings, eager = false }) {
             </button>
           ) : s.single ? (
             <button class="btn btn-lime w-full text-sm" onClick={add} aria-label={`Add ${p.brand} ${p.name} to cart`}>
-              Add to cart
+              {added ? 'Added ✓' : 'Add to cart'}
             </button>
           ) : (
             <a class="btn btn-ghost w-full text-sm" href={href} aria-label={`Choose size for ${p.brand} ${p.name}`}>

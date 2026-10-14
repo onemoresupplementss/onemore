@@ -1,5 +1,5 @@
 // Header cart button + slide-in cart drawer.
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import ProductImage from './ProductImage.jsx';
 import Sheet from './Sheet.jsx';
 import { cart, cartCount, cartOpen, clearCart, feed, liveVariant, loadFeed, removeFromCart, setQty, useSignal } from '../client/store.js';
@@ -33,6 +33,14 @@ export default function Cart({ settings, shop }) {
     if (open) loadFeed();
   }, [open]);
 
+  // Bump the badge when something is added, so people see where the cart is.
+  const lastCount = useRef(count);
+  const [pops, setPops] = useState(0);
+  useEffect(() => {
+    if (count > lastCount.current) setPops((n) => n + 1);
+    lastCount.current = count;
+  }, [count]);
+
   const priced = pricedLines(lines, f, s);
   const subtotal = SHOW_PRICES ? priced.reduce((n, l) => n + l.lineTotal, 0) : 0;
   const free = SHOW_PRICES ? s.FreeDeliveryAbove : 0;
@@ -51,7 +59,7 @@ export default function Cart({ settings, shop }) {
           <path d="M6 7h12l-1 13H7L6 7Z" />
           <path d="M9 7a3 3 0 0 1 6 0" />
         </svg>
-        {count > 0 && <span class="absolute right-0.5 top-0.5 min-w-5 rounded-full bg-lime px-1 text-center text-[11px] font-black leading-5 text-ink">{count}</span>}
+        {count > 0 && <span key={pops} class={`${pops ? 'cart-pop ' : ''}absolute right-0.5 top-0.5 min-w-5 rounded-full bg-lime px-1 text-center text-[11px] font-black leading-5 text-ink`}>{count}</span>}
       </button>
 
       <Sheet open={open} onClose={() => cartOpen.set(false)} title="Your cart">
