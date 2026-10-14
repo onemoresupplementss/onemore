@@ -1,0 +1,92 @@
+---
+import { SHOW_PRICES, url } from '../lib/env.js';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { absUrl, catalog, shop, waHref } from '../lib/site.js';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
+  jsonLd?: object | object[];
+  waText?: string;
+  waRaised?: boolean;
+}
+
+const {
+  title,
+  description = `${shop.name} – gym supplements in ${shop.addressLocality}. Whey protein, mass gainers, creatine and pre-workouts from authorised importers. ${SHOW_PRICES ? 'UPI, pay on delivery or store pickup.' : 'Order on WhatsApp – delivery or store pickup.'}`,
+  image = '/og.png',
+  noindex = false,
+  jsonLd,
+  waText = `Hi ${shop.name}, I have a question.`,
+  waRaised = false,
+} = Astro.props;
+
+const fullTitle = title ? `${title} | ${shop.name}` : `${shop.name} – ${shop.tagline} | Supplements in ${shop.addressLocality}`;
+// Astro.url.pathname already includes the GitHub Pages sub-folder.
+const canonical = new URL(Astro.url.pathname, Astro.site || shop.siteUrl).toString();
+const s = catalog.settings;
+// The banner warns about placeholder prices/stock, which only exist in checkout mode.
+const preview = SHOW_PRICES && (s.PreviewBanner || catalog.source === 'seed');
+const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content="#0a0a0a" />
+    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
+    <link rel="manifest" href={url('/site.webmanifest')} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={shop.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={absUrl(image)} />
+    <meta property="og:locale" content="en_IN" />
+    <meta name="twitter:card" content="summary_large_image" />
+    {ld.map((d) => <script type="application/ld+json" set:html={JSON.stringify(d).replace(/</g, '\\u003c')} />)}
+  </head>
+  <body class="min-h-dvh">
+    <a href="#main" class="sr-only z-[60] rounded bg-lime px-4 py-2 font-bold text-ink focus:not-sr-only focus:fixed focus:left-2 focus:top-2">Skip to content</a>
+    {
+      preview && (
+        <div class="bg-warn px-4 py-1.5 text-center text-xs font-bold text-ink">
+          Preview – prices, stock and photos are placeholders. Do not order yet.
+        </div>
+      )
+    }
+    {s.Announcement && <div class="bg-lime px-4 py-2 text-center text-xs font-bold text-ink sm:text-sm">{s.Announcement}</div>}
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <a
+      href={waHref(waText)}
+      target="_blank"
+      rel="noopener"
+      class:list={[
+        'fixed right-4 z-40 flex size-14 items-center justify-center rounded-full bg-[#25d366] text-white shadow-lg shadow-black/50 transition-transform hover:scale-105',
+        waRaised ? 'bottom-24 lg:bottom-5' : 'bottom-5',
+      ]}
+      aria-label="Chat with us on WhatsApp"
+    >
+      <svg class="size-7" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path
+          d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.8 0-1.4.7-2 1-2.3.2-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.6-.1 1.2Z"
+        ></path>
+      </svg>
+    </a>
+  </body>
+</html>

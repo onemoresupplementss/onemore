@@ -1,0 +1,28 @@
+{
+  "name": "onemore-shop",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "oneMore supplement shop website (Astro + Cloudflare Pages + Google Sheets)",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "seed": "node scripts/make-seed.mjs",
+    "photos": "node scripts/add-photos.mjs",
+    "data": "node scripts/prepare-data.mjs",
+    "dev": "node scripts/prepare-data.mjs && astro dev",
+    "build": "node scripts/prepare-data.mjs && astro build",
+    "preview": "astro preview",
+    "test": "node --test \"tests/*.test.js\""
+  },
+  "dependencies": {
+    "@astrojs/preact": "6.0.6",
+    "@astrojs/sitemap": "3.7.4",
+    "@tailwindcss/vite": "4.3.3",
+    "astro": "7.3.8",
+    "lean-qr": "2.7.4",
+    "preact": "10.29.8",
+    "tailwindcss": "4.3.3"
+  }
+}

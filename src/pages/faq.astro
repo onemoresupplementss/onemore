@@ -1,0 +1,122 @@
+---
+import Page from '../layouts/Page.astro';
+import { catalog, shop, waHref } from '../lib/site.js';
+import { SHOW_PRICES } from '../lib/env.js';
+import { formatINR } from '../shared/order.js';
+
+const s = catalog.settings;
+
+const genuine = {
+  q: 'Are your products genuine?',
+  a: `Yes. We buy from authorised importers and brand distributors. Every imported tub has the Indian importer’s sticker with their name and address. Ask us and we will show you the purchase invoice.`,
+  ta: 'ஆம். அங்கீகரிக்கப்பட்ட இறக்குமதியாளர்களிடமிருந்து மட்டுமே வாங்குகிறோம்.',
+};
+
+// Phase 1: the cart is sent on WhatsApp and the shop replies with the price.
+const orderingWhatsApp = [
+  {
+    q: 'How do I order?',
+    a: 'Add the products you want to the cart and tap “Send order on WhatsApp”. WhatsApp opens with your list already typed – just press send. We reply with today’s price, delivery charge and how to pay.',
+    ta: 'பொருட்களை கார்ட்டில் சேர்த்து, “Send order on WhatsApp” அழுத்தவும். விலையை WhatsApp-ல் அனுப்புவோம்.',
+  },
+  {
+    q: 'Why are there no prices on the website?',
+    a: 'Prices change with offers and new stock, so we confirm today’s price on WhatsApp before you pay. Our prices are the same as at the shop counter.',
+  },
+  {
+    q: 'How do I pay?',
+    a: 'After we confirm your order on WhatsApp you can pay by UPI, in cash or by UPI when it is delivered, or at the shop if you pick it up. We never ask for your UPI PIN or OTP.',
+    ta: 'UPI, டெலிவரியின் போது பணம், அல்லது கடையில் செலுத்தலாம்.',
+  },
+];
+
+// Phase 2: full checkout with prices.
+const orderingCheckout = [
+  {
+    q: 'How do I pay by UPI?',
+    a: `After you place the order you will see our UPI ID, the exact amount and your order number, each with a copy button. Open any UPI app, choose “Pay to UPI ID”, paste them and pay. Then send the order to us on WhatsApp with the payment screenshot. We mark it paid once the money shows in our account.`,
+    ta: 'ஆர்டர் செய்த பிறகு UPI ID மற்றும் தொகையை நகலெடுத்து, உங்கள் UPI ஆப்பில் பணம் செலுத்தவும்.',
+  },
+  {
+    q: 'Why is there no “Pay now” button that opens my UPI app?',
+    a: 'UPI apps now block payment links from websites unless the shop uses a paid payment gateway. Copying our UPI ID works in every app and costs you nothing extra.',
+  },
+  {
+    q: 'What is the UTR number?',
+    a: 'It is the 12-digit reference number of your UPI payment. You find it in your UPI app under the payment’s details, sometimes called “UPI Ref No.” or “UPI transaction ID”. Entering it is optional but helps us match your payment faster.',
+  },
+  {
+    q: 'Can I pay on delivery?',
+    a: `Yes, for orders up to ${formatINR(s.CODMax)}. Pay in cash or by UPI when the order arrives. For a first pay-on-delivery order above ${formatINR(s.CallFirstCODAbove)} we call you to confirm before packing.`,
+    ta: 'ஆம், டெலிவரியின் போது பணம் அல்லது UPI மூலம் செலுத்தலாம்.',
+  },
+];
+
+const faqs = [
+  genuine,
+  ...(SHOW_PRICES ? orderingCheckout : orderingWhatsApp),
+  {
+    q: 'Where do you deliver and how fast?',
+    a: `Around ${shop.addressLocality} and nearby towns. See the full list on our delivery page. ${s.SameDayCutoff ? `Orders placed before ${s.SameDayCutoff} are usually delivered the same day in town.` : ''}`,
+  },
+  SHOW_PRICES
+    ? {
+        q: 'How much is delivery?',
+        a: s.FreeDeliveryAbove > 0 ? `${formatINR(s.DeliveryFee)} for most areas, and free for orders of ${formatINR(s.FreeDeliveryAbove)} or more. Store pickup is always free.` : `${formatINR(s.DeliveryFee)} for most areas. Store pickup is free.`,
+      }
+    : { q: 'How much is delivery?', a: 'It depends on your area and order. We tell you the delivery charge on WhatsApp before you pay. Store pickup is always free.' },
+  {
+    q: 'Can I pick up from the shop?',
+    a: SHOW_PRICES
+      ? 'Yes. Choose “Pick up from shop” at checkout. We message you when the order is packed. Pay by UPI before or at the counter.'
+      : 'Yes. Mention it in your WhatsApp message and we will tell you when it is ready. Pay by UPI or at the counter.',
+  },
+  {
+    q: 'What if my product is damaged, wrong or expired?',
+    a: 'Tell us on WhatsApp, ideally within 48 hours of delivery, with a photo. We will replace it or refund you. See our delivery and returns page for details.',
+    ta: 'பொருள் சேதமடைந்திருந்தால் அல்லது தவறாக இருந்தால் 48 மணி நேரத்திற்குள் WhatsApp-ல் தெரிவிக்கவும்.',
+  },
+  {
+    q: 'Can I return a product if I change my mind?',
+    a: 'We cannot take back opened or sealed supplements for a change of mind, because they are food products. If you are unsure which product to choose, ask us before ordering.',
+  },
+  {
+    q: 'How fresh is your stock?',
+    a: `We only sell stock with at least ${s.MinDaysLeft ?? 45} days left before its best-before date${SHOW_PRICES ? ', and the product page shows the earliest best-before date we have' : ''}.`,
+  },
+  {
+    q: 'Which supplement should I take?',
+    a: 'We are happy to explain the products and what the label says. For medical conditions, pregnancy, or for anyone under 18, please ask your doctor first.',
+  },
+];
+
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+---
+
+<Page title="Questions & answers" description={`Ordering, delivery, returns and product questions for ${shop.name}.`} jsonLd={ld}>
+  <div class="not-prose space-y-3">
+    {
+      faqs.map((f) => (
+        <details class="card group p-4">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-bold [&::-webkit-details-marker]:hidden">
+            {f.q}
+            <span class="text-xl text-lime transition-transform group-open:rotate-45" aria-hidden="true">
+              +
+            </span>
+          </summary>
+          <p class="mt-3">{f.a}</p>
+          {f.ta && (
+            <p lang="ta" class="ta mt-2">
+              {f.ta}
+            </p>
+          )}
+        </details>
+      ))
+    }
+  </div>
+  <p class="mt-8">Still have a question? <a href={waHref()} target="_blank" rel="noopener">WhatsApp us</a>.</p>
+</Page>

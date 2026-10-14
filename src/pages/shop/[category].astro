@@ -1,0 +1,16 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ShopPage from '../../components/ShopPage.astro';
+import { cardData, catalog, categoriesWithProducts, shop } from '../../lib/site.js';
+
+export function getStaticPaths() {
+  return categoriesWithProducts.map((c) => ({ params: { category: c.slug }, props: { c } }));
+}
+
+const { c } = Astro.props;
+const products = catalog.products.filter((p) => p.category === c.slug).map(cardData);
+---
+
+<Layout title={`${c.name} – buy online`} description={`${c.name} in ${shop.addressLocality}: ${products.length} products from brands like ${[...new Set(products.map((p) => p.brand))].slice(0, 4).join(', ')}. Local delivery, UPI or pay on delivery.`}>
+  <ShopPage title={c.name} intro={c.blurb} current={c.slug} products={products} />
+</Layout>

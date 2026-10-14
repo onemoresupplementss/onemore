@@ -1,0 +1,58 @@
+[
+  {
+    "Area": "Thiruthuraipoondi town",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "Same day if ordered by 6 pm",
+    "Active": true
+  },
+  {
+    "Area": "Villages around Thiruthuraipoondi",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "Same day or next day",
+    "Active": true
+  },
+  {
+    "Area": "Muthupet",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "Next day",
+    "Active": true
+  },
+  {
+    "Area": "Mannargudi",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "Next day",
+    "Active": true
+  },
+  {
+    "Area": "Tiruvarur",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "Next day",
+    "Active": true
+  },
+  {
+    "Area": "Vedaranyam",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "Next day",
+    "Active": true
+  },
+  {
+    "Area": "Karaikal (Puducherry)",
+    "Pincodes": "",
+    "Fee": 80,
+    "ETA": "1–2 days",
+    "Active": true
+  },
+  {
+    "Area": "Puducherry",
+    "Pincodes": "",
+    "Fee": 120,
+    "ETA": "2–3 days",
+    "Active": true
+  }
+]

@@ -1,0 +1,23 @@
+Setting,Value,Notes
+AcceptingOrders,Open,Open or Closed. Closed hides checkout and shows ClosedMessage.
+ClosedMessage,We are not taking online orders right now. Please call or WhatsApp us.,
+Announcement,Delivery in Thiruthuraipoondi & nearby · Store pickup · Order on WhatsApp,Text in the top bar. Leave blank to hide.
+PreviewBanner,Yes,"Yes shows ""Prices are placeholders"" on every page. Set No at launch."
+DeliveryFee,40,Flat delivery charge in ₹ (a Delivery-tab Fee overrides it for that area).
+FreeDeliveryAbove,2999,Orders at or above this subtotal get free delivery. 0 = never free.
+CODMax,10000,Highest order total allowed for pay on delivery.
+CallFirstCODAbove,3000,"First-time pay-on-delivery orders above this are marked ""call first""."
+PickupEnabled,Yes,Yes/No – store pickup option at checkout.
+SameDayCutoff,18:00,Orders after this time are delivered next day (shown at checkout).
+ShopHours,Mon–Sat 9 am – 9 pm,Shown on the site.
+ReplyPromise,We reply within 2 hours during shop hours.,Shown after an order is placed.
+ShowLowStockAt,3,"Show ""Only N left"" when stock is at or below this. 0 = never."
+MaxQtyPerLine,10,Most units of one item in one order.
+MaxOpenOrdersPerPhone,3,Unpaid New orders allowed per phone number.
+MinDaysLeft,45,Hide a variant when fewer days than this remain before BestBefore.
+RequireVerified,Yes,Yes = only rows with Verified ticked are sold online.
+AllowPuducherry,Yes,Yes = accept Puducherry/Karaikal pincodes. Needs GST registration – set No if not registered.
+AlertEmail,,Email for new-order alerts (leave blank if using Telegram).
+ReviewLink,,Your Google review link (from your Business Profile).
+PublishNow,FALSE,"Tick to rebuild the website now (new products, names, photos). It unticks itself."
+SiteStatus,,Written by the script: last sync time and any problems.

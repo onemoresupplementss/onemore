@@ -1,0 +1,43 @@
+{
+  "_help": "Shop details used across the website. Edit on GitHub, commit, and the site rebuilds in about 2 minutes. Anything in [square brackets] is a placeholder that must be replaced before launch.",
+  "_orderModeHelp": "orderMode: \"whatsapp\" = phase 1: no prices, the cart is sent to you as a WhatsApp message (works on GitHub Pages). \"checkout\" = phase 2: prices, live stock and full checkout (needs Cloudflare + Google Sheets, see README).",
+  "orderMode": "whatsapp",
+
+  "name": "oneMore",
+  "tagline": "Fuel for one more rep.",
+  "siteUrl": "https://onemore.example.in",
+
+  "whatsappNumber": "916385824752",
+  "phoneDisplay": "+91 63858 24752",
+  "phoneDial": "+916385824752",
+  "email": "[shop email]",
+  "instagram": "",
+
+  "upiId": "[your-shop-upi-id@bank]",
+  "upiPayeeName": "oneMore",
+  "upiNameCustomersSee": "[exact name shown in the customer's UPI app]",
+  "upiPayLinkTested": false,
+
+  "legalName": "[Legal business name]",
+  "ownerName": "[Owner name]",
+  "addressLines": ["[Shop address line]", "Thiruthuraipoondi, Tiruvarur District", "Tamil Nadu – [pincode]"],
+  "addressLocality": "Thiruthuraipoondi",
+  "addressRegion": "Tamil Nadu",
+  "postalCode": "",
+  "mapsUrl": "",
+  "mapImage": "",
+  "hoursText": "[Mon–Sat 9 am – 9 pm, Sunday 10 am – 1 pm]",
+
+  "fssaiNumber": "",
+  "gstin": "",
+
+  "grievanceOfficer": {
+    "name": "[Owner name]",
+    "designation": "Proprietor and Grievance Officer",
+    "phone": "+91 63858 24752",
+    "email": "[shop email]"
+  },
+
+  "turnstileSiteKey": "",
+  "brandStrip": ["Optimum Nutrition", "MuscleBlaze", "MuscleTech", "Myprotein", "GNC", "Labrada", "BSN", "Kevin Levrone", "Ronnie Coleman", "Atom", "Wellcore", "One Science"]
+}

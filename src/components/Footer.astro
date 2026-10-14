@@ -1,0 +1,53 @@
+---
+import { SHOW_PRICES, url } from '../lib/env.js';
+import Logo from './Logo.astro';
+import SellerDetails from './SellerDetails.astro';
+import { catalog, categoriesWithProducts, filled, shop, telHref, waHref } from '../lib/site.js';
+---
+
+<footer class="mt-16 border-t border-line bg-surface">
+  <div class="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="space-y-3">
+      <Logo size="text-3xl" />
+      <p class="text-sm text-muted">{shop.tagline} Gym supplements in {shop.addressLocality}, with home delivery nearby and store pickup.</p>
+      <p class="text-sm">
+        <a class="font-bold hover:text-lime" href={telHref}>{shop.phoneDisplay}</a><br />
+        <a class="text-muted hover:text-lime" href={waHref()} target="_blank" rel="noopener">WhatsApp us</a>
+      </p>
+      {catalog.settings.ShopHours && <p class="text-sm text-muted">{catalog.settings.ShopHours}</p>}
+    </div>
+    <nav aria-label="Categories">
+      <h2 class="mb-3 text-xs font-black uppercase tracking-wider text-muted">Shop</h2>
+      <ul class="space-y-2 text-sm">
+        <li><a class="hover:text-lime" href={url('/shop/')}>All products</a></li>
+        {
+          categoriesWithProducts.map((c) => (
+            <li>
+              <a class="hover:text-lime" href={url(`/shop/${c.slug}/`)}>
+                {c.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <nav aria-label="Help">
+      <h2 class="mb-3 text-xs font-black uppercase tracking-wider text-muted">Help</h2>
+      <ul class="space-y-2 text-sm">
+        <li><a class="hover:text-lime" href={url('/about/')}>About us</a></li>
+        <li><a class="hover:text-lime" href={url('/contact/')}>Contact & shop location</a></li>
+        <li><a class="hover:text-lime" href={url('/faq/')}>FAQ</a></li>
+        <li><a class="hover:text-lime" href={url('/shipping-returns/')}>Delivery, returns & refunds</a></li>
+        <li><a class="hover:text-lime" href={url('/terms/')}>Terms of sale</a></li>
+        <li><a class="hover:text-lime" href={url('/privacy/')}>Privacy policy</a></li>
+      </ul>
+    </nav>
+    <SellerDetails />
+  </div>
+  <div class="border-t border-line">
+    <p class="mx-auto max-w-7xl px-4 py-5 text-xs text-muted">
+      © {new Date().getFullYear()} {filled(shop.legalName) || shop.name}.{SHOW_PRICES && ' All prices in ₹ and inclusive of all taxes.'} Brand names belong to their owners; we are an independent retailer.
+      Supplements are not medicines. Not for children, pregnant or nursing women unless a doctor advises.
+    </p>
+  </div>
+</footer>

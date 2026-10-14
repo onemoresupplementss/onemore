@@ -1,0 +1,9 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ShopPage from '../../components/ShopPage.astro';
+import { cardData, catalog, shop } from '../../lib/site.js';
+---
+
+<Layout title="All supplements" description={`Shop whey protein, mass gainers, creatine, pre-workouts and vitamins at ${shop.name}, ${shop.addressLocality}. Live stock, UPI or pay on delivery.`}>
+  <ShopPage title="All supplements" products={catalog.products.map(cardData)} />
+</Layout>

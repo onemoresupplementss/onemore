@@ -1,0 +1,85 @@
+---
+import { SHOW_PRICES, url } from '../lib/env.js';
+import Page from '../layouts/Page.astro';
+import { catalog, shop, waHref } from '../lib/site.js';
+import { formatINR } from '../shared/order.js';
+
+const s = catalog.settings;
+const zones = catalog.delivery;
+---
+
+<Page title="Delivery, returns & refunds" description={`Delivery areas, fees, pickup, returns and refunds at ${shop.name}.`} updated="October 2026">
+  <h2>Delivery</h2>
+  {
+    SHOW_PRICES ? (
+      <p>
+        We deliver ourselves around {shop.addressLocality}. The delivery fee is {formatINR(s.DeliveryFee)} unless shown otherwise below
+        {s.FreeDeliveryAbove > 0 ? <>, and delivery is <b>free for orders of {formatINR(s.FreeDeliveryAbove)} or more</b></> : ''}.
+        {s.SameDayCutoff && <> Orders placed after {s.SameDayCutoff} go out the next day.</>}
+      </p>
+    ) : (
+      <p>
+        We deliver ourselves around {shop.addressLocality}. We tell you the delivery charge on WhatsApp before you pay, and store pickup is free.
+        {s.SameDayCutoff && <> Orders confirmed after {s.SameDayCutoff} go out the next day.</>}
+      </p>
+    )
+  }
+  <p lang="ta" class="ta">திருத்துறைப்பூண்டி மற்றும் அருகிலுள்ள ஊர்களுக்கு நாங்களே டெலிவரி செய்கிறோம்.</p>
+  <div class="not-prose card mt-4 overflow-x-auto">
+    <table class="w-full text-left text-sm">
+      <thead class="text-xs uppercase tracking-wider text-muted">
+        <tr><th class="p-3">Area</th>{SHOW_PRICES && <th class="p-3">Fee</th>}<th class="p-3">When</th></tr>
+      </thead>
+      <tbody class="divide-y divide-line">
+        {
+          zones.map((z) => (
+            <tr>
+              <td class="p-3 font-semibold">{z.area}</td>
+              {SHOW_PRICES && <td class="p-3">{formatINR(z.fee ?? s.DeliveryFee)}</td>}
+              <td class="p-3 text-muted">{z.eta}</td>
+            </tr>
+          ))
+        }
+        <tr><td class="p-3 font-semibold">Other areas</td><td class="p-3" colspan={SHOW_PRICES ? 2 : 1}>We call you to confirm the {SHOW_PRICES ? 'fee and ' : ''}time before packing.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  {s.AllowPuducherry ? <p>We also deliver to Puducherry and Karaikal pincodes.</p> : <p>We deliver only within Tamil Nadu at the moment.</p>}
+
+  {
+    s.PickupEnabled && (
+      <>
+        <h2>Store pickup</h2>
+        <p>{SHOW_PRICES ? 'Choose “Pick up from shop” at checkout.' : 'Tell us in your WhatsApp message that you will pick it up.'} Pickup is free. We message you on WhatsApp when your order is packed, and we keep it for 3 days.</p>
+      </>
+    )
+  }
+
+  <h2>Late deliveries</h2>
+  <p>If we cannot deliver within the time shown when you ordered, we will tell you. You can then cancel for a full refund.</p>
+
+  <h2>Cancelling an order</h2>
+  <p>You can cancel any order free of charge before it leaves the shop. Message us on WhatsApp{SHOW_PRICES ? ' with your order number' : ''}. If you already paid by UPI, we refund the full amount to the same UPI account.</p>
+
+  <h2>Damaged, wrong, expired or missing items</h2>
+  <p>Please check your order when it arrives. If a seal is broken, the tub is damaged, an item is wrong or missing, or the product is past or close to its best-before date:</p>
+  <ol>
+    <li>Message us on <a href={waHref('Hi oneMore, there is a problem with my order ')} target="_blank" rel="noopener">WhatsApp</a> with {SHOW_PRICES ? 'your order number' : 'the order details'} and a photo. Please do this within 48 hours of delivery so we can check it quickly.</li>
+    <li>Keep the product and its packaging. We collect it from you at no cost.</li>
+    <li>We replace it, or refund you if you prefer or if we have no replacement.</li>
+  </ol>
+  <p>An unboxing video helps us sort out problems faster, but you do not need one to make a claim.</p>
+  <p lang="ta" class="ta">சேதம், தவறான பொருள் அல்லது காலாவதியான பொருள் இருந்தால் 48 மணி நேரத்திற்குள் புகைப்படத்துடன் WhatsApp-ல் தெரிவிக்கவும். மாற்றித் தருவோம் அல்லது பணத்தைத் திருப்பித் தருவோம்.</p>
+
+  <h2>Change of mind</h2>
+  <p>Supplements are food products, so we cannot take them back if you change your mind, whether the tub is open or sealed. Ask us before ordering if you are unsure about a product or flavour.</p>
+
+  <h2>Refunds</h2>
+  <ul>
+    <li>UPI payments: refunded to the UPI account you paid from, within 7 days of us agreeing the refund.</li>
+    <li>Cash payments: refunded by UPI or in cash at the shop, as you prefer.</li>
+  </ul>
+
+  <h2>Questions or complaints</h2>
+  <p>Contact our grievance officer, details on the <a href={url('/contact/')}>contact page</a>. We acknowledge every complaint within 48 hours.</p>
+</Page>

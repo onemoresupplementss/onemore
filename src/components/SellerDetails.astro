@@ -1,0 +1,35 @@
+---
+// Seller details required for e-commerce sellers (Consumer Protection (E-Commerce) Rules
+// and FSSAI): legal name, address, licence numbers and the grievance officer.
+// Fields still holding a "[placeholder]" are left out; the build log lists them.
+import { filled, shop } from '../lib/site.js';
+
+const g = shop.grievanceOfficer;
+const { heading = true } = Astro.props;
+const address = shop.addressLines.map(filled).filter(Boolean);
+const officer = filled(g.name);
+const email = filled(g.email);
+---
+
+<div class="space-y-2 text-sm">
+  {heading && <h2 class="mb-3 text-xs font-black uppercase tracking-wider text-muted">Seller details</h2>}
+  <p>
+    <b>{filled(shop.legalName) || shop.name}</b><br />
+    {address.map((l) => <>{l}<br /></>)}
+  </p>
+  {
+    (filled(shop.fssaiNumber) || filled(shop.gstin)) && (
+      <p class="text-muted">
+        {filled(shop.fssaiNumber) && <>FSSAI licence no.: <span class="text-fg">{shop.fssaiNumber}</span></>}
+        {filled(shop.fssaiNumber) && filled(shop.gstin) && <br />}
+        {filled(shop.gstin) && <>GSTIN: <span class="text-fg">{shop.gstin}</span></>}
+      </p>
+    )
+  }
+  <p class="text-muted">
+    Grievance officer: {officer ? <span class="text-fg">{officer}, {g.designation}</span> : <span class="text-fg">{g.designation}</span>}<br />
+    <a class="hover:text-lime" href={`tel:${g.phone.replace(/\s/g, '')}`}>{g.phone}</a>
+    {email && <> · <a class="hover:text-lime" href={`mailto:${email}`}>{email}</a></>}<br />
+    We acknowledge complaints within 48 hours and resolve them within one month.
+  </p>
+</div>

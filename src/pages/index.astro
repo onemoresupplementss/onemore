@@ -1,0 +1,181 @@
+---
+import { SHOW_PRICES, url } from '../lib/env.js';
+import Layout from '../layouts/Layout.astro';
+import ProductGrid from '../components/ProductGrid.jsx';
+import { absUrl, cardData, catalog, categoriesWithProducts, isPlaceholder, shop, telHref, waHref } from '../lib/site.js';
+import { formatINR } from '../shared/order.js';
+
+const s = catalog.settings;
+const best = catalog.products.filter((p) => p.bestseller).slice(0, 8).map(cardData);
+const whey = catalog.products.filter((p) => p.category === 'whey-protein').slice(0, 8).map(cardData);
+
+const trust = [
+  { t: 'Genuine products', d: 'From authorised importers and brands. Invoice on request.' },
+  { t: 'Local delivery', d: `${shop.addressLocality} and nearby${SHOW_PRICES && s.FreeDeliveryAbove > 0 ? ` · free above ${formatINR(s.FreeDeliveryAbove)}` : ''}` },
+  { t: 'UPI or pay on delivery', d: s.PickupEnabled ? 'Or pick up from the shop and pay there.' : 'Cash or UPI at your door.' },
+  { t: 'Real people on WhatsApp', d: s.ReplyPromise },
+];
+
+const steps = SHOW_PRICES
+  ? [
+      { t: 'Add to cart', d: 'Pick your size and flavour. Stock is live from our shelf.' },
+      { t: 'Place the order', d: 'Delivery or pickup. Pay by UPI, on delivery or at the shop.' },
+      { t: 'Send it on WhatsApp', d: 'One tap sends us your order. We confirm and pack it.' },
+    ]
+  : [
+      { t: 'Add to cart', d: 'Pick your products, size and flavour.' },
+      { t: 'Send it on WhatsApp', d: 'One tap opens WhatsApp with your list. Just press send.' },
+      { t: 'We confirm', d: 'We reply with today’s price and delivery. Pay by UPI, on delivery or at the shop.' },
+    ];
+
+const store = {
+  '@context': 'https://schema.org',
+  '@type': 'Store',
+  name: shop.name,
+  url: absUrl('/'),
+  telephone: shop.phoneDial,
+  image: absUrl('/og.png'),
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: isPlaceholder(shop.addressLines[0]) ? undefined : shop.addressLines[0],
+    addressLocality: shop.addressLocality,
+    addressRegion: shop.addressRegion,
+    postalCode: shop.postalCode || undefined,
+    addressCountry: 'IN',
+  },
+  ...(shop.mapsUrl ? { hasMap: shop.mapsUrl } : {}),
+  ...(shop.instagram ? { sameAs: [shop.instagram] } : {}),
+};
+---
+
+<Layout jsonLd={store}>
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="pointer-events-none absolute -right-32 -top-32 size-[28rem] rounded-full bg-lime/10 blur-3xl" aria-hidden="true"></div>
+    <div class="relative mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:py-16 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:py-24">
+      <div>
+        <p class="mb-4 text-xs font-black uppercase tracking-[0.2em] text-lime">Supplements · {shop.addressLocality}</p>
+        <h1 class="display text-5xl sm:text-6xl lg:text-7xl">
+          Fuel for<br /><span class="italic text-lime">one more</span><br />rep.
+        </h1>
+        <p class="mt-5 max-w-md text-lg text-muted">
+          {`Whey, gainers, creatine and pre-workouts from the brands you trust. ${SHOW_PRICES ? 'Order here, pay by UPI or on delivery, and we bring it to your door.' : 'Add what you need, send the list to us on WhatsApp, and we bring it to your door.'}`}
+        </p>
+        <p lang="ta" class="ta mt-2">திருத்துறைப்பூண்டி மற்றும் அருகிலுள்ள ஊர்களுக்கு டெலிவரி.</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={url('/shop/whey-protein/')} class="btn btn-lime px-6 text-base">Shop whey protein</a>
+          <a href={url('/shop/')} class="btn btn-ghost px-6 text-base">All products</a>
+        </div>
+      </div>
+      <ul class="hidden grid-cols-2 gap-3 lg:grid">
+        {
+          categoriesWithProducts.slice(0, 4).map((c, i) => (
+            <li>
+              <a href={url(`/shop/${c.slug}/`)} class:list={['card flex aspect-[4/3] flex-col justify-end p-4 transition-colors hover:border-lime', i === 0 && 'border-lime/50 bg-lime/10']}>
+                <span class="display text-3xl text-lime">{c.count}</span>
+                <span class="text-sm font-bold">{c.name}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 py-12" aria-labelledby="cat-h">
+    <h2 id="cat-h" class="display mb-6 text-2xl sm:text-3xl">Shop by category</h2>
+    <ul class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+      {
+        categoriesWithProducts.map((c) => (
+          <li>
+            <a href={url(`/shop/${c.slug}/`)} class="card group flex h-full flex-col justify-between gap-6 p-4 transition-colors hover:border-lime">
+              <span class="text-xs font-bold text-muted">{c.count} {c.count === 1 ? 'product' : 'products'}</span>
+              <span>
+                <span class="block text-lg font-black leading-tight group-hover:text-lime">{c.name}</span>
+                <span class="block text-xs text-muted">{c.blurb}</span>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  {
+    best.length > 0 && (
+      <section class="mx-auto max-w-7xl px-4 py-6" aria-labelledby="best-h">
+        <div class="mb-6 flex items-end justify-between gap-4">
+          <h2 id="best-h" class="display text-2xl sm:text-3xl">
+            Best <span class="text-lime">sellers</span>
+          </h2>
+          <a href={url('/shop/')} class="text-sm font-bold text-lime hover:underline">See all →</a>
+        </div>
+        <ProductGrid client:visible products={best} settings={s} />
+      </section>
+    )
+  }
+
+  <section class="mx-auto max-w-7xl px-4 py-12" aria-label="Why shop with us">
+    <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        trust.map((x) => (
+          <li class="card flex gap-3 p-4">
+            <svg class="mt-0.5 size-6 shrink-0 text-lime" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <path d="m5 12 5 5 9-10" />
+            </svg>
+            <span>
+              <span class="block font-black">{x.t}</span>
+              <span class="block text-sm text-muted">{x.d}</span>
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  {
+    whey.length > 0 && (
+      <section class="mx-auto max-w-7xl px-4 py-6" aria-labelledby="whey-h">
+        <div class="mb-6 flex items-end justify-between gap-4">
+          <h2 id="whey-h" class="display text-2xl sm:text-3xl">Whey protein</h2>
+          <a href={url('/shop/whey-protein/')} class="text-sm font-bold text-lime hover:underline">See all →</a>
+        </div>
+        <ProductGrid client:visible products={whey} settings={s} scroll />
+      </section>
+    )
+  }
+
+  <section class="border-y border-line bg-surface py-8" aria-labelledby="brands-h">
+    <div class="mx-auto max-w-7xl px-4">
+      <h2 id="brands-h" class="mb-4 text-xs font-black uppercase tracking-[0.2em] text-muted">Brands we stock</h2>
+      <ul class="flex flex-wrap gap-x-8 gap-y-3">
+        {
+          shop.brandStrip.map((b) => (
+            <li>
+              <a href={url(`/shop/?brand=${encodeURIComponent(b)}`)} class="display text-lg text-fg/70 transition-colors hover:text-lime sm:text-xl">
+                {b}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 py-12" aria-labelledby="how-h">
+    <h2 id="how-h" class="display mb-6 text-2xl sm:text-3xl">How ordering works</h2>
+    <ol class="grid gap-3 sm:grid-cols-3">
+      {
+        steps.map((x, i) => (
+          <li class="card p-5">
+            <span class="display text-4xl text-lime">{i + 1}</span>
+            <span class="mt-2 block text-lg font-black">{x.t}</span>
+            <span class="block text-sm text-muted">{x.d}</span>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="mt-6 text-sm text-muted">
+      Questions first? <a class="font-bold text-lime underline" href={waHref()} target="_blank" rel="noopener">WhatsApp us</a> or <a class="font-bold text-lime underline" href={telHref}>call {shop.phoneDisplay}</a>.
+    </p>
+  </section>
+</Layout>

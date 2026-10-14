@@ -1,0 +1,23 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Checkout from '../components/Checkout.jsx';
+import WhatsAppOrder from '../components/WhatsAppOrder.jsx';
+import { catalog, shop } from '../lib/site.js';
+import { SHOW_PRICES } from '../lib/env.js';
+
+const publicShop = { name: shop.name, whatsappNumber: shop.whatsappNumber, turnstileSiteKey: shop.turnstileSiteKey || '' };
+---
+
+<Layout title={SHOW_PRICES ? 'Checkout' : 'Your order'} noindex>
+  <div class="mx-auto max-w-6xl px-4 py-8">
+    <h1 class="display mb-6 text-3xl">{SHOW_PRICES ? 'Checkout' : 'Your order'}</h1>
+    {
+      SHOW_PRICES ? (
+        <Checkout client:only="preact" settings={catalog.settings} delivery={catalog.delivery} shop={publicShop} />
+      ) : (
+        <WhatsAppOrder client:only="preact" settings={catalog.settings} shop={{ name: shop.name, whatsappNumber: shop.whatsappNumber }} />
+      )
+    }
+    <noscript><p class="card p-4">Please turn on JavaScript to order online, or WhatsApp us your order.</p></noscript>
+  </div>
+</Layout>

@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+.wrangler/
+.env
+.dev.vars
+# Written by scripts/prepare-data.mjs on every build
+src/data/catalog.json
+public/feed.json

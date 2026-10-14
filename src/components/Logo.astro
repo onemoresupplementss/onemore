@@ -1,0 +1,8 @@
+---
+// Text logo: "one" in white, "MORE" in lime. Swap for an <img> when a logo file exists.
+const { size = 'text-2xl' } = Astro.props;
+---
+
+<span class:list={['display inline-flex items-baseline italic', size]}>
+  <span class="lowercase">one</span><span class="text-lime">more</span>
+</span>

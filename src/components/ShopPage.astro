@@ -1,0 +1,37 @@
+---
+import { url } from '../lib/env.js';
+// Shared body for /shop/ and /shop/<category>/.
+import ShopBrowser from './ShopBrowser.jsx';
+import { categoriesWithProducts, catalog } from '../lib/site.js';
+
+interface Props {
+  title: string;
+  intro?: string;
+  current?: string;
+  products: object[];
+}
+const { title, intro, current, products } = Astro.props;
+---
+
+<div class="mx-auto max-w-7xl px-4 py-8">
+  <nav aria-label="Breadcrumb" class="mb-3 text-xs text-muted">
+    <a href={url('/')} class="hover:text-lime">Home</a> / <a href={url('/shop/')} class="hover:text-lime">Shop</a>{current && <> / <span>{title}</span></>}
+  </nav>
+  <h1 class="display text-3xl sm:text-4xl">{title}</h1>
+  {intro && <p class="mt-2 max-w-2xl text-muted">{intro}</p>}
+  <nav aria-label="Categories" class="no-scrollbar -mx-4 mt-5 mb-6 overflow-x-auto px-4">
+    <ul class="flex gap-2">
+      <li><a href={url('/shop/')} class="chip whitespace-nowrap" aria-current={!current ? 'page' : undefined} aria-pressed={!current ? 'true' : 'false'}>All</a></li>
+      {
+        categoriesWithProducts.map((c) => (
+          <li>
+            <a href={url(`/shop/${c.slug}/`)} class="chip whitespace-nowrap" aria-current={current === c.slug ? 'page' : undefined} aria-pressed={current === c.slug ? 'true' : 'false'}>
+              {c.name}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+  <ShopBrowser client:load products={products} settings={catalog.settings} />
+</div>

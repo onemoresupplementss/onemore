@@ -1,0 +1,71 @@
+---
+import { url } from '../lib/env.js';
+import Cart from './Cart.jsx';
+import Logo from './Logo.astro';
+import { catalog, categoriesWithProducts, shop, telHref } from '../lib/site.js';
+
+const path = Astro.url.pathname;
+const main = categoriesWithProducts.slice(0, 5);
+---
+
+<header class="sticky top-0 z-40 border-b border-line bg-ink/95 backdrop-blur">
+  <div class="mx-auto flex h-16 max-w-7xl items-center gap-2 px-4">
+    <details class="group relative lg:hidden">
+      <summary class="flex size-11 cursor-pointer list-none items-center justify-center rounded-lg hover:bg-surface-2 [&::-webkit-details-marker]:hidden" aria-label="Menu">
+        <svg class="size-6 group-open:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+        <svg class="hidden size-6 group-open:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+      </summary>
+      <nav class="fixed inset-x-0 top-16 bottom-0 overflow-y-auto border-t border-line bg-ink px-4 py-6" aria-label="Menu">
+        <p class="mb-2 text-xs font-black uppercase tracking-wider text-muted">Shop</p>
+        <ul class="mb-6 grid grid-cols-2 gap-2">
+          <li><a class="card block px-3 py-3 font-bold" href={url('/shop/')}>All products</a></li>
+          {
+            categoriesWithProducts.map((c) => (
+              <li>
+                <a class="card block px-3 py-3 font-bold" href={url(`/shop/${c.slug}/`)}>
+                  {c.name}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <ul class="space-y-1 text-lg font-bold">
+          <li><a class="block py-2" href={url('/about/')}>About us</a></li>
+          <li><a class="block py-2" href={url('/contact/')}>Contact & shop location</a></li>
+          <li><a class="block py-2" href={url('/faq/')}>FAQ</a></li>
+          <li><a class="block py-2" href={url('/shipping-returns/')}>Delivery & returns</a></li>
+          <li><a class="block py-2 text-lime" href={telHref}>Call the shop</a></li>
+        </ul>
+      </nav>
+    </details>
+
+    <a href={url('/')} class="mr-2 shrink-0" aria-label="oneMore home"><Logo /></a>
+
+    <nav class="hidden flex-1 lg:block" aria-label="Categories">
+      <ul class="flex items-center gap-1 text-sm font-bold">
+        <li><a href={url('/shop/')} class:list={['rounded-lg px-3 py-2 hover:text-lime', path === url('/shop/') && 'text-lime']}>All</a></li>
+        {
+          main.map((c) => (
+            <li>
+              <a href={url(`/shop/${c.slug}/`)} class:list={['rounded-lg px-3 py-2 hover:text-lime', path.startsWith(url(`/shop/${c.slug}/`)) && 'text-lime']}>
+                {c.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <form action={url('/shop/')} method="get" role="search" class="ml-auto hidden md:block">
+      <label class="relative block">
+        <span class="sr-only">Search products</span>
+        <input type="search" name="q" placeholder="Search supplements" class="field h-10 min-h-0 w-56 py-1.5 pl-9 text-sm" />
+        <svg class="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+      </label>
+    </form>
+    <a href={url('/shop/')} class="ml-auto inline-flex size-11 items-center justify-center rounded-lg hover:bg-surface-2 md:hidden" aria-label="Search products">
+      <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+    </a>
+    <Cart client:idle settings={catalog.settings} shop={{ name: shop.name, whatsappNumber: shop.whatsappNumber }} />
+  </div>
+</header>

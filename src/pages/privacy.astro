@@ -1,0 +1,51 @@
+---
+import Page from '../layouts/Page.astro';
+import { filled, shop } from '../lib/site.js';
+import { SHOW_PRICES } from '../lib/env.js';
+
+const g = shop.grievanceOfficer;
+const owner = filled(shop.legalName) || shop.name;
+---
+
+<Page title="Privacy policy" description={`How ${shop.name} uses your personal details.`} updated="October 2026">
+  <p>{owner} (“we”) runs {shop.name}. This policy explains what personal details we collect, why, and your rights under India’s Digital Personal Data Protection Act, 2023.</p>
+
+  <h2>What we collect</h2>
+  <ul>
+    {
+      SHOW_PRICES ? (
+        <li><b>When you order:</b> your name, mobile number, delivery address, landmark, pincode, notes, the items you ordered, your payment method and, if you enter it, your UPI transaction number (UTR).</li>
+      ) : (
+        <li><b>On this website:</b> nothing. The website has no forms and does not ask for your name, number or address. Your order list is sent only when you choose to send it on WhatsApp.</li>
+      )
+    }
+    <li><b>When you message us on WhatsApp:</b> your WhatsApp number and name, and whatever you send us, such as your order, delivery address and payment screenshots.</li>
+    <li>
+      <b>On your phone:</b> the website keeps your cart{SHOW_PRICES ? ', your last-used delivery details and your recent order numbers' : ''} in your browser’s storage so it is still there when you come back.
+      This never leaves your phone{SHOW_PRICES ? ' unless you place an order' : ''}. You can clear it by clearing your browser data.
+    </li>
+    <li><b>Technical data:</b> the company that hosts this website processes your IP address to deliver the pages and block attacks. We do not use advertising or tracking cookies.</li>
+  </ul>
+
+  <h2>Why we use it</h2>
+  <ul>
+    <li>To process, deliver and support your order, and to contact you about it.</li>
+    <li>To keep the accounting records the law requires.</li>
+    <li>To prevent fake or abusive orders.</li>
+  </ul>
+  <p>We do not sell your details, and we do not send you marketing messages unless you ask us to.</p>
+
+  <h2>Who processes it</h2>
+  <p>
+    Messages you send us go through WhatsApp (Meta).{SHOW_PRICES ? ' Order details are stored in our Google Sheets (Google), and the website runs on Cloudflare.' : ''}
+    These companies process the data under their own security and privacy terms. Data may be stored on servers outside India.
+  </p>
+
+  <h2>How long we keep it</h2>
+  <p>We keep order records for as long as tax and accounting law requires, usually up to 8 years, and then delete them.</p>
+
+  <h2>Your rights</h2>
+  <p>You can ask us to show you the details we hold about you, correct them, or delete them where the law allows. You can also withdraw consent for anything that relies on it. To do this, or to complain, contact:</p>
+  <p>{filled(g.name) ? `${g.name}, ` : ''}{g.designation}<br />Phone: {g.phone}{filled(g.email) && <> · Email: {g.email}</>}</p>
+  <p>If you are not satisfied with our answer, you can complain to the Data Protection Board of India.</p>
+</Page>

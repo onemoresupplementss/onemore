@@ -1,0 +1,17 @@
+---
+import { url } from '../lib/env.js';
+import Layout from '../layouts/Layout.astro';
+import { waHref } from '../lib/site.js';
+---
+
+<Layout title="Page not found" noindex>
+  <div class="mx-auto max-w-xl px-4 py-20 text-center">
+    <p class="display text-7xl text-lime">404</p>
+    <h1 class="mt-4 text-2xl font-black">This page is not here</h1>
+    <p class="mt-2 text-muted">The product may have moved or sold out. Try the shop, or ask us on WhatsApp.</p>
+    <div class="mt-6 flex flex-wrap justify-center gap-3">
+      <a class="btn btn-lime" href={url('/shop/')}>Go to the shop</a>
+      <a class="btn btn-ghost" href={waHref()} target="_blank" rel="noopener">WhatsApp us</a>
+    </div>
+  </div>
+</Layout>

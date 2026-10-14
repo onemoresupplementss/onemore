@@ -1,0 +1,77 @@
+---
+import { SHOW_PRICES, url } from '../lib/env.js';
+import Page from '../layouts/Page.astro';
+import SellerDetails from '../components/SellerDetails.astro';
+import { catalog, filled, shop } from '../lib/site.js';
+import { formatINR } from '../shared/order.js';
+
+const s = catalog.settings;
+---
+
+<Page title="Terms of sale" description={`Terms for buying from ${shop.name}.`} updated="October 2026">
+  <p>These terms apply when you order through this website (the “website”). The seller is {filled(shop.legalName) || shop.name}{filled(shop.legalName) ? `, the owner of ${shop.name}` : ''} (“we”, “us”).</p>
+
+  <h2>1. The seller</h2>
+  <div class="not-prose card p-4"><SellerDetails heading={false} /></div>
+
+  <h2>2. Products and information</h2>
+  <ul>
+    <li>We sell food supplements in their original sealed packaging. Product details on the website are taken from the product labels. If anything differs, the label on the product you receive is correct, and you can return it as described in our <a href={url('/shipping-returns/')}>returns policy</a>.</li>
+    <li>Imported products are sold only with the Indian importer’s details on the pack.</li>
+    <li>Photos may show a different flavour or older packaging.</li>
+    <li>Supplements are not medicines and do not treat or prevent any disease. Follow the serving size on the label. Pregnant or nursing women, children and people with medical conditions should ask a doctor first.</li>
+  </ul>
+
+  {
+    SHOW_PRICES ? (
+      <>
+        <h2>3. Prices</h2>
+        <p>All prices are in Indian rupees and include all taxes. The MRP is the maximum retail price printed on the product. Delivery fees are shown before you place an order. Our online prices are the same as our shop prices.</p>
+
+        <h2>4. Orders</h2>
+        <ul>
+          <li>When you place an order, our system checks the price and stock at that moment and gives you an order number. This is the price you pay, even if the price on the page changes later.</li>
+          <li>Your order is confirmed once you send it to us on WhatsApp, or once we call you to confirm it.</li>
+          <li>We may cancel an order, for example if a product turns out to be damaged in stock or if we cannot reach you. If you already paid, we refund you in full.</li>
+          <li>We may limit quantities per order (currently {s.MaxQtyPerLine} of each item).</li>
+        </ul>
+
+        <h2>5. Payment</h2>
+        <ul>
+          <li>UPI: pay the exact amount to our UPI ID shown on your order page. Your order is marked paid only when the payment shows in our account.</li>
+          <li>Pay on delivery: available for orders up to {formatINR(s.CODMax)}. Pay in cash or by UPI at your door.</li>
+          <li>Pay at the shop: for store pickup orders.</li>
+          <li>We never ask for your UPI PIN, OTP or card details. Do not share them with anyone.</li>
+        </ul>
+      </>
+    ) : (
+      <>
+        <h2>3. Prices</h2>
+        <p>The website does not show prices. When you send us your list on WhatsApp we reply with the price of each item in Indian rupees, including all taxes and never above the MRP printed on the product, and the delivery charge. Our prices are the same as at our shop counter.</p>
+
+        <h2>4. Orders</h2>
+        <ul>
+          <li>Sending your list on WhatsApp is a request, not yet an order. Your order is confirmed when you accept the price and delivery details we send you.</li>
+          <li>We may decline or cancel an order, for example if a product is out of stock or damaged. If you already paid, we refund you in full.</li>
+          <li>We may limit quantities per order.</li>
+        </ul>
+
+        <h2>5. Payment</h2>
+        <ul>
+          <li>UPI to the UPI ID we send you on WhatsApp, cash or UPI on delivery, or payment at the shop for pickup orders.</li>
+          <li>Your order is marked paid only when the payment shows in our account.</li>
+          <li>We never ask for your UPI PIN, OTP or card details. Do not share them with anyone.</li>
+        </ul>
+      </>
+    )
+  }
+
+  <h2>6. Delivery, cancellation and returns</h2>
+  <p>See <a href={url('/shipping-returns/')}>Delivery, returns & refunds</a>.</p>
+
+  <h2>7. Complaints</h2>
+  <p>Contact our grievance officer (details above). We acknowledge complaints within 48 hours and aim to resolve them within one month. You may also approach the National Consumer Helpline (1915 or consumerhelpline.gov.in).</p>
+
+  <h2>8. Law</h2>
+  <p>These terms are governed by the laws of India. Courts in Tiruvarur District, Tamil Nadu have jurisdiction, without affecting your rights to use a consumer commission near you.</p>
+</Page>

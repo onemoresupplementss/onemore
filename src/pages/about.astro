@@ -1,0 +1,27 @@
+---
+import { SHOW_PRICES, url } from '../lib/env.js';
+import Page from '../layouts/Page.astro';
+import { shop, waHref } from '../lib/site.js';
+---
+
+<Page title="About us" description={`${shop.name} is a gym supplement shop in ${shop.addressLocality}, Tamil Nadu.`}>
+  <p>
+    {shop.name} is a supplement shop in {shop.addressLocality} for people who train. We stock whey protein, mass gainers, creatine,
+    pre-workouts, amino acids and vitamins from brands we know and trust, and we help you pick what suits your goal and budget.
+  </p>
+  <p lang="ta" class="ta">திருத்துறைப்பூண்டியில் உள்ள உடற்பயிற்சி சப்ளிமெண்ட் கடை.</p>
+
+  <h2>What we promise</h2>
+  <ul>
+    <li><b>Genuine stock.</b> We buy from authorised importers and brand distributors. Imported tubs carry the Indian importer’s sticker, and we will show you the invoice if you ask.</li>
+    <li><b>Fresh stock.</b> We do not sell products close to their best-before date.</li>
+    <li><b>Honest prices.</b> {SHOW_PRICES ? 'Prices on the website are the same as at our counter.' : 'The price we send you on WhatsApp is the same as at our counter.'} All prices include taxes.</li>
+    <li><b>Real help.</b> Message us on WhatsApp or walk in. We will answer questions about dosage on the label, flavours and alternatives.</li>
+  </ul>
+
+  <h2>Visit or order online</h2>
+  <p>
+    {SHOW_PRICES ? 'Order here' : 'Send us your list from the website on WhatsApp'} for delivery around {shop.addressLocality}, or pick up from the shop. Not sure what to buy?
+    <a href={waHref()} target="_blank" rel="noopener">Ask us on WhatsApp</a> or see our <a href={url('/contact/')}>shop location and hours</a>.
+  </p>
+</Page>
