@@ -1,7 +1,7 @@
 // Header cart button + slide-in cart drawer.
-import { useEffect, useRef, useState } from 'preact/hooks';
-import { createPortal } from 'preact/compat';
+import { useEffect, useState } from 'preact/hooks';
 import ProductImage from './ProductImage.jsx';
+import Sheet from './Sheet.jsx';
 import { cart, cartCount, cartOpen, clearCart, feed, liveVariant, loadFeed, removeFromCart, setQty, useSignal } from '../client/store.js';
 import { SHOW_PRICES, url } from '../lib/env.js';
 import { buildOrderListText, formatINR, lineLabel, whatsappLink } from '../shared/order.js';
@@ -25,40 +25,12 @@ export default function Cart({ settings, shop }) {
   const lines = useSignal(cart);
   const open = useSignal(cartOpen);
   const f = useSignal(feed);
-  const panel = useRef(null);
-  const opener = useRef(null);
   const [sent, setSent] = useState(false);
   const count = cartCount(lines);
   const s = f?.settings ? { ...settings, ...f.settings } : settings;
 
   useEffect(() => {
-    if (!open) return;
-    loadFeed();
-    const prev = document.activeElement;
-    document.body.style.overflow = 'hidden';
-    panel.current?.querySelector('[data-close]')?.focus();
-    const onKey = (e) => {
-      if (e.key === 'Escape') cartOpen.set(false);
-      if (e.key === 'Tab' && panel.current) {
-        const els = panel.current.querySelectorAll('a[href],button:not([disabled]),select,input');
-        if (!els.length) return;
-        const first = els[0];
-        const last = els[els.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
-    };
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.body.style.overflow = '';
-      document.removeEventListener('keydown', onKey);
-      (prev instanceof HTMLElement ? prev : opener.current)?.focus?.();
-    };
+    if (open) loadFeed();
   }, [open]);
 
   const priced = pricedLines(lines, f, s);
@@ -70,7 +42,6 @@ export default function Cart({ settings, shop }) {
   return (
     <>
       <button
-        ref={opener}
         type="button"
         class="relative inline-flex size-11 items-center justify-center rounded-lg hover:bg-surface-2"
         onClick={() => cartOpen.set(true)}
@@ -83,20 +54,7 @@ export default function Cart({ settings, shop }) {
         {count > 0 && <span class="absolute right-0.5 top-0.5 min-w-5 rounded-full bg-lime px-1 text-center text-[11px] font-black leading-5 text-ink">{count}</span>}
       </button>
 
-      {/* Rendered on <body>: the header's backdrop blur would otherwise trap this fixed panel inside the header. */}
-      {open && createPortal(
-        <div class="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Your cart">
-          <div class="absolute inset-0 bg-black/70" onClick={() => cartOpen.set(false)} />
-          <div ref={panel} class="absolute inset-y-0 right-0 flex w-full max-w-md flex-col border-l border-line bg-ink shadow-2xl">
-            <div class="flex items-center justify-between border-b border-line px-4 py-3">
-              <h2 class="display text-xl">Your cart</h2>
-              <button type="button" data-close class="inline-flex size-11 items-center justify-center rounded-lg hover:bg-surface-2" onClick={() => cartOpen.set(false)} aria-label="Close cart">
-                <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                  <path d="M6 6l12 12M18 6 6 18" />
-                </svg>
-              </button>
-            </div>
-
+      <Sheet open={open} onClose={() => cartOpen.set(false)} title="Your cart">
             {priced.length === 0 ? (
               <div class="flex flex-1 flex-col items-center justify-center gap-4 p-8 text-center">
                 <p class="text-lg font-bold">Your cart is empty</p>
@@ -156,10 +114,7 @@ export default function Cart({ settings, shop }) {
                 )}
               </>
             )}
-          </div>
-        </div>,
-        document.body,
-      )}
+      </Sheet>
     </>
   );
 }

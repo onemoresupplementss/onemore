@@ -19,6 +19,22 @@
   --font-display: "Arial Black", "Helvetica Neue", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
+@keyframes sheet-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+}
+@keyframes sheet-in-right {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes sheet-fade {
+  from {
+    opacity: 0;
+  }
+}
+
 @layer base {
   html {
     color-scheme: dark;
@@ -167,6 +183,23 @@
   }
   .no-scrollbar {
     scrollbar-width: none;
+  }
+  /* Slide-in panels (cart drawer, mobile menu). */
+  .sheet-left {
+    animation: sheet-in-left 0.22s ease-out;
+  }
+  .sheet-right {
+    animation: sheet-in-right 0.22s ease-out;
+  }
+  .sheet-fade {
+    animation: sheet-fade 0.22s ease-out;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sheet-left,
+    .sheet-right,
+    .sheet-fade {
+      animation: none;
+    }
   }
   .no-scrollbar::-webkit-scrollbar {
     display: none;

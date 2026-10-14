@@ -1,8 +1,9 @@
 ---
 import { url } from '../lib/env.js';
 import Cart from './Cart.jsx';
+import MobileMenu from './MobileMenu.jsx';
 import Logo from './Logo.astro';
-import { catalog, categoriesWithProducts, shop, telHref } from '../lib/site.js';
+import { catalog, categoriesWithProducts, shop, telHref, waHref } from '../lib/site.js';
 
 const path = Astro.url.pathname;
 const main = categoriesWithProducts.slice(0, 5);
@@ -10,34 +11,21 @@ const main = categoriesWithProducts.slice(0, 5);
 
 <header class="sticky top-0 z-40 border-b border-line bg-ink/95 backdrop-blur">
   <div class="mx-auto flex h-16 max-w-7xl items-center gap-2 px-4">
-    <details class="group relative lg:hidden">
-      <summary class="flex size-11 cursor-pointer list-none items-center justify-center rounded-lg hover:bg-surface-2 [&::-webkit-details-marker]:hidden" aria-label="Menu">
-        <svg class="size-6 group-open:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
-        <svg class="hidden size-6 group-open:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
-      </summary>
-      <nav class="fixed inset-x-0 top-16 bottom-0 overflow-y-auto border-t border-line bg-ink px-4 py-6" aria-label="Menu">
-        <p class="mb-2 text-xs font-black uppercase tracking-wider text-muted">Shop</p>
-        <ul class="mb-6 grid grid-cols-2 gap-2">
-          <li><a class="card block px-3 py-3 font-bold" href={url('/shop/')}>All products</a></li>
-          {
-            categoriesWithProducts.map((c) => (
-              <li>
-                <a class="card block px-3 py-3 font-bold" href={url(`/shop/${c.slug}/`)}>
-                  {c.name}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-        <ul class="space-y-1 text-lg font-bold">
-          <li><a class="block py-2" href={url('/about/')}>About us</a></li>
-          <li><a class="block py-2" href={url('/contact/')}>Contact & shop location</a></li>
-          <li><a class="block py-2" href={url('/faq/')}>FAQ</a></li>
-          <li><a class="block py-2" href={url('/shipping-returns/')}>Delivery & returns</a></li>
-          <li><a class="block py-2 text-lime" href={telHref}>Call the shop</a></li>
-        </ul>
-      </nav>
-    </details>
+    <MobileMenu
+      client:load
+      categories={[{ name: 'All products', href: url('/shop/') }, ...categoriesWithProducts.map((c) => ({ name: c.name, href: url(`/shop/${c.slug}/`) }))]}
+      pages={[
+        { label: 'Home', href: url('/') },
+        { label: 'About us', href: url('/about/') },
+        { label: 'Contact & shop location', href: url('/contact/') },
+        { label: 'FAQ', href: url('/faq/') },
+        { label: 'Delivery & returns', href: url('/shipping-returns/') },
+      ]}
+      current={path}
+      telHref={telHref}
+      phoneDisplay={shop.phoneDisplay}
+      waHref={waHref()}
+    />
 
     <a href={url('/')} class="mr-2 shrink-0" aria-label="oneMore home"><Logo /></a>
 
