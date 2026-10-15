@@ -244,16 +244,17 @@ The sheet tabs can also be built by hand from `sheets/*.csv` (File → Import), 
 **Free visitor statistics**: Pages project → Metrics → enable **Web Analytics** (no cookies, no banner needed).
 
 ### Step 4 – Domain
-1. Buy the domain (for example `onemore.in`) from an Indian registrar that takes UPI.
+1. Buy the domain (for example `onemoresupplements.in`) from an Indian registrar that takes UPI.
 2. Cloudflare → **Add a domain** (free plan) → it gives you two nameservers → enter them at your registrar
    (takes up to a few hours).
-3. Pages project → **Custom domains** → add `onemore.in` and `www.onemore.in`.
+3. Pages project → **Custom domains** → add `onemoresupplements.in` and `www.onemoresupplements.in`, then press
+   **Activate domain** on each (Cloudflare adds the DNS record; it can take a few minutes to show Active).
 4. Update `siteUrl` in `shop.config.json` and `SITE_URL` in the Apps Script properties to the new domain.
-5. **Email**: Cloudflare → your domain → Email → **Email Routing** → forward `info@onemore.in` to your Gmail. Free.
+5. **Email**: Cloudflare → your domain → Email → **Email Routing** → forward `info@onemoresupplements.in` to your Gmail. Free.
 
 ### Step 5 – Google Business Profile
 Search for your shop on Google Maps. If it's there, tap **Claim this business**. If not, add it at business.google.com.
-Add the website link, hours and photos, and the link `https://onemore.in/?src=gbp` (so you can see orders that came from Google).
+Add the website link, hours and photos, and the link `https://onemoresupplements.in/?src=gbp` (so you can see orders that came from Google).
 Use `?src=ig` in your Instagram bio and `?src=bag` on the QR sticker on carry bags.
 
 ---
