@@ -4,6 +4,7 @@
  *   onOrdersEdit        (installed trigger) Status/Payment changed -> "Updated" time;
  *                       Status -> Cancelled -> units go back to Products stock, once.
  *                       Payment tab edited -> email (the UPI ID customers pay to changed).
+ *                       "Send to supplier" ticked / Status changed -> supplier sheet (Supplier.gs).
  *   staleOrderReminder  (every 30 min) one email listing unpaid New orders older than 2 hours.
  *                       Nothing is ever cancelled automatically.
  */
@@ -28,6 +29,8 @@ function onOrdersEdit(e) {
     const c2 = range.getLastColumn();
     const touches = (i) => i + 1 >= c1 && i + 1 <= c2;
     const statusEdited = touches(col.status);
+    const supplierCol = findCol(header, [SUPPLIER_COL_HEADER]);
+    if (!statusEdited && supplierCol >= 0 && touches(supplierCol)) return syncSupplierSafely_();
     if (!statusEdited && !touches(col.payment)) return;
 
     const n = r2 - r1 + 1;
@@ -51,6 +54,7 @@ function onOrdersEdit(e) {
       }
     });
     if (cancelNeeded && returnCancelledStock_() > 0) pushLiveFeed('cancel');
+    if (supplierCol >= 0) syncSupplierSafely_(); // Cancelled -> "do not ship" for the supplier
   } catch (err) {
     console.error('onOrdersEdit: ' + (err && err.stack ? err.stack : err));
   }

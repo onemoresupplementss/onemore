@@ -144,6 +144,7 @@ function timerTick() {
   const data = readProductsFile_(productsSpreadsheet_(), { info: true });
   checkProducts_(data);
   pushLiveFeed('timer', { data: data, onlyIfChanged: true });
+  syncSupplierSafely_();
 }
 
 /* =====================================================================

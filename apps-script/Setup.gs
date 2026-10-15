@@ -28,6 +28,7 @@ function onOpen() {
     .addItem('Push stock to website now', 'menuPushNow')
     .addItem('Check products', 'menuCheckProducts')
     .addItem('Rebuild website now', 'rebuildWebsite')
+    .addItem('Send ticked orders to supplier now', 'menuSyncSupplier')
     .addSeparator()
     .addItem('Run self-test', 'menuSelfTest')
     .addItem('Set website address…', 'setWebsiteAddresses')
@@ -43,6 +44,10 @@ function menuPushNow() {
 function menuCheckProducts() {
   const n = checkProducts();
   say_('Check products', n ? n + ' active product rows need attention. See the Check column in the Products file.' : 'All product rows look OK.');
+}
+
+function menuSyncSupplier() {
+  say_('Supplier orders', 'Supplier sheet: ' + syncSupplierSheet());
 }
 
 function menuSelfTest() {
@@ -351,6 +356,8 @@ function setupOrdersFile() {
     ") 'd mmm yyyy'"));
 
   setupPaymentTab_(ss);
+  ensureSupplierColumn_(sheet);
+  setupSupplierFile();
   removeEmptyDefaultSheet_(ss);
   if (!props.getProperty('ORDER_SEQ')) props.setProperty('ORDER_SEQ', '1000');
 
@@ -387,6 +394,7 @@ function selfTest() {
   else if (!/^https:\/\/[^/\s]+(\/[^\s]*)?$/.test(p('SITE_URL')) || /\/$/.test(p('SITE_URL'))) bad('SITE_URL should look like https://onemore.example.in (no slash at the end): ' + p('SITE_URL'));
   else ok('SITE_URL = ' + p('SITE_URL'));
   p('DEPLOY_HOOK_URL') ? ok('DEPLOY_HOOK_URL is set') : note('DEPLOY_HOOK_URL not set - "Rebuild website" and the daily rebuild will not work');
+  p('SUPPLIER_SHEET_ID') ? ok('Supplier file is set up') : note('No supplier file - run setupOrdersFile (or setupSupplierFile)');
   /^\d+$/.test(p('ORDER_SEQ')) ? ok('ORDER_SEQ = ' + p('ORDER_SEQ') + ' (next order ORD-' + (Number(p('ORDER_SEQ')) + 1) + ')') : bad('ORDER_SEQ missing - run setupOrdersFile');
 
   // Orders file

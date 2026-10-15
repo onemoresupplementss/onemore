@@ -131,6 +131,16 @@ type its file name in the **Image** column, then tick **PublishNow**.
 
 **Delivery** tab: one row per area with Fee (blank = DeliveryFee) and ETA. Untick Active to stop delivering there.
 
+### Orders your supplier ships
+The **oneMore – Supplier orders** file (made by `setupOrdersFile`, in your Google Drive) gets a copy of every order you tick
+in the Orders tab → **Send to supplier** column (far right). Share that file with the supplier's Gmail as **Editor**.
+
+- Copied: order number, date, items and quantities, customer name, phone, address, landmark, area, pincode, notes.
+  **Never copied**: prices, totals, delivery fee, payment method or status, UTR. The supplier never gets the Orders file.
+- It updates within seconds of ticking (menu **oneMore → Send ticked orders to supplier now** forces it).
+- The supplier fills **Shipped** and **Tracking / note**; the other columns are locked to you.
+- Untick an order or set it to **Cancelled** after sending, and the supplier sees it marked **CANCELLED – do not ship**.
+
 ### Change the UPI ID customers pay to
 It is in the **Payment** tab of **oneMore Orders – private**, the file only you can open (not in oneMore Products,
 which staff can edit):
@@ -179,7 +189,7 @@ Do this on a computer, signed in to the Google account that will own the shop's 
 1. Create a new Google Sheet and name it **oneMore Orders – private**. Don't share it with anyone.
 2. In that sheet: **Extensions → Apps Script**. Name the project `oneMore`.
 3. Copy in the files from the `apps-script/` folder of this project:
-   - For each `.gs` file (`Code.gs`, `Rules.gs`, `Feed.gs`, `Orders.gs`, `Setup.gs`, `SeedData.gs`): click **+ → Script**,
+   - For each `.gs` file (`Code.gs`, `Rules.gs`, `Feed.gs`, `Orders.gs`, `Supplier.gs`, `Setup.gs`, `SeedData.gs`): click **+ → Script**,
      give it the same name (without `.gs`), and paste the contents. Replace the starter `Code.gs` contents completely.
    - **Project Settings ⚙ → tick "Show appsscript.json manifest file"**, then open `appsscript.json` in the editor and
      paste the contents of `apps-script/appsscript.json`.
