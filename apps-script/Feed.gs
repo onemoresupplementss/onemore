@@ -1,8 +1,8 @@
 /**
- * Feed.gs - keeps the website's live prices and stock in step with the Products file.
+ * Feed.gs - keeps the website's live prices and availability in step with the Products file.
  *
- *   pushLiveFeed        sends prices/stock/visibility + public settings + delivery areas to
- *                       <SITE_URL>/api/refresh (after orders, cancels, edits and every 5 minutes)
+ *   pushLiveFeed        sends prices/out-of-stock/visibility + public settings + delivery areas to
+ *                       <SITE_URL>/api/refresh (after Products edits and every 5 minutes if changed)
  *   onProductsEdit      trigger on the Products file: schedules a push ~30 s later; "PublishNow" tick
  *   checkProducts       fills the Check column (and blank Group cells)
  *   rebuildWebsite      calls the Cloudflare deploy hook (new products, names, photos)
@@ -126,8 +126,8 @@ function runScheduledFeedPush() {
   pushLiveFeed('edit', { data: data, onlyIfChanged: true });
 }
 
-// Every 5 minutes: return stock of cancelled orders (if an edit was missed), update the
-// Check column, and push the feed only if something changed since the last successful push.
+// Every 5 minutes: update the Check column, push the feed only if something changed since the
+// last successful push, and sync the supplier sheet.
 function timerTick() {
   if (!prop_('PRODUCTS_SHEET_ID')) return;
   const props = PropertiesService.getScriptProperties();
@@ -135,11 +135,6 @@ function timerTick() {
   if (scheduled && Date.now() - scheduled > 10 * 60 * 1000) {
     props.deleteProperty('FEED_PUSH_SCHEDULED_AT'); // a one-off trigger got lost - clean up
     deleteTriggers_('runScheduledFeedPush');
-  }
-  try {
-    returnCancelledStock_();
-  } catch (err) {
-    console.error('Cancelled-stock sweep failed: ' + err);
   }
   const data = readProductsFile_(productsSpreadsheet_(), { info: true });
   checkProducts_(data);

@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { buildFeed, normalizeCatalog, normalizeSettings, parseDate, variantVisible } from '../src/shared/catalog.js';
+import { buildFeed, normalizeCatalog, normalizeSettings, variantVisible } from '../src/shared/catalog.js';
 import { buildOrderListText, buildWhatsAppText, formatNetQty, deliveryFeeFor, paymentOptions, pincodeProblem, unitPrice, validateCustomer } from '../src/shared/order.js';
 
 const seed = (f) => JSON.parse(readFileSync(new URL(`../data/seed/${f}.json`, import.meta.url)));
@@ -17,11 +17,12 @@ test('seed catalogue normalises without warnings', () => {
 
 test('header names are matched loosely', () => {
   const c = normalizeCatalog(
-    { products: [{ 'Product ID': 'X-1', Brand: 'B', 'Product Name': 'N', Category: 'creatine', 'Price (₹)': '₹1,299', MRP: 1500, Stock: 4, Verified: true }] },
+    { products: [{ 'Product ID': 'X-1', Brand: 'B', 'Product Name': 'N', Category: 'creatine', 'Price (₹)': '₹1,299', MRP: 1500, 'Sold out': 'yes', Verified: true }] },
     { today: '2026-10-14' },
   );
   assert.equal(c.products[0].variants[0].price, 1299);
   assert.equal(c.products[0].category, 'creatine');
+  assert.equal(c.products[0].variants[0].soldOut, true);
 });
 
 test('price above MRP hides the variant with a warning', () => {
@@ -30,13 +31,23 @@ test('price above MRP hides the variant with a warning', () => {
   assert.match(c.warnings[0], /above MRP/);
 });
 
-test('visibility: verified, priced, enough shelf life', () => {
-  const v = { active: true, verified: true, price: 100, bestBefore: '2026-12-31' };
-  assert.equal(variantVisible(v, settings, '2026-10-14'), true);
-  assert.equal(variantVisible({ ...v, bestBefore: '2026-11-01' }, settings, '2026-10-14'), false);
-  assert.equal(variantVisible({ ...v, verified: false }, settings, '2026-10-14'), false);
-  assert.equal(variantVisible({ ...v, verified: false }, { ...settings, RequireVerified: false }, '2026-10-14'), true);
-  assert.equal(variantVisible({ ...v, price: 0 }, settings, '2026-10-14'), false);
+test('visibility: active, verified, priced; out of stock stays listed', () => {
+  const v = { active: true, verified: true, price: 100 };
+  assert.equal(variantVisible(v, settings), true);
+  assert.equal(variantVisible({ ...v, soldOut: true }, settings), true);
+  assert.equal(variantVisible({ ...v, active: false }, settings), false);
+  assert.equal(variantVisible({ ...v, verified: false }, settings), false);
+  assert.equal(variantVisible({ ...v, verified: false }, { ...settings, RequireVerified: false }), true);
+  assert.equal(variantVisible({ ...v, price: 0 }, settings), false);
+});
+
+test('Out of stock tick box: in the feed as 0, product not in stock when every option is out', () => {
+  const row = (id, out) => ({ ID: id, Group: 'g', Brand: 'B', Name: 'N', Category: 'Creatine', Size: id, Price: 500, MRP: 600, 'Out of stock': out, Verified: true });
+  const c = normalizeCatalog({ products: [row('A', true), row('B', '')] }, { today: '2026-10-14' });
+  assert.deepEqual(buildFeed(c, 'x').items, { A: [500, 600, 0, 1], B: [500, 600, 1, 1] });
+  assert.equal(c.products[0].inStock, true);
+  const all = normalizeCatalog({ products: [row('A', true)] }, { today: '2026-10-14' });
+  assert.equal(all.products[0].inStock, false);
 });
 
 test('WhatsApp mode: products without a price are still shown', () => {
@@ -67,19 +78,12 @@ test('WhatsApp order list: items, sizes, quantities and codes, no customer detai
   assert.doesNotMatch(t, /₹/);
 });
 
-test('dates in common Indian formats', () => {
-  assert.equal(parseDate('31/12/2026'), '2026-12-31');
-  assert.equal(parseDate('2027-03-05'), '2027-03-05');
-  assert.equal(parseDate('02/2027'), '2027-02-28');
-  assert.equal(parseDate('nonsense'), null);
-});
-
 test('feed hash changes only when data changes', () => {
   const c = normalizeCatalog({ products: seed('products'), settings: { RequireVerified: 'No' } }, { today: '2026-10-14' });
   const a = buildFeed(c, 'x');
   const b = buildFeed(c, 'y');
   assert.equal(a.v, b.v);
-  c.products[0].variants[0].stock = 1;
+  c.products[0].variants[0].soldOut = !c.products[0].variants[0].soldOut;
   assert.notEqual(buildFeed(c, 'x').v, a.v);
 });
 

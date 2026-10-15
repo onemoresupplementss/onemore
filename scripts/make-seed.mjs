@@ -1,4 +1,4 @@
-// Generates the starter catalogue (placeholder prices, stock 5, no photos) from the
+// Generates the starter catalogue (placeholder prices, no photos) from the
 // owner's brand list. Writes:
 //   data/seed/*.json         - used by the build when Google Sheets is not connected
 //   sheets/*.csv             - can be imported into Google Sheets by hand
@@ -12,7 +12,7 @@ import { slugify } from '../src/shared/catalog.js';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 // [category, brand, name, sizes, flavour (or [flavours]), imported('Yes'|'No'|'Check'), extra]
-// extra: { best: true, check: 'note', keywords: '', stock: 0 (out of stock; default 5) }
+// extra: { best: true, check: 'note', keywords: '', out: true ("Out of stock" ticked) }
 const C = (category, brand, name, sizes, flavour, imported, extra = {}) => ({ category, brand, name, sizes, flavour, imported, ...extra });
 const CONFIRM_MT = 'Confirm: which 4 MuscleTech wheys do you stock? Rename/replace this row.';
 const CONFIRM_NAME = 'Confirm the exact product name from the label.';
@@ -31,7 +31,7 @@ const LIST = [
   C('Whey Protein', 'GNC', 'Pro Performance 100% Whey', ['2 kg'], 'Double Rich Chocolate', 'Check', { check: FROM_PACK }),
   C('Whey Protein', 'Apex Vitals', 'Whey 2 Pure', ['1 kg', '2 kg'], 'Yoghurt', 'Yes', { check: FROM_PACK, keywords: 'apex vital, whey2pure' }),
   C('Whey Protein', 'Myprotein', 'Impact Whey Protein', ['2 kg'], 'Chocolate Smooth', 'Yes', { keywords: 'my protein, impact' }),
-  C('Whey Protein', 'Mutant', 'Mutant Whey', ['2 kg'], 'Chocolate', 'Yes', { stock: 0 }),
+  C('Whey Protein', 'Mutant', 'Mutant Whey', ['2 kg'], 'Chocolate', 'Yes', { out: true }),
   C('Whey Protein', 'BSN', 'Syntha-6', ['2 kg'], 'Chocolate Milkshake', 'Yes', { keywords: 'syntha 6, syntha6' }),
   C('Whey Protein', 'Kevin Levrone', 'Anabolic Iso Whey', ['2 kg'], 'Chocolate', 'Yes', { check: FROM_PACK, keywords: 'levrone, levro, isolate' }),
   C('Whey Protein', 'Kevin Levrone', 'Levro Whey Supreme', ['2 kg'], 'Chocolate', 'Yes', { check: FROM_PACK, keywords: 'levrone, levro, supreme whey' }),
@@ -160,7 +160,7 @@ for (const item of LIST) {
     let n = 2;
     while (usedIds.has(id)) id = `${id.replace(/-\d+$/, '')}-${n++}`;
     usedIds.add(id);
-    const checks = [image ? 'Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can.' : 'Placeholder price, stock and photo – replace.'];
+    const checks = [image ? 'Placeholder price – replace. Photo is from the brand website; swap for your own shelf photo when you can.' : 'Placeholder price and photo – replace.'];
     if (item.check) checks.push(item.check);
     if (!verified) checks.push('Tick Verified after checking the Indian importer sticker and distributor bill.');
     products.push({
@@ -175,12 +175,11 @@ for (const item of LIST) {
       Flavour: flavour,
       Price: price,
       MRP: mrp,
-      Stock: item.stock ?? 5,
+      'Out of stock': Boolean(item.out),
       Image: variantImage,
       Description: '',
       NetQty: nq,
       Unit: unit,
-      BestBefore: '',
       Bestseller: Boolean(item.best),
       Badge: '',
       Sort: sort,
@@ -219,10 +218,8 @@ const settings = [
   ['SameDayCutoff', '18:00', 'Orders after this time are delivered next day (shown at checkout).'],
   ['ShopHours', 'Mon–Sat 9 am – 9 pm', 'Shown on the site.'],
   ['ReplyPromise', 'We reply within 2 hours during shop hours.', 'Shown after an order is placed.'],
-  ['ShowLowStockAt', 3, 'Show "Only N left" when stock is at or below this. 0 = never.'],
   ['MaxQtyPerLine', 10, 'Most units of one item in one order.'],
   ['MaxOpenOrdersPerPhone', 3, 'Unpaid New orders allowed per phone number.'],
-  ['MinDaysLeft', 45, 'Hide a variant when fewer days than this remain before BestBefore.'],
   ['RequireVerified', 'Yes', 'Yes = only rows with Verified ticked are sold online.'],
   ['AllowPuducherry', 'Yes', 'Yes = accept Puducherry/Karaikal pincodes. Needs GST registration – set No if not registered.'],
   ['AlertEmail', '', 'Email for new-order alerts (leave blank if using Telegram).'],

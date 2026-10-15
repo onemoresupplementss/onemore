@@ -23,7 +23,7 @@ function symbol(name) {
 function quote(name) {
   const products = byBrand.get(name);
   const variants = products.flatMap((p) => p.variants);
-  const inStock = variants.filter((v) => v.stock > 0);
+  const inStock = variants.filter((v) => !v.soldOut);
   const prices = (inStock.length ? inStock : variants).map((v) => v.price).filter((n) => n > 0);
   return {
     name,
@@ -558,7 +558,7 @@ const SPEED = 42;
     setTimeout(step, 1200);
   }
 
-  // Checkout mode: keep each brand's "from" price in step with the live stock feed.
+  // Checkout mode: keep each brand's "from" price in step with the live price feed.
   async function livePrices(root) {
     const { feed, loadFeed, liveVariant } = await import('../client/store.js');
     const update = (f) => {
@@ -567,7 +567,7 @@ const SPEED = 42;
         const live = a.dataset.ids
           .split(' ')
           .map((id) => liveVariant({ id }, f))
-          .filter((v) => v.buyable && v.stock > 0 && v.price > 0);
+          .filter((v) => v.buyable && v.inStock && v.price > 0);
         const label = a.querySelector('[data-from]');
         if (!label) return;
         const price = live.length ? Math.min(...live.map((v) => v.price)) : 0;

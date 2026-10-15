@@ -1,4 +1,5 @@
-// The live price/stock feed that the Apps Script pushes to /api/refresh.
+// The live price/availability feed that the Apps Script pushes to /api/refresh.
+// items: { id: [price, mrp, inStock 1/0, visible 1/0] }
 // Stored as one KV value under FEED_KEY (binding name: LIVE).
 import { normalizeSettings } from '../../src/shared/catalog.js';
 
@@ -30,7 +31,7 @@ export function cleanFeed(body) {
   const items = {};
   for (const [id, row] of Object.entries(body.items)) {
     if (id.length > 64 || !Array.isArray(row) || row.length !== 4 || !row.every(num)) return null;
-    items[id] = [row[0], row[1], Math.max(0, Math.trunc(row[2])), row[3] ? 1 : 0];
+    items[id] = [row[0], row[1], row[2] ? 1 : 0, row[3] ? 1 : 0];
   }
   const settings = body.settings && typeof body.settings === 'object' && !Array.isArray(body.settings) ? body.settings : {};
   const delivery = Array.isArray(body.delivery)

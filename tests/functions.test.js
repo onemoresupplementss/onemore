@@ -117,7 +117,7 @@ test('utr: checks format and token shape', async () => {
   assert.equal(calls[0].data.utr, '412345678901');
 });
 
-const feed = { v: 'abc', at: '2026-10-14T10:00:00Z', items: { 'ON-GS100-2KG': [5499, 6499, 3, 1] }, settings: { DeliveryFee: 40 }, delivery: [{ area: 'Town', pincodes: ['614713', 'x'], fee: null, eta: 'Today' }] };
+const feed = { v: 'abc', at: '2026-10-14T10:00:00Z', items: { 'ON-GS100-2KG': [5499, 6499, 1, 1] }, settings: { DeliveryFee: 40 }, delivery: [{ area: 'Town', pincodes: ['614713', 'x'], fee: null, eta: 'Today' }] };
 
 test('refresh: needs the key, stores only on change, live serves it', async () => {
   let res = await refresh({ request: post('/api/refresh', feed, { 'X-Refresh-Key': 'wrong' }), env });
@@ -130,7 +130,7 @@ test('refresh: needs the key, stores only on change, live serves it', async () =
   res = await live({ request: new Request(SITE + '/api/live'), env });
   assert.equal(res.status, 200);
   const got = await res.json();
-  assert.deepEqual(got.items['ON-GS100-2KG'], [5499, 6499, 3, 1]);
+  assert.deepEqual(got.items['ON-GS100-2KG'], [5499, 6499, 1, 1]);
   assert.deepEqual(got.delivery[0].pincodes, ['614713']);
 });
 

@@ -36,12 +36,11 @@ const PRODUCT_COLUMNS = {
   flavour: ['flavour', 'flavor', 'variant'],
   price: ['price', 'selling price', 'our price'],
   mrp: ['mrp'],
-  stock: ['stock', 'qty', 'quantity', 'in stock'],
+  outOfStock: ['outofstock', 'out of stock', 'sold out'],
   image: ['image', 'photo', 'image file', 'picture'],
   description: ['description', 'desc', 'details'],
   netQty: ['netqty', 'net qty', 'net quantity', 'net weight'],
   unit: ['unit', 'net unit'],
-  bestBefore: ['bestbefore', 'best before', 'expiry', 'use by'],
   bestseller: ['bestseller', 'best seller'],
   badge: ['badge', 'tag'],
   sort: ['sort', 'order', 'position'],
@@ -85,10 +84,8 @@ export const SETTINGS = {
   SameDayCutoff: ['text', '18:00', true],
   ShopHours: ['text', '', true],
   ReplyPromise: ['text', 'We reply within 2 hours during shop hours.', true],
-  ShowLowStockAt: ['int', 3, true],
   MaxQtyPerLine: ['int', 10, true],
   MaxOpenOrdersPerPhone: ['int', 3, false],
-  MinDaysLeft: ['int', 45, false],
   RequireVerified: ['bool', true, false],
   AllowPuducherry: ['bool', true, true],
   AlertEmail: ['text', '', false],
@@ -115,25 +112,6 @@ export function parseIntSafe(v, fallback = 0) {
 export function parseBool(v) {
   if (typeof v === 'boolean') return v;
   return ['true', 'yes', 'y', '1', 'on', 'open', '✓', '✔'].includes(String(v ?? '').trim().toLowerCase());
-}
-
-// Accepts 2026-12-31, 31/12/2026, 31-12-2026, 12/2026 (end of month) or an ISO timestamp.
-export function parseDate(v) {
-  if (v === null || v === undefined || v === '') return null;
-  if (v instanceof Date) return isNaN(v) ? null : v.toISOString().slice(0, 10);
-  const s = String(v).trim();
-  let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-  if (m) return iso(+m[1], +m[2], +m[3]);
-  m = s.match(/^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})$/);
-  if (m) return iso(+m[3], +m[2], +m[1]);
-  m = s.match(/^(\d{1,2})[/.-](\d{4})$/);
-  if (m) return iso(+m[2], +m[1], new Date(Date.UTC(+m[2], +m[1], 0)).getUTCDate());
-  return null;
-}
-
-function iso(y, mo, d) {
-  if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
-  return `${y}-${String(mo).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 }
 
 export function slugify(s) {
@@ -202,21 +180,13 @@ export function normalizeDelivery(rows = []) {
     }));
 }
 
-export function daysUntil(isoDate, today) {
-  if (!isoDate) return null;
-  const a = Date.parse(isoDate + 'T00:00:00Z');
-  const b = Date.parse(today + 'T00:00:00Z');
-  return Math.floor((a - b) / 86400000);
-}
-
-// The single rule for whether a variant can be bought online.
+// The single rule for whether a variant is on the site. "Out of stock" variants stay listed
+// (shown as out of stock, can't be ordered); untick Active to take one off the site.
 // requirePrice is false in the WhatsApp-only phase, where the site shows no prices.
-export function variantVisible(v, settings, today, { requirePrice = true } = {}) {
+export function variantVisible(v, settings, { requirePrice = true } = {}) {
   if (!v.active) return false;
   if (settings.RequireVerified && !v.verified) return false;
   if (requirePrice && !(v.price > 0)) return false;
-  const left = daysUntil(v.bestBefore, today);
-  if (left !== null && left < settings.MinDaysLeft) return false;
   return true;
 }
 
@@ -274,16 +244,15 @@ export function normalizeCatalog(raw, { today, requirePrice = true }) {
       flavour: text(m.flavour),
       price: price ?? 0,
       mrp: mrp ?? price ?? 0,
-      stock: Math.max(0, parseIntSafe(m.stock, 0)),
+      soldOut: parseBool(m.outOfStock),
       image: text(m.image),
       netQty: parseMoney(m.netQty),
       unit: text(m.unit).toLowerCase(),
-      bestBefore: parseDate(m.bestBefore),
       active: m.active === undefined ? true : parseBool(m.active),
       verified: parseBool(m.verified),
     };
     if (price !== null && mrp !== null && price > mrp) v.active = false;
-    v.visible = variantVisible(v, settings, today, { requirePrice });
+    v.visible = variantVisible(v, settings, { requirePrice });
     let g = groups.get(slug);
     if (!g) {
       g = {
@@ -324,7 +293,7 @@ export function normalizeCatalog(raw, { today, requirePrice = true }) {
         minMrp: cheapest.mrp,
         sizes: unique(g.variants.map((v) => v.size)),
         flavours: unique(g.variants.map((v) => v.flavour)),
-        inStock: visible.some((v) => v.stock > 0),
+        inStock: visible.some((v) => !v.soldOut),
       };
     })
     .sort((a, b) => a.sort - b.sort || a.brand.localeCompare(b.brand) || a.name.localeCompare(b.name));
@@ -347,13 +316,13 @@ export function hashString(s) {
 }
 
 /**
- * The small "live" feed the site polls: price, MRP, stock and visibility per variant ID,
+ * The small "live" feed the site polls: [price, MRP, in stock 1/0, visible 1/0] per variant ID,
  * plus public settings and delivery areas. Same shape as Apps Script's pushLiveFeed().
  */
 export function buildFeed(catalog, at) {
   const items = {};
   for (const p of catalog.products) {
-    for (const v of p.variants) items[v.id] = [v.price, v.mrp, v.stock, v.visible ? 1 : 0];
+    for (const v of p.variants) items[v.id] = [v.price, v.mrp, v.soldOut ? 0 : 1, v.visible ? 1 : 0];
   }
   const body = { items, settings: publicSettings(catalog.settings), delivery: catalog.delivery };
   return { v: hashString(JSON.stringify(body)), at, ...body };

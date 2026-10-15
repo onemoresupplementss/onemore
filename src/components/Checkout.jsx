@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { pricedLines, QtyStepper } from './Cart.jsx';
 import { url } from '../lib/env.js';
-import { cart, clearCart, feed, loadFeed, orderSource, saveOrder, setQty, removeFromCart, useSignal } from '../client/store.js';
+import { cart, clearCart, feed, loadFeed, orderSource, saveOrder, removeFromCart, useSignal } from '../client/store.js';
 import { buildWhatsAppText, deliveryFeeFor, formatINR, paymentOptions, PAYMENT_LABELS, pincodeProblem, validateCustomer, whatsappLink } from '../shared/order.js';
 
 const CUSTOMER_KEY = 'om_customer_v1';
@@ -199,17 +199,13 @@ export default function Checkout({ settings, delivery, shop }) {
   function handleError(body, idemKey, value) {
     const err = body.error;
     if (err === 'sold_out' && Array.isArray(body.details)) {
-      // Lower quantities to what is left; the red notes explain what happened.
-      for (const d of body.details) {
-        if (d.available > 0) setQty(d.id, Math.min(d.available, lines.find((l) => l.id === d.id)?.qty ?? d.available));
-      }
+      // details = IDs now ticked "Out of stock" in the sheet.
       loadFeed({ fresh: true });
-      const names = body.details.map((d) => {
-        const l = lines.find((x) => x.id === d.id);
-        const label = l ? `${l.brand} ${l.name} ${l.size}` : d.id;
-        return d.available > 0 ? `${label}: only ${d.available} left (we changed your quantity)` : `${label}: just sold out`;
+      const names = body.details.map((id) => {
+        const l = lines.find((x) => x.id === id);
+        return l ? `${l.brand} ${l.name} ${l.size}` : id;
       });
-      setProblem({ kind: 'stock', message: 'Someone just bought the last ones.', list: names });
+      setProblem({ kind: 'stock', message: 'These items just went out of stock. Please remove them to continue.', list: names, remove: body.details });
     } else if (err === 'unavailable' && Array.isArray(body.details)) {
       loadFeed({ fresh: true });
       setProblem({ kind: 'stock', message: 'These items are no longer available online. Please remove them to continue.', list: body.details.map((id) => lines.find((l) => l.id === id)?.name || id), remove: body.details });

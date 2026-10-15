@@ -11,10 +11,8 @@ PickupEnabled,Yes,Yes/No – store pickup option at checkout.
 SameDayCutoff,18:00,Orders after this time are delivered next day (shown at checkout).
 ShopHours,Mon–Sat 9 am – 9 pm,Shown on the site.
 ReplyPromise,We reply within 2 hours during shop hours.,Shown after an order is placed.
-ShowLowStockAt,3,"Show ""Only N left"" when stock is at or below this. 0 = never."
 MaxQtyPerLine,10,Most units of one item in one order.
 MaxOpenOrdersPerPhone,3,Unpaid New orders allowed per phone number.
-MinDaysLeft,45,Hide a variant when fewer days than this remain before BestBefore.
 RequireVerified,Yes,Yes = only rows with Verified ticked are sold online.
 AllowPuducherry,Yes,Yes = accept Puducherry/Karaikal pincodes. Needs GST registration – set No if not registered.
 AlertEmail,,Email for new-order alerts (leave blank if using Telegram).

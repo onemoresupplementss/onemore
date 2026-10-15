@@ -1,5 +1,5 @@
 // POST /api/order - place an order. The Apps Script re-prices the cart from the
-// sheet, re-checks and holds stock, and gives the order its ORD- number.
+// sheet, refuses items ticked "Out of stock", and gives the order its ORD- number.
 import { createStore } from '../_lib/data/index.js';
 import { currentSettings } from '../_lib/feed.js';
 import { fail, json, readJson, sameOrigin, turnstileOk } from '../_lib/http.js';

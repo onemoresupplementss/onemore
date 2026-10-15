@@ -11,7 +11,7 @@
  */
 
 const PRODUCT_HEADERS = ['ID', 'Group', 'Active', 'Verified', 'Brand', 'Name', 'Category', 'Size', 'Flavour', 'Price', 'MRP',
-  'Stock', 'Image', 'Description', 'NetQty', 'Unit', 'BestBefore', 'Bestseller', 'Badge', 'Sort', 'Keywords', 'Check'];
+  'Out of stock', 'Image', 'Description', 'NetQty', 'Unit', 'Bestseller', 'Badge', 'Sort', 'Keywords', 'Check'];
 const INFO_HEADERS = ['Group', 'GenericName', 'VegNonVeg', 'Ingredients', 'Nutrition', 'Warnings', 'Manufacturer', 'Importer',
   'CountryOfOrigin', 'ConsumerCare', 'LabelImages', 'Imported'];
 const SETTINGS_HEADERS = ['Setting', 'Value', 'Notes'];
@@ -25,7 +25,7 @@ const PROTECT_TAG = 'oneMore: written by the script';
 function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu('oneMore')
-    .addItem('Push stock to website now', 'menuPushNow')
+    .addItem('Push prices to website now', 'menuPushNow')
     .addItem('Check products', 'menuCheckProducts')
     .addItem('Rebuild website now', 'rebuildWebsite')
     .addItem('Send ticked orders to supplier now', 'menuSyncSupplier')
@@ -38,7 +38,7 @@ function onOpen() {
 
 function menuPushNow() {
   const out = pushLiveFeed('manual');
-  say_('Push stock to website', out.status || (out.ok ? 'OK' : 'Failed'));
+  say_('Push prices to website', out.status || (out.ok ? 'OK' : 'Failed'));
 }
 
 function menuCheckProducts() {
@@ -161,6 +161,7 @@ function setupProductsFile() {
 
 function setupProductsTab_(ss) {
   const sheet = findSheet_(ss, 'Products') || ss.insertSheet('Products');
+  migrateStockColumns_(sheet);
   const header = ensureHeaders_(sheet, PRODUCT_HEADERS, PRODUCT_COLUMNS);
   styleHeader_(sheet, header.length);
   ensureRows_(sheet, 500);
@@ -170,16 +171,13 @@ function setupProductsTab_(ss) {
 
   ['id', 'group', 'size', 'flavour', 'image', 'description', 'badge', 'keywords', 'unit'].forEach((f) => colRange(f).setNumberFormat('@'));
   ['price', 'mrp'].forEach((f) => colRange(f).setNumberFormat(MONEY_FORMAT));
-  ['stock', 'sort'].forEach((f) => colRange(f).setNumberFormat('0'));
-  colRange('bestBefore').setNumberFormat('yyyy-mm-dd');
+  colRange('sort').setNumberFormat('0');
   const checkbox = SpreadsheetApp.newDataValidation().requireCheckbox().build();
-  ['active', 'verified', 'bestseller'].forEach((f) => colRange(f).setDataValidation(checkbox));
+  ['active', 'verified', 'outOfStock', 'bestseller'].forEach((f) => colRange(f).setDataValidation(checkbox));
   colRange('category').setDataValidation(SpreadsheetApp.newDataValidation()
     .requireValueInList(CATEGORIES.map((x) => x.name), true).setAllowInvalid(false).build());
   colRange('unit').setDataValidation(SpreadsheetApp.newDataValidation()
     .requireValueInList(UNITS, true).setAllowInvalid(false).build());
-  colRange('bestBefore').setDataValidation(SpreadsheetApp.newDataValidation().requireDate().setAllowInvalid(true)
-    .setHelpText('Date of the earliest batch on the shelf, e.g. 2027-03-31').build());
   colRange('check').setFontColor('#b3261e').setWrap(true);
   sheet.setColumnWidth(c('name'), 220);
   sheet.setColumnWidth(c('description'), 220);
@@ -194,6 +192,31 @@ function setupProductsTab_(ss) {
     sheet.getRange(2, c('check'), values.length, 1).setNotes(SEED.products.map((p) => [p.Check ? 'Setup to-do: ' + p.Check : '']));
   }
   protectOnce_(sheet, sheet.getRange(1, c('check'), sheet.getMaxRows(), 1), PROTECT_TAG + ' (Check column)');
+}
+
+// Stock is no longer counted (the supplier ships; the owner ticks "Out of stock"). An older Products tab
+// gets an "Out of stock" column where "Stock" was (ticked where Stock was 0), and the "Stock" and
+// "BestBefore" columns are deleted. Later runs find neither column and do nothing.
+function migrateStockColumns_(sheet) {
+  if (!sheet.getLastColumn()) return;
+  const headerNow = () => sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  let header = headerNow();
+  const stockCol = findCol(header, ['stock']);
+  const idCol = findCol(header, PRODUCT_COLUMNS.id);
+  if (stockCol >= 0 && idCol >= 0 && findCol(header, PRODUCT_COLUMNS.outOfStock) < 0) {
+    const n = Math.max(1, sheet.getMaxRows() - 1);
+    const ids = sheet.getRange(2, idCol + 1, n, 1).getValues();
+    const stock = sheet.getRange(2, stockCol + 1, n, 1).getValues();
+    sheet.insertColumnAfter(stockCol + 1);
+    sheet.getRange(1, stockCol + 2).setValue('Out of stock');
+    sheet.getRange(2, stockCol + 2, n, 1).setNumberFormat('General')
+      .setValues(stock.map((r, i) => [text(ids[i][0]) ? parseMoney(r[0]) === 0 : '']));
+  }
+  ['stock', 'bestbefore'].forEach((name) => {
+    header = headerNow();
+    const i = findCol(header, [name]);
+    if (i >= 0) sheet.deleteColumn(i + 1);
+  });
 }
 
 function setupInfoTab_(ss) {
@@ -294,6 +317,11 @@ function setupOrdersFile() {
   ss.setSpreadsheetTimeZone(TZ);
 
   const sheet = findSheet_(ss, ORDERS_TAB) || ss.insertSheet(ORDERS_TAB, 0);
+  // "Stock held" belonged to stock counting, which was removed.
+  if (sheet.getLastColumn()) {
+    const held = findCol(sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0], ['Stock held']);
+    if (held >= 0) sheet.deleteColumn(held + 1);
+  }
   const header = ensureHeaders_(sheet, ORDER_HEADERS, null);
   const col = orderColumns_(header);
   styleHeader_(sheet, header.length);
@@ -308,12 +336,11 @@ function setupOrdersFile() {
   colRange('payment').setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(PAYMENTS, true).setAllowInvalid(false).build());
   colRange('method').setDataValidation(SpreadsheetApp.newDataValidation()
     .requireValueInList(Object.keys(METHOD_LABELS).map((k) => METHOD_LABELS[k]), true).setAllowInvalid(true).build());
-  colRange('stockHeld').setDataValidation(SpreadsheetApp.newDataValidation().requireCheckbox().build());
   ['items', 'address', 'notes', 'utrFlag'].forEach((f) => colRange(f).setWrap(true));
 
   const widths = { orderId: 90, created: 150, status: 120, payment: 90, method: 120, total: 80, name: 150, phone: 110,
     fulfilment: 90, area: 160, pincode: 70, address: 240, landmark: 160, items: 380, subtotal: 80, deliveryFee: 80,
-    notes: 200, utr: 120, utrFlag: 220, source: 60, stockHeld: 80, updated: 150, itemsJson: 120, idemKey: 120 };
+    notes: 200, utr: 120, utrFlag: 220, source: 60, updated: 150, itemsJson: 120, idemKey: 120 };
   Object.keys(widths).forEach((f) => sheet.setColumnWidth(col[f] + 1, widths[f]));
 
   // Colours: Cancelled = grey row, UTR flag = red, CALL FIRST = red, stale (New + Pending > 2 h) = orange row,
@@ -336,7 +363,7 @@ function setupOrdersFile() {
   // Script-only columns: hidden and protected with a warning.
   sheet.hideColumns(col.itemsJson + 1);
   sheet.hideColumns(col.idemKey + 1);
-  ['itemsJson', 'idemKey', 'stockHeld'].forEach((f) => protectOnce_(sheet, sheet.getRange(1, col[f] + 1, sheet.getMaxRows(), 1), PROTECT_TAG + ' (' + f + ')'));
+  ['itemsJson', 'idemKey'].forEach((f) => protectOnce_(sheet, sheet.getRange(1, col[f] + 1, sheet.getMaxRows(), 1), PROTECT_TAG + ' (' + f + ')'));
 
   // Report tabs (formulas only - safe to rebuild).
   const src = "'" + sheet.getName() + "'!A:" + last;
@@ -417,7 +444,7 @@ function selfTest() {
   }
   if (data) {
     const header = data.products.values[0];
-    const needed = ['id', 'active', 'verified', 'brand', 'name', 'category', 'size', 'flavour', 'price', 'mrp', 'stock', 'image', 'netQty', 'unit', 'bestBefore'];
+    const needed = ['id', 'active', 'verified', 'brand', 'name', 'category', 'size', 'flavour', 'price', 'mrp', 'outOfStock', 'image', 'netQty', 'unit'];
     const missing = needed.filter((f) => findCol(header, PRODUCT_COLUMNS[f]) < 0);
     missing.length ? bad('Products tab is missing column(s): ' + missing.join(', ')) : ok('Products tab columns');
     findCol(header, CHECK_COLUMN) >= 0 ? ok('Check column present') : bad('Check column missing - run setupProductsFile');
@@ -443,7 +470,7 @@ function selfTest() {
       const visible = ids.filter((id) => dry.feed.items[id][3]).length;
       ok('Feed builds: ' + ids.length + ' variants, ' + visible + ' buyable online, ' + dry.feed.delivery.length + ' delivery areas, ' +
         JSON.stringify(dry.feed).length + ' bytes, v=' + dry.feed.v + (p('LAST_FEED_HASH') === dry.feed.v ? ' (website is up to date)' : ' (not yet on the website)'));
-      if (!visible) note('No variant is buyable yet - tick Verified (RequireVerified is ' + (s.RequireVerified ? 'Yes' : 'No') + ') and check prices/BestBefore');
+      if (!visible) note('No variant is buyable yet - tick Verified (RequireVerified is ' + (s.RequireVerified ? 'Yes' : 'No') + ') and check prices');
       if (dry.model.warnings.length) note('Rows skipped by the website: ' + dry.model.warnings.slice(0, 5).join(' | ') + (dry.model.warnings.length > 5 ? ' …' : ''));
       const checks = productChecks({ products: rowsAsObjects_(data.products.values), info: rowsAsObjects_(data.info.values), settings: settingsMap_(data.settings.values) }, todayIST());
       checks.problemRows ? note(checks.problemRows + ' active product rows have something in the Check column') : ok('Check column: all rows OK');

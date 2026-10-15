@@ -38,12 +38,11 @@ const PRODUCT_COLUMNS = {
   flavour: ['flavour', 'flavor', 'variant'],
   price: ['price', 'selling price', 'our price'],
   mrp: ['mrp'],
-  stock: ['stock', 'qty', 'quantity', 'in stock'],
+  outOfStock: ['outofstock', 'out of stock', 'sold out'],
   image: ['image', 'photo', 'image file', 'picture'],
   description: ['description', 'desc', 'details'],
   netQty: ['netqty', 'net qty', 'net quantity', 'net weight'],
   unit: ['unit', 'net unit'],
-  bestBefore: ['bestbefore', 'best before', 'expiry', 'use by'],
   bestseller: ['bestseller', 'best seller'],
   badge: ['badge', 'tag'],
   sort: ['sort', 'order', 'position'],
@@ -90,10 +89,8 @@ const SETTINGS = {
   SameDayCutoff: ['text', '18:00', true],
   ShopHours: ['text', '', true],
   ReplyPromise: ['text', 'We reply within 2 hours during shop hours.', true],
-  ShowLowStockAt: ['int', 3, true],
   MaxQtyPerLine: ['int', 10, true],
   MaxOpenOrdersPerPhone: ['int', 3, false],
-  MinDaysLeft: ['int', 45, false],
   RequireVerified: ['bool', true, false],
   AllowPuducherry: ['bool', true, true],
   AlertEmail: ['text', '', false],
@@ -127,26 +124,6 @@ function parseIntSafe(v, fallback) {
 function parseBool(v) {
   if (typeof v === 'boolean') return v;
   return ['true', 'yes', 'y', '1', 'on', 'open', '✓', '✔'].indexOf(text(v).toLowerCase()) !== -1;
-}
-
-// Accepts 2026-12-31, 31/12/2026, 31-12-2026, 12/2026 (end of month) or an ISO timestamp.
-// (Dates typed into the sheet are turned into YYYY-MM-DD text before they reach this.)
-function parseDate(v) {
-  if (v === null || v === undefined || v === '') return null;
-  if (v instanceof Date) return isNaN(v) ? null : v.toISOString().slice(0, 10);
-  const s = String(v).trim();
-  let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-  if (m) return isoDate_(+m[1], +m[2], +m[3]);
-  m = s.match(/^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})$/);
-  if (m) return isoDate_(+m[3], +m[2], +m[1]);
-  m = s.match(/^(\d{1,2})[/.-](\d{4})$/);
-  if (m) return isoDate_(+m[2], +m[1], new Date(Date.UTC(+m[2], +m[1], 0)).getUTCDate());
-  return null;
-}
-
-function isoDate_(y, mo, d) {
-  if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
-  return y + '-' + String(mo).padStart(2, '0') + '-' + String(d).padStart(2, '0');
 }
 
 function slugify(s) {
@@ -239,20 +216,11 @@ function normalizeDelivery(rows) {
     }));
 }
 
-function daysUntil(isoDate, today) {
-  if (!isoDate) return null;
-  const a = Date.parse(isoDate + 'T00:00:00Z');
-  const b = Date.parse(today + 'T00:00:00Z');
-  return Math.floor((a - b) / 86400000);
-}
-
-// The single rule for whether a variant can be bought online.
-function variantVisible(v, settings, today) {
+// The single rule for whether a variant is on the site ("Out of stock" ones stay listed but can't be ordered).
+function variantVisible(v, settings) {
   if (!v.active) return false;
   if (settings.RequireVerified && !v.verified) return false;
   if (!(v.price > 0)) return false;
-  const left = daysUntil(v.bestBefore, today);
-  if (left !== null && left < settings.MinDaysLeft) return false;
   return true;
 }
 
@@ -260,7 +228,7 @@ function variantVisible(v, settings, today) {
  * Same steps as normalizeCatalog() in catalog.js, keeping only what the live feed and
  * orders need. raw = { products:[rowObject], settings:{Key:value}, delivery:[rowObject] }.
  * Returns { products (groups, sorted like the site), settings, delivery, byId, warnings }.
- * byId: variant ID -> { id, brand, name, size, flavour, price, mrp, stock, visible, row (0 = first data row) }
+ * byId: variant ID -> { id, brand, name, size, flavour, price, mrp, soldOut, visible, row (0 = first data row) }
  */
 function buildCatalogModel(raw, today) {
   const settings = normalizeSettings(raw.settings);
@@ -291,13 +259,12 @@ function buildCatalogModel(raw, today) {
       flavour: text(m.flavour),
       price: price === null ? 0 : price,
       mrp: mrp !== null ? mrp : price !== null ? price : 0,
-      stock: Math.max(0, parseIntSafe(m.stock, 0)),
-      bestBefore: parseDate(m.bestBefore),
+      soldOut: parseBool(m.outOfStock),
       active: m.active === undefined ? true : parseBool(m.active),
       verified: parseBool(m.verified),
     };
     if (price !== null && mrp !== null && price > mrp) v.active = false;
-    v.visible = variantVisible(v, settings, today);
+    v.visible = variantVisible(v, settings);
     v.brand = brand;
     v.name = name;
     v.row = i;
@@ -333,7 +300,7 @@ function buildFeed(model, at) {
   const items = {};
   model.products.forEach((p) => {
     p.variants.forEach((v) => {
-      items[v.id] = [v.price, v.mrp, v.stock, v.visible ? 1 : 0];
+      items[v.id] = [v.price, v.mrp, v.soldOut ? 0 : 1, v.visible ? 1 : 0];
     });
   });
   const body = { items: items, settings: publicSettings(model.settings), delivery: model.delivery };
@@ -380,20 +347,6 @@ function productChecks(raw, today) {
     if (price === null || price <= 0) p.push('Price missing - hidden');
     if (mrp === null) p.push('MRP missing');
     else if (price !== null && price > mrp) p.push('Price is above MRP - hidden');
-    if (text(m.stock) === '') p.push('Stock blank (counts as 0)');
-    else {
-      const n = parseMoney(m.stock);
-      if (n === null || !Number.isInteger(n) || n < 0) p.push('Stock must be a whole number');
-    }
-    if (text(m.bestBefore)) {
-      const iso = parseDate(m.bestBefore);
-      if (!iso) p.push('BestBefore is not a date (type it like 2027-03-31)');
-      else {
-        const left = daysUntil(iso, today);
-        if (left < 0) p.push('Past BestBefore (' + iso + ') - hidden');
-        else if (left < settings.MinDaysLeft) p.push('Only ' + left + ' days to BestBefore (MinDaysLeft is ' + settings.MinDaysLeft + ') - hidden');
-      }
-    }
     if (settings.RequireVerified && !parseBool(m.verified)) p.push('Not Verified - hidden until ticked');
     const nq = parseMoney(m.netQty);
     if (!(nq > 0)) p.push('NetQty missing');

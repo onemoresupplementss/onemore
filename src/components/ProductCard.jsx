@@ -4,11 +4,14 @@ import { addToCart, liveVariant, showAddedToast } from '../client/store.js';
 import { SHOW_PRICES, url } from '../lib/env.js';
 import { formatINR, percentOff } from '../shared/order.js';
 
-/** Live state for a product card: cheapest buyable price, stock, and which variant "Add" would add. */
+/**
+ * Live state for a product card: cheapest buyable price, whether anything is in stock, and which
+ * variant "Add" would add. WhatsApp mode passes no feed: no prices, "Out of stock" from the build.
+ */
 export function cardState(p, f) {
   const vs = p.variants.map((v) => ({ ...v, live: liveVariant(v, f) }));
   const buyable = vs.filter((v) => v.live.buyable);
-  const inStock = buyable.filter((v) => v.live.stock > 0);
+  const inStock = buyable.filter((v) => v.live.inStock);
   const pool = inStock.length ? inStock : buyable.length ? buyable : vs;
   const cheapest = pool.reduce((a, b) => (b.live.price < a.live.price ? b : a));
   const prices = new Set(pool.map((v) => v.live.price));
@@ -19,19 +22,13 @@ export function cardState(p, f) {
     buyable: buyable.length > 0,
     inStock: inStock.length > 0,
     single: inStock.length === 1 && vs.length === 1 ? inStock[0] : null,
-    stockLeft: inStock.length === 1 ? inStock[0].live.stock : null,
   };
 }
 
 export default function ProductCard({ p, f, settings, eager = false }) {
-  // WhatsApp mode: no prices or stock counts; only "soldOut" (Stock 0) blocks adding.
-  const inStockVariants = p.variants.filter((v) => !v.soldOut);
-  const s = SHOW_PRICES
-    ? cardState(p, f)
-    : { buyable: true, inStock: inStockVariants.length > 0, single: p.variants.length === 1 ? inStockVariants[0] || null : null, stockLeft: null };
+  const s = cardState(p, SHOW_PRICES ? f : null);
   const off = SHOW_PRICES ? percentOff(s.price, s.mrp) : 0;
   const href = url(`/p/${p.slug}/`);
-  const lowAt = settings?.ShowLowStockAt ?? 3;
   const maxQty = settings?.MaxQtyPerLine ?? 10;
   const sizes = [...new Set(p.variants.map((v) => v.size).filter(Boolean))];
   const tag = p.badge || (p.bestseller ? 'Bestseller' : '');
@@ -44,7 +41,7 @@ export default function ProductCard({ p, f, settings, eager = false }) {
     addToCart(
       { id: v.id, slug: p.slug, brand: p.brand, name: p.name, size: v.size, flavour: v.flavour, image: v.image || p.image, ...(SHOW_PRICES ? { price: v.live.price } : {}) },
       1,
-      SHOW_PRICES ? Math.min(v.live.stock, maxQty) : maxQty,
+      maxQty,
     );
     // Stay on the page: a short "Added" on the button and a notice with "View cart".
     showAddedToast([p.name, v.size].filter(Boolean).join(' · '));
@@ -84,7 +81,6 @@ export default function ProductCard({ p, f, settings, eager = false }) {
                 </span>
               )}
             </p>
-            {s.stockLeft !== null && lowAt > 0 && s.stockLeft <= lowAt && <p class="text-xs font-semibold text-warn">Only {s.stockLeft} left</p>}
           </div>
         )}
         <div class={`relative z-10 pt-2 ${SHOW_PRICES ? '' : 'mt-auto'}`}>

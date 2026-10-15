@@ -1,7 +1,7 @@
 // Runs before every build. Fetches the catalogue from the Google Apps Script
 // (or uses data/seed/ when the sheet is not connected yet) and writes:
 //   src/data/catalog.json - products for the pages (public settings only)
-//   public/feed.json      - price/stock snapshot, the fallback when /api/live is unavailable
+//   public/feed.json      - price/availability snapshot, the fallback when /api/live is unavailable
 //                           (checkout mode only; WhatsApp mode ships no prices at all)
 //
 // If the sheet IS connected but cannot be read, the build fails on purpose:
@@ -88,18 +88,19 @@ const today = todayIST();
 const catalog = normalizeCatalog(raw, { today, requirePrice: showPrices });
 const generatedAt = new Date().toISOString();
 
-// Only variants that can be bought online get onto the site (unverified,
-// unpriced or short-dated rows stay in the sheet). A product with none is left out.
-// In WhatsApp mode prices and stock counts are removed, so they are not even in the page source;
-// only "soldOut" (Stock 0) is kept, to show "Out of stock".
+// Only variants that can be bought online get onto the site (inactive, unverified or
+// unpriced rows stay in the sheet). A product with none is left out.
+// In WhatsApp mode prices are removed, so they are not even in the page source. "soldOut"
+// (the "Out of stock" tick box) is kept in both modes, only when true.
 const products = catalog.products
   .map((p) => {
     const variants = p.variants
       .filter((v) => v.visible)
-      .map(({ active, verified, visible, price, mrp, stock, ...v }) => ({
+      .map(({ active, verified, visible, price, mrp, soldOut, ...v }) => ({
         ...v,
         image: imageUrl(v.image),
-        ...(showPrices ? { price, mrp, stock } : stock > 0 ? {} : { soldOut: true }),
+        ...(showPrices ? { price, mrp } : {}),
+        ...(soldOut ? { soldOut: true } : {}),
       }));
     const { minPrice, minMrp, inStock, ...rest } = p;
     return {

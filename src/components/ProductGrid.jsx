@@ -1,4 +1,4 @@
-// A plain grid of product cards with live stock (home page rows, related products).
+// A plain grid of product cards with live prices and availability (home page rows, related products).
 import { useEffect } from 'preact/hooks';
 import ProductCard from './ProductCard.jsx';
 import { feed, loadFeed, useSignal } from '../client/store.js';

@@ -30,7 +30,7 @@ const fullTitle = title ? `${title} | ${shop.name}` : `${shop.name} – ${shop.t
 // Astro.url.pathname already includes the GitHub Pages sub-folder.
 const canonical = new URL(Astro.url.pathname, Astro.site || shop.siteUrl).toString();
 const s = catalog.settings;
-// The banner warns about placeholder prices/stock, which only exist in checkout mode.
+// The banner warns about placeholder prices, which only exist in checkout mode.
 const preview = SHOW_PRICES && (s.PreviewBanner || catalog.source === 'seed');
 const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---
@@ -63,7 +63,7 @@ const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     {
       preview && (
         <div class="bg-warn px-4 py-1.5 text-center text-xs font-bold text-ink">
-          Preview – prices, stock and photos are placeholders. Do not order yet.
+          Preview – prices and photos are placeholders. Do not order yet.
         </div>
       )
     }

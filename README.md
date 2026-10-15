@@ -7,10 +7,10 @@ The site has two modes, set by `orderMode` in `shop.config.json`:
 | Mode | What customers see | Needs |
 |---|---|---|
 | **`whatsapp` – Phase 1 (current)** | Products with photos and details, **no prices**. The cart is sent to your WhatsApp as a list; you reply with the price. No customer details are collected on the site. | Only GitHub (free) |
-| `checkout` – Phase 2 | Prices, live stock, full checkout with order numbers saved in Google Sheets, UPI steps. | Cloudflare + Google Sheets (Parts 1–3 below) |
+| `checkout` – Phase 2 | Prices, live availability, full checkout with order numbers saved in Google Sheets, UPI steps. | Cloudflare + Google Sheets (Parts 1–3 below) |
 
 - **[Phase 1 – Publish on GitHub Pages](#phase-1--publish-on-github-pages)**
-- **[Part 1 – Daily use](#part-1--daily-use-owner-guide)** (phase 2): stock, prices, orders, photos (from your phone)
+- **[Part 1 – Daily use](#part-1--daily-use-owner-guide)** (phase 2): prices, out of stock, orders, photos (from your phone)
 - **[Part 2 – One-time setup](#part-2--one-time-setup)**: Google, Cloudflare, domain
 - **[Part 3 – Before launch](#part-3--launch-checklist)**: checklist
 - **[Part 4 – For developers](#part-4--for-developers)**
@@ -36,9 +36,8 @@ Free, no other accounts needed. The site updates by itself about 2 minutes after
 ### Changing products
 Products live in `data/seed/products.json` (one block per size/flavour) and label details in `data/seed/info.json`.
 On GitHub open the file → pencil icon → edit → **Commit changes**. Copy an existing block to add a product; keep the
-`ID` unique. `Active: false` hides a product. `Stock: 0` keeps it listed but shows **Out of stock** (customers can
-ask on WhatsApp when it's back); any number above 0 makes it orderable again. Prices and stock numbers are **not**
-shown in phase 1.
+`ID` unique. `Active: false` hides a product. `"Out of stock": true` keeps it listed but shows **Out of stock**
+(customers can ask on WhatsApp when it's back); `false` makes it orderable again. Prices are **not** shown in phase 1.
 Photos: see `public/products/README.txt`.
 
 > `npm run seed` regenerates these files from `scripts/make-seed.mjs` and **overwrites** hand edits – only use it to start over.
@@ -62,17 +61,17 @@ You have two Google Sheets:
 
 | File | Who opens it | What it is for |
 |---|---|---|
-| **oneMore Products** | You and staff | Prices, stock, photos, delivery areas, settings |
+| **oneMore Products** | You and staff | Prices, out of stock, photos, delivery areas, settings |
 | **oneMore Orders – private** | Only you | Every order, payment and status |
 
-### Change a price or stock
+### Change a price, or mark something out of stock
 1. Open **oneMore Products** → tab **Products** in the Google Sheets app.
-2. Change **Price** or **Stock**.
-3. That's it. The website shows the new value within about a minute. No rebuild needed.
+2. Change **Price**, or tick **Out of stock** when your supplier has run out (untick it when it's back).
+3. That's it. The website shows it within about a minute. No rebuild needed.
 
-`Stock` is the number of tubs on your shelf. The website takes stock off when an order is placed
-and puts it back if you set that order to **Cancelled**. When you sell at the counter, lower the
-number yourself (once a night is fine).
+Stock is not counted: your supplier ships the orders. An **Out of stock** product stays on the website with
+"Out of stock" and an "Ask on WhatsApp when it's back" button, and can't be ordered. To take a product off the
+website completely, untick **Active**.
 
 The **Check** column is filled in by the system. If it is not blank, that row has a problem
 (for example "price is above MRP" or "photo missing"). Rows with a serious problem are hidden from the website.
@@ -89,14 +88,13 @@ You get the customer's WhatsApp message, and an email if `AlertEmail` is set.
 5. Orders marked "call first" are pay-on-delivery orders above ₹3,000 from new customers. Call them before packing.
 
 Orders never cancel themselves. If an order stays *New + Pending* for 2 hours you get a reminder.
-To cancel: set **Status → Cancelled**. The stock goes back to the Products sheet automatically, once.
-If you change a cancelled order back, fix the stock yourself (the sheet will remind you).
+To cancel: set **Status → Cancelled** (if it was sent to the supplier, they see "CANCELLED – do not ship").
 
 The tabs **Pending payments**, **To pack**, **Today** and **Customers** update themselves. Don't type in them.
 
 ### Add a new product
 1. In **Products**, add a row: `ID` (unique, never reuse one, for example `MB-BIOZ-1KG-02`), Brand, Name,
-   Category (pick from the list), Size, Flavour, Price, MRP, Stock, NetQty + Unit, BestBefore.
+   Category (pick from the list), Size, Flavour, Price, MRP, NetQty + Unit.
 2. Tick **Active**. Tick **Verified** only after you've checked the Indian importer sticker and the distributor bill
    (Indian brands: just tick it).
 3. Different sizes/flavours of the same product: one row each. The `Group` column joins them on one product page
@@ -121,9 +119,7 @@ type its file name in the **Image** column, then tick **PublishNow**.
 | DeliveryFee, FreeDeliveryAbove | Delivery charge and free-delivery threshold. |
 | CODMax, CallFirstCODAbove | Pay-on-delivery limit, and the "call first" amount for new customers. |
 | PickupEnabled, SameDayCutoff, ShopHours | Shown at checkout and on the site. |
-| ShowLowStockAt | Shows "Only N left" at or below this number. |
 | MaxQtyPerLine, MaxOpenOrdersPerPhone | Limits against mistakes and fake orders. |
-| MinDaysLeft | Hides stock that is close to its best-before date (default 45 days). |
 | RequireVerified | `Yes` = only Verified rows are sold online. |
 | AllowPuducherry | `Yes` accepts Puducherry/Karaikal pincodes. **Needs GST registration.** Set `No` if you're not registered. |
 | AlertEmail | Where new-order and reminder emails go. |
@@ -171,8 +167,8 @@ These are in **`shop.config.json`** on GitHub (rarely changed, and kept away fro
 > the site shows Copy UPI ID / Copy amount instead. That works in every app.
 
 ### If something goes wrong
-- **Website shows old stock**: Settings → **SiteStatus** shows the last sync and any error. In the Orders file, use menu **oneMore → Push stock to website now**.
-- **Customer says the order didn't go through**: if Google was down, the customer could still send the order on WhatsApp marked **NOT SAVED**. Add it to the sheet by hand and lower the stock.
+- **Website shows an old price or out-of-stock state**: Settings → **SiteStatus** shows the last sync and any error. In the Orders file, use menu **oneMore → Push prices to website now**.
+- **Customer says the order didn't go through**: if Google was down, the customer could still send the order on WhatsApp marked **NOT SAVED**. Add it to the sheet by hand.
 - **Order system closed by mistake**: Settings → AcceptingOrders → `Open`.
 
 ---
@@ -203,14 +199,14 @@ Do this on a computer, signed in to the Google account that will own the shop's 
    - creates the **oneMore Products** spreadsheet filled with the starter catalogue (find it in your Google Drive);
    - formats the **Orders** tab with dropdowns and colours, and adds the **Pending payments**, **To pack**, **Today** and
      **Customers** tabs;
-   - sets up the timers (stock sync every 5 min, unpaid-order reminder every 30 min, website rebuild at 5 am).
+   - sets up the timers (price sync every 5 min, unpaid-order reminder every 30 min, website rebuild at 5 am).
 5. **Deploy → New deployment → ⚙ Select type → Web app**. Description `website`, Execute as **Me**,
    Who has access **Anyone**. Press **Deploy**, and copy the **Web app URL** (ends in `/exec`).
    (Later code changes: **Deploy → Manage deployments → ✏ Edit → Version: New version → Deploy**, so the URL stays the same.)
 6. After Step 3 below gives you the website address and deploy hook: in the Orders sheet use menu
    **oneMore → Set website address…** (or Project Settings → Script Properties: `SITE_URL`, `DEPLOY_HOOK_URL`).
 7. Fill **AlertEmail** in the Settings tab of oneMore Products, then run **`selfTest`**. Every line should say OK.
-8. Share **oneMore Products** with staff who update stock (Share → Editor). Never share the Orders file.
+8. Share **oneMore Products** with staff who update prices (Share → Editor). Never share the Orders file.
 
 The sheet tabs can also be built by hand from `sheets/*.csv` (File → Import), but `setupAll` does it for you.
 
@@ -232,7 +228,7 @@ The sheet tabs can also be built by hand from `sheets/*.csv` (File → Import), 
    | `REFRESH_KEY` | the `REFRESH_KEY` from Step 2 – Secret |
    | `TURNSTILE_SECRET` | optional, see below |
 
-5. **KV storage for live stock**: Storage & Databases → **KV** → Create namespace `onemore-live`.
+5. **KV storage for live prices**: Storage & Databases → **KV** → Create namespace `onemore-live`.
    Then your Pages project → Settings → **Bindings** → Add → KV namespace, variable name **`LIVE`**, namespace `onemore-live`.
 6. **Deploy hook** (for PublishNow and the nightly rebuild): Pages project → Settings → Builds → **Deploy hooks** →
    Add (name `sheet`, branch `main`).
@@ -268,12 +264,12 @@ Use `?src=ig` in your Instagram bio and `?src=bag` on the QR sticker on carry ba
 - [ ] FSSAI number in `shop.config.json` → `fssaiNumber` (it shows in the footer and on terms).
 - [ ] Every `[placeholder]` in `shop.config.json` replaced (the build log lists any that are left).
 - [ ] UPI ID and UpiName in the Orders file → **Payment** tab; ₹1 test payment by "Pay to UPI ID" works and shows that name.
-- [ ] Real prices, MRP, stock, NetQty/Unit and BestBefore for every product; placeholder rows fixed or set inactive.
+- [ ] Real prices, MRP and NetQty/Unit for every product; placeholder rows fixed or set inactive.
 - [ ] **Verified** ticked only for tubs with an importer sticker and a distributor bill.
 - [ ] Product info (label details) filled at least for bestsellers; label photos added.
 - [ ] Delivery areas, pincodes and fees confirmed.
 - [ ] **AllowPuducherry = No** unless you are GST-registered.
-- [ ] AlertEmail set; a test order reaches the sheet, the email arrives, and Cancelled puts the stock back.
+- [ ] AlertEmail set; a test order reaches the sheet, the email arrives, and a ticked order reaches the supplier sheet.
 - [ ] **PreviewBanner = No**.
 - [ ] Domain, email forwarding, Google Business Profile done.
 
@@ -305,8 +301,8 @@ docs/api-contract.md      contract between the site and the Apps Script
 
 **How data flows**
 - *Build*: `prepare-data.mjs` calls the script's `catalog` action and bakes products into the pages, plus `public/feed.json` as a snapshot.
-- *Live stock*: the script pushes a small `{id: [price, mrp, stock, visible]}` feed to `/api/refresh` after every order, cancel and sheet edit (debounced) and every 5 minutes if changed. `/api/refresh` writes KV only when the hash changes; `/api/live` serves it with a 30 s cache. The browser falls back to `/feed.json`.
-- *Orders*: `/api/order` validates, then the script re-prices from the sheet, checks and holds stock under a lock, and returns `ORD-####`. The same `idemKey` always returns the same order, so retries never duplicate.
+- *Live prices*: the script pushes a small `{id: [price, mrp, inStock01, visible01]}` feed to `/api/refresh` after every Products edit (debounced) and every 5 minutes if changed. `/api/refresh` writes KV only when the hash changes; `/api/live` serves it with a 30 s cache. The browser falls back to `/feed.json`.
+- *Orders*: `/api/order` validates, then the script re-prices from the sheet, refuses items ticked Out of stock, and returns `ORD-####` (numbered under a lock). The same `idemKey` always returns the same order, so retries never duplicate.
 
 **Commands**
 
@@ -324,4 +320,4 @@ holding the same variables as Cloudflare.
 
 **Moving orders to Cloudflare D1 later**: write `functions/_lib/data/d1.js` exporting `createStore(env)` with
 `getCatalog`, `createOrder`, `attachPaymentRef` and `notifyOrder` (same results as `apps-script.js`), change the one line in
-`functions/_lib/data/index.js`, and move stock into D1 too so the stock check and the insert share one transaction.
+`functions/_lib/data/index.js`.

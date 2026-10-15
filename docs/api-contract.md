@@ -18,14 +18,13 @@ only has to implement the same four calls (see the end of this file).
 
 Products headers (row 1, in this order; the site matches headers by name, so order does not matter to the site):
 
-`ID, Group, Active, Verified, Brand, Name, Category, Size, Flavour, Price, MRP, Stock, Image, Description, NetQty, Unit, BestBefore, Bestseller, Badge, Sort, Keywords, Check`
+`ID, Group, Active, Verified, Brand, Name, Category, Size, Flavour, Price, MRP, Out of stock, Image, Description, NetQty, Unit, Bestseller, Badge, Sort, Keywords, Check`
 
 - `ID` unique, never reused (e.g. `ON-GSW-2KG-01`). `Group` = product page key; script fills it once from Brand + Name (slug) when blank and never overwrites it.
-- `Active`, `Verified`, `Bestseller` are checkboxes. `Verified` = importer sticker + distributor bill checked (or Indian brand).
+- `Active`, `Verified`, `Out of stock`, `Bestseller` are checkboxes. `Verified` = importer sticker + distributor bill checked (or Indian brand).
 - `Category` dropdown: Whey Protein, Mass Gainer, Creatine, Pre-Workout, BCAA, EAA, Glutamine, Fish Oil, Multivitamin, Minerals, Protein Oats.
-- `Price`, `MRP` rupees; `Stock` whole number the owner types (shelf count). The script subtracts ordered units at order time and adds them back once when an order is Cancelled.
+- `Price`, `MRP` rupees. Stock is not counted (the supplier ships): `Out of stock` ticked = listed but can't be ordered.
 - `NetQty` number, `Unit` one of g, ml, tablets, capsules, softgels (for unit price).
-- `BestBefore` date of the earliest batch on the shelf.
 - `Check` is written by the script (problems with the row; blank = OK).
 
 Product info headers: `Group, GenericName, VegNonVeg, Ingredients, Nutrition, Warnings, Manufacturer, Importer, CountryOfOrigin, ConsumerCare, LabelImages, Imported`
@@ -39,7 +38,7 @@ Delivery headers: `Area, Pincodes, Fee, ETA, Active` (blank Fee = Settings Deliv
 
 Orders headers:
 
-`Order ID, Created, Status, Payment, Method, Total, Name, Phone, Fulfilment, Area, Pincode, Address, Landmark, Items, Subtotal, Delivery fee, Notes, UTR, UTR flag, Source, Stock held, Updated, ItemsJSON, IdemKey`
+`Order ID, Created, Status, Payment, Method, Total, Name, Phone, Fulfilment, Area, Pincode, Address, Landmark, Items, Subtotal, Delivery fee, Notes, UTR, UTR flag, Source, Updated, ItemsJSON, IdemKey` (then, added by setup: `Send to supplier, Supplier shipped, Supplier note`)
 
 - Status dropdown: `New, Packed, Ready for pickup, Delivered, Cancelled`.
 - Payment dropdown: `Pending, Paid, Refunded`.
@@ -77,15 +76,15 @@ Row objects are keyed by the exact header text. Dates as `YYYY-MM-DD`. Booleans 
 
 Inside `LockService.getScriptLock()` (wait up to 20 s; `SpreadsheetApp.flush()` before release):
 
-1. If a row already has this `IdemKey` → return that order exactly as the first time (no new row, no stock change).
+1. If a row already has this `IdemKey` → return that order exactly as the first time (no new row).
 2. Settings `AcceptingOrders` must be Open → else `closed`.
-3. Each item: the ID exists and is visible (same rule as `variantVisible` in `src/shared/catalog.js`: Active, Verified when RequireVerified, Price > 0, Price ≤ MRP, BestBefore at least MinDaysLeft days away) → else `unavailable` with `details: [ids]`.
+3. Each item: the ID exists and is visible (same rule as `variantVisible` in `src/shared/catalog.js`: Active, Verified when RequireVerified, Price > 0, Price ≤ MRP) → else `unavailable` with `details: [ids]`.
    qty is an integer from 1 to MaxQtyPerLine → else `bad_request`.
-   Stock ≥ qty → else `sold_out` with `details: [{ id, available }]`.
+   Not ticked `Out of stock` → else `sold_out` with `details: [ids]`.
 4. Open orders for this phone (Status New and Payment Pending) < MaxOpenOrdersPerPhone → else `too_many_open`.
 5. Pickup needs PickupEnabled; `shop` only with pickup; `cod` only with delivery and total ≤ CODMax → else `bad_request`.
 6. Prices come from the sheet, never from the browser. Subtotal = Σ price × qty. Delivery fee: 0 for pickup; 0 if subtotal ≥ FreeDeliveryAbove (when > 0); else the Delivery tab's Fee for the chosen area, else Settings DeliveryFee.
-7. Subtract stock, set `Stock held` = TRUE, take the next number from Script Property `ORDER_SEQ` (starts at 1000 → first order ORD-1001), append the row (Status New, Payment Pending).
+7. Take the next number from Script Property `ORDER_SEQ` (starts at 1000 → first order ORD-1001), append the row (Status New, Payment Pending).
 
 Response:
 
@@ -113,8 +112,6 @@ Response:
 
 `pay` (UPI orders only) = `UpiId` / `UpiName` from the **Payment** tab of the private Orders file, read when the order is placed. It is left out when that tab is missing or the ID is not a valid UPI ID; the order page then falls back to `upiId` / `upiNameCustomersSee` in `shop.config.json`, or tells the customer the UPI ID comes on WhatsApp. Any edit to the Payment tab is emailed to AlertEmail and the script owner.
 
-After releasing the lock the script pushes the live feed (below) so stock on the site updates at once.
-
 ### `attachUtr`
 
 `data: { orderId, token, utr }` – `token` must equal the row's IdemKey → else `not_found`. `utr` must be 12 digits → else `bad_request`.
@@ -132,13 +129,13 @@ The script POSTs to `<SITE_URL>/api/refresh` with header `X-Refresh-Key: <REFRES
 {
   "v": "hash of items+settings+delivery",
   "at": "ISO timestamp",
-  "items": { "ON-GSW-2KG-01": [price, mrp, stock, visible01] },
+  "items": { "ON-GSW-2KG-01": [price, mrp, inStock01, visible01] },
   "settings": { "...public settings only, see publicSettings() in src/shared/catalog.js" },
   "delivery": [{ "area": "", "pincodes": ["614713"], "fee": 40, "eta": "Same day" }]
 }
 ```
 
-It pushes: after every order, after Cancelled (stock returned), from an installable onEdit trigger on the Products file (debounced ~30 s), and from a 5-minute time trigger only when the hash changed since the last successful push (stored in Script Properties). The site writes Cloudflare KV only when `v` changes.
+It pushes: from an installable onEdit trigger on the Products file (debounced ~30 s), and from a 5-minute time trigger only when the hash changed since the last successful push (stored in Script Properties). The site writes Cloudflare KV only when `v` changes.
 
 ## Script Properties
 
@@ -148,7 +145,7 @@ It pushes: after every order, after Cancelled (stock returned), from an installa
 
 Implement `functions/_lib/data/d1.js` exporting `createStore(env)`, like `apps-script.js`, returning
 `{ getCatalog(), createOrder(input), attachPaymentRef({ orderId, token, utr }), notifyOrder(orderId) }`
-with the same results, and change one line in `functions/_lib/data/index.js`. Move stock into D1 at the same time so the stock check and the order insert stay in one transaction.
+with the same results, and change one line in `functions/_lib/data/index.js`.
 
 ## Clarifications from the Apps Script implementation (added with apps-script/*.gs)
 
@@ -163,6 +160,5 @@ These fill gaps in the contract above; nothing above was changed.
 - **`MaxOpenOrdersPerPhone`** is applied literally (`open < limit`), so 0 blocks every order; `selfTest` warns about this.
 - **Daily rebuild**: a time trigger around 05:00 IST POSTs to `DEPLOY_HOOK_URL` (when set) and writes the result into `SiteStatus`.
 - **Stale reminder**: unpaid `New` orders older than 2 hours are emailed once. They are marked with a cell note `stale – reminded <time>` on the Order ID cell, and nothing is cancelled.
-- **Un-cancelling** an order whose stock was already returned does not take the stock again. The script adds a warning to `UTR flag` and a note on the Status cell, and the owner adjusts stock by hand.
 - **Transport**: the web app always answers HTTP 200 with a JSON body, through a 302 to googleusercontent.com, so callers must follow redirects and read `ok`/`error`. `GET` returns only `{ ok: true, service: "oneMore" }`.
 - **Extra Script Properties** used internally: `ORDERS_SHEET_ID`, `FEED_PUSH_SCHEDULED_AT`, `STATUS_SYNC`, `STATUS_REBUILD`, `STATUS_CHECK`, `PRICE_CACHE_0…n` (the last logged price/MRP per ID for the `Price log` tab).

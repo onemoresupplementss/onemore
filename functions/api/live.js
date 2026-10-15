@@ -1,4 +1,4 @@
-// GET /api/live - latest prices, stock and public settings, as pushed by the sheet.
+// GET /api/live - latest prices, availability and public settings, as pushed by the sheet.
 // Pages fall back to /feed.json (built with the site) when this has nothing.
 import { readFeedText } from '../_lib/feed.js';
 import { json } from '../_lib/http.js';

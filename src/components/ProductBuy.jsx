@@ -1,14 +1,9 @@
-// Product page buy box: size/flavour picker, live price and stock, quantity, add to cart.
-// In WhatsApp mode there is no price or stock; "Order on WhatsApp" sends just this item.
+// Product page buy box: size/flavour picker, live price and availability, quantity, add to cart.
+// In WhatsApp mode there is no price; "Order on WhatsApp" sends just this item.
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { addToCart, feed, liveVariant, loadFeed, selectedVariant, showAddedToast, useSignal } from '../client/store.js';
 import { SHOW_PRICES, url } from '../lib/env.js';
 import { buildOrderListText, formatINR, formatNetQty, percentOff, unitPrice, whatsappLink } from '../shared/order.js';
-
-function formatMonth(iso) {
-  if (!iso) return '';
-  return new Intl.DateTimeFormat('en-IN', { month: 'short', year: 'numeric', timeZone: 'UTC' }).format(new Date(iso + 'T00:00:00Z'));
-}
 
 export default function ProductBuy({ product, settings, shop }) {
   const f = useSignal(feed);
@@ -28,14 +23,13 @@ export default function ProductBuy({ product, settings, shop }) {
 
   const s = f?.settings ? { ...settings, ...f.settings } : settings;
   const v = vs.find((x) => x.id === id) || vs[0];
-  const live = SHOW_PRICES ? liveVariant(v, f) : { buyable: true, stock: v.soldOut ? 0 : Infinity };
-  const maxQty = Math.max(0, Math.min(live.stock, s.MaxQtyPerLine || 10));
+  const live = liveVariant(v, SHOW_PRICES ? f : null);
+  const maxQty = s.MaxQtyPerLine || 10;
   const sizes = [...new Set(vs.map((x) => x.size).filter(Boolean))];
   const flavours = [...new Set(vs.filter((x) => x.size === v.size).map((x) => x.flavour).filter(Boolean))];
   const off = SHOW_PRICES ? percentOff(live.price, live.mrp) : 0;
   const per = SHOW_PRICES ? unitPrice(live.price, v.netQty, v.unit) : '';
-  const lowAt = s.ShowLowStockAt ?? 3;
-  const canBuy = live.buyable && live.stock > 0 && s.AcceptingOrders !== 'Closed';
+  const canBuy = live.buyable && live.inStock && s.AcceptingOrders !== 'Closed';
   const line = { id: v.id, slug: product.slug, brand: product.brand, name: product.name, size: v.size, flavour: v.flavour, image: v.image || product.image };
 
   useEffect(() => {
@@ -75,10 +69,8 @@ export default function ProductBuy({ product, settings, shop }) {
   const backInStock = `Hi ${shop.name}, please tell me when ${title} ${[v.size, v.flavour].filter(Boolean).join(' ')} is back in stock.`;
   const stockLine = !live.buyable ? (
     <span class="text-danger">Not available online right now</span>
-  ) : live.stock <= 0 ? (
+  ) : !live.inStock ? (
     <span class="text-danger">Out of stock</span>
-  ) : lowAt > 0 && live.stock <= lowAt ? (
-    <span class="text-warn">Only {live.stock} left</span>
   ) : (
     <span class="text-ok">In stock</span>
   );
@@ -203,12 +195,6 @@ export default function ProductBuy({ product, settings, shop }) {
             <dd>
               {formatNetQty(v.netQty, v.unit)}
             </dd>
-          </>
-        )}
-        {v.bestBefore && (
-          <>
-            <dt class="text-muted">Best before</dt>
-            <dd>{formatMonth(v.bestBefore)} or later</dd>
           </>
         )}
         <dt class="text-muted">Product code</dt>

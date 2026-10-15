@@ -1,5 +1,5 @@
 // Browser-side state shared by all islands on a page: the cart (kept in
-// localStorage), the live price/stock feed, and the cart drawer.
+// localStorage), the live price/availability feed, and the cart drawer.
 import { useEffect, useState } from 'preact/hooks';
 import { SHOW_PRICES, url } from '../lib/env.js';
 
@@ -106,9 +106,9 @@ export function showAddedToast(text) {
 
 /* ---------- Live feed ---------- */
 
-// { items: { id: [price, mrp, stock, visible01] }, settings, delivery, at, live: bool }
+// { items: { id: [price, mrp, inStock01, visible01] }, settings, delivery, at, live: bool }
 export const feed = signal(null);
-const FEED_CACHE = 'om_feed_v1';
+const FEED_CACHE = 'om_feed_v2';
 const FEED_TTL = 60 * 1000;
 let loading = null;
 
@@ -118,9 +118,9 @@ async function getJson(url) {
   return res.json();
 }
 
-/** Loads /api/live (the sheet's latest stock), falling back to the build snapshot. */
+/** Loads /api/live (the sheet's latest prices and availability), falling back to the build snapshot. */
 export function loadFeed({ fresh = false } = {}) {
-  // WhatsApp mode has no prices or stock to load.
+  // WhatsApp mode has no prices to load.
   if (!isBrowser || !SHOW_PRICES) return Promise.resolve(null);
   if (!fresh) {
     if (feed.get()) return Promise.resolve(feed.get());
@@ -146,13 +146,16 @@ export function loadFeed({ fresh = false } = {}) {
   return loading;
 }
 
-/** Current price/stock for a variant: live feed when loaded, else the build-time values. */
+/**
+ * Current price and availability for a variant: the live feed when loaded, else the build-time values
+ * (always the case in WhatsApp mode). inStock = not ticked "Out of stock" in the sheet.
+ */
 export function liveVariant(v, f) {
-  if (!f) return { price: v.price, mrp: v.mrp, stock: v.stock, buyable: true };
+  if (!f) return { price: v.price, mrp: v.mrp, inStock: !v.soldOut, buyable: true };
   const row = f.items?.[v.id];
-  if (!row) return { price: v.price, mrp: v.mrp, stock: 0, buyable: false };
-  const [price, mrp, stock, visible] = row;
-  return { price, mrp, stock, buyable: visible === 1 };
+  if (!row) return { price: v.price, mrp: v.mrp, inStock: false, buyable: false };
+  const [price, mrp, inStock, visible] = row;
+  return { price, mrp, inStock: inStock > 0, buyable: visible === 1 };
 }
 
 /* ---------- Order source (ig / gbp / shop / bag) ---------- */

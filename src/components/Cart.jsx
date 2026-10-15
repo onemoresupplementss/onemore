@@ -6,17 +6,16 @@ import { cart, cartCount, cartOpen, clearCart, feed, liveVariant, loadFeed, remo
 import { SHOW_PRICES, url } from '../lib/env.js';
 import { buildOrderListText, formatINR, lineLabel, whatsappLink } from '../shared/order.js';
 
-/** Cart lines priced from the live feed, with problems flagged. WhatsApp mode: no prices, no stock limits. */
+/** Cart lines priced from the live feed, with problems flagged. WhatsApp mode: no prices. */
 export function pricedLines(lines, f, settings) {
-  const maxPer = settings?.MaxQtyPerLine ?? 10;
-  if (!SHOW_PRICES) return lines.map((l) => ({ ...l, max: maxPer, problem: l.qty > maxPer ? `Max ${maxPer} per order` : '' }));
+  const max = settings?.MaxQtyPerLine ?? 10;
+  if (!SHOW_PRICES) return lines.map((l) => ({ ...l, max, problem: l.qty > max ? `Max ${max} per order` : '' }));
   return lines.map((l) => {
     const live = liveVariant(l, f);
-    const max = Math.min(live.stock, maxPer);
     let problem = '';
     if (!live.buyable) problem = 'No longer available';
-    else if (live.stock <= 0) problem = 'Just sold out';
-    else if (l.qty > max) problem = live.stock < l.qty ? `Only ${live.stock} left` : `Max ${max} per order`;
+    else if (!live.inStock) problem = 'Out of stock';
+    else if (l.qty > max) problem = `Max ${max} per order`;
     return { ...l, price: live.price, lineTotal: live.price * l.qty, max, problem };
   });
 }

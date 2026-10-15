@@ -74,7 +74,7 @@ export default function ShopBrowser({ products, settings }) {
   }, [products]);
   const index = useMemo(() => new Map(products.map((p) => [p.slug, searchText(p)])), [products]);
 
-  const rows = products.map((p) => ({ p, st: SHOW_PRICES ? cardState(p, f) : { inStock: p.variants.some((v) => !v.soldOut) } }));
+  const rows = products.map((p) => ({ p, st: cardState(p, SHOW_PRICES ? f : null) }));
   const words = norm(state.q).split(' ').filter(Boolean);
   let shown = rows.filter(({ p, st }) => {
     if (words.length && !words.every((w) => index.get(p.slug).includes(w))) return false;
