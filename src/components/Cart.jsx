@@ -26,20 +26,25 @@ export default function Cart({ settings, shop }) {
   const open = useSignal(cartOpen);
   const f = useSignal(feed);
   const [sent, setSent] = useState(false);
-  const count = cartCount(lines);
+  // The page is built with an empty cart; show the saved count only after start-up,
+  // so the first render matches the built HTML.
+  const [started, setStarted] = useState(false);
+  useEffect(() => setStarted(true), []);
+  const count = started ? cartCount(lines) : 0;
   const s = f?.settings ? { ...settings, ...f.settings } : settings;
 
   useEffect(() => {
     if (open) loadFeed();
   }, [open]);
 
-  // Bump the badge when something is added, so people see where the cart is.
-  const lastCount = useRef(count);
+  // Bump the badge when something is added (not when the saved count first appears).
+  const lastCount = useRef(null);
   const [pops, setPops] = useState(0);
   useEffect(() => {
-    if (count > lastCount.current) setPops((n) => n + 1);
+    if (!started) return;
+    if (lastCount.current !== null && count > lastCount.current) setPops((n) => n + 1);
     lastCount.current = count;
-  }, [count]);
+  }, [count, started]);
 
   const priced = pricedLines(lines, f, s);
   const subtotal = SHOW_PRICES ? priced.reduce((n, l) => n + l.lineTotal, 0) : 0;
