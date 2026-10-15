@@ -177,11 +177,12 @@ export default function OrderView({ shop, replyPromise, reviewLink, callFirstAbo
         </div>
 
         {isUpi && !upiId ? (
-          <section class="card space-y-2 p-5" aria-labelledby="pay-h">
+          <section class="card space-y-4 p-5" aria-labelledby="pay-h">
             <h2 id="pay-h" class="text-xl font-black">
-              1. Pay {formatINR(order.total)} by UPI
+              Send the order to us, then pay {formatINR(order.total)} by UPI
             </h2>
-            <p class="text-sm text-muted">Send this order to us on WhatsApp (below). We reply with our UPI ID and the amount to pay.</p>
+            <p class="text-muted">We reply on WhatsApp with our UPI ID. Pay only to the UPI ID we send you.</p>
+            {sendButton}
           </section>
         ) : isUpi ? (
           <section class="card space-y-4 p-5" aria-labelledby="pay-h">
