@@ -144,3 +144,8 @@ if (todo.length) console.warn(`shop.config.json still has placeholders: ${todo.j
 const variants = products.reduce((n, p) => n + p.variants.length, 0);
 const hidden = catalog.products.reduce((n, p) => n + p.variants.length, 0) - variants;
 console.log(`Catalogue (${source}, ${showPrices ? 'checkout' : 'WhatsApp'} mode): ${products.length} products, ${variants} variants on the site, ${hidden} hidden.`);
+// A sheet answer with nothing to sell is almost always a read in the middle of an edit, not
+// the owner's intent. Stop, so the host keeps the last good version online.
+if (source === 'google-sheet' && !products.length) {
+  throw new Error('The sheet returned no products that can be shown - not publishing an empty shop. Check the Products tab, then rebuild.');
+}

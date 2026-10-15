@@ -1,10 +1,11 @@
-// Tests for the Cloudflare Pages Functions with a fake KV and a fake Apps Script.
+// Tests for the API handlers (functions/api/) and the Worker that routes to them, with a fake KV and a fake Apps Script.
 import { test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { onRequestPost as order } from '../functions/api/order.js';
 import { onRequestPost as utr } from '../functions/api/utr.js';
 import { onRequestGet as live } from '../functions/api/live.js';
 import { onRequestPost as refresh } from '../functions/api/refresh.js';
+import worker from '../worker/index.js';
 
 const SITE = 'https://shop.test';
 let kv;
@@ -137,4 +138,23 @@ test('refresh: rejects a malformed feed', async () => {
 test('live: 404 before the first push', async () => {
   const res = await live({ request: new Request(SITE + '/api/live'), env });
   assert.equal(res.status, 404);
+});
+
+test('worker: routes /api/* to the handlers, everything else to the static files', async () => {
+  const waited = [];
+  const ctx = { waitUntil: (p) => waited.push(p) };
+  const assets = [];
+  const workerEnv = { ...env, ASSETS: { fetch: async (req) => (assets.push(new URL(req.url).pathname), new Response('page')) } };
+
+  let res = await worker.fetch(post('/api/refresh', feed, { 'X-Refresh-Key': 'refresh-secret' }), workerEnv, ctx);
+  assert.deepEqual(await res.json(), { ok: true, changed: true });
+  res = await worker.fetch(new Request(SITE + '/api/live/'), workerEnv, ctx);
+  assert.equal(res.status, 200);
+  res = await worker.fetch(new Request(SITE + '/api/order'), workerEnv, ctx);
+  assert.equal(res.status, 405);
+  res = await worker.fetch(new Request(SITE + '/api/nope'), workerEnv, ctx);
+  assert.equal(res.status, 404);
+  res = await worker.fetch(new Request(SITE + '/shop/'), workerEnv, ctx);
+  assert.equal(await res.text(), 'page');
+  assert.deepEqual(assets, ['/shop/']);
 });

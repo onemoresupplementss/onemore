@@ -1,4 +1,4 @@
-# Cloudflare Pages response headers.
+# Response headers, applied by Cloudflare (Worker static assets). GitHub Pages ignores this file.
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin

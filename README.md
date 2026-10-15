@@ -186,40 +186,53 @@ Do this on a computer, signed in to the Google account that will own the shop's 
 
 The sheet tabs can also be built by hand from `sheets/*.csv` (File → Import), but `setupAll` does it for you.
 
-### Step 3 – Cloudflare Pages (hosts the website for free)
+### Step 3 – Cloudflare Worker (hosts the website for free)
+The site runs as a Cloudflare **Worker** with static assets: the pages are plain files, and only `/api/*` runs code
+(`worker/index.js`). The Worker's name, the KV binding and the asset settings are in `wrangler.jsonc`.
+
 1. Create a free account at dash.cloudflare.com.
-2. **Workers & Pages → Create → Pages → Connect to Git** → pick the `onemore` repository.
-3. Build settings: Framework preset **Astro**, Build command `npm run build`, Output directory `dist`.
-4. **Environment variables** (Settings → Variables and Secrets; add to *Production* and *Preview*). Mark the keys as **Secret**:
+2. **KV storage for live stock**: `npx wrangler kv namespace create onemore-live`, and put the id it prints in
+   `wrangler.jsonc` → `kv_namespaces` (binding `LIVE`).
+3. **Compute → Workers & Pages → Create → Import a repository** → connect GitHub → pick `onemore`.
+   Build command `npm run build`, deploy command `npx wrangler deploy`, root directory `/`.
+4. **Runtime secrets** (Worker → Settings → Variables and secrets, type **Secret**), or
+   `npx wrangler secret put <NAME>`:
 
    | Name | Value |
    |---|---|
-   | `NODE_VERSION` | `22` |
    | `APPS_SCRIPT_URL` | the Web app URL from Step 2 (ends in `/exec`) |
    | `APPS_SCRIPT_KEY` | the `API_KEY` from Step 2 |
    | `REFRESH_KEY` | the `REFRESH_KEY` from Step 2 |
    | `TURNSTILE_SECRET` | optional, see below |
 
-5. **KV storage for live stock**: Storage & Databases → **KV** → Create namespace `onemore-live`.
-   Then your Pages project → Settings → **Bindings** → Add → KV namespace, variable name **`LIVE`**, namespace `onemore-live`.
-6. **Deploy hook** (for PublishNow and the nightly rebuild): Pages project → Settings → Builds → **Deploy hooks** →
-   Add (name `sheet`, branch `main`). Copy the URL into the Apps Script property `DEPLOY_HOOK_URL`.
-7. Click **Retry deployment** (or push a commit) so the build picks up the variables.
-   The build log should say `Catalogue (google-sheet): …`. If the sheet can't be read, the build stops on purpose,
-   and Cloudflare keeps the previous version online.
-8. Your site is now live at `https://<project>.pages.dev`. Put that URL (or your domain later) in Script Property
-   `SITE_URL` and in `shop.config.json` → `siteUrl`.
+5. **Build variables** (Worker → Settings → Builds → **Variables and secrets**; the build reads the sheet, so it needs
+   the key too):
+
+   | Name | Value |
+   |---|---|
+   | `NODE_VERSION` | `22` |
+   | `PUBLIC_ORDER_MODE` | `checkout` (overrides `orderMode` in `shop.config.json`, so GitHub Pages can keep phase 1) |
+   | `SITE_URL` | the site address, e.g. `https://onemore.<account>.workers.dev` |
+   | `APPS_SCRIPT_URL` | as above |
+   | `APPS_SCRIPT_KEY` | as above (Secret) |
+
+6. **Deploy hook** (for PublishNow and the nightly rebuild): Worker → Settings → Builds → **Deploy Hooks** → Add
+   (branch `main`). Put the URL in the Apps Script property `DEPLOY_HOOK_URL`.
+7. Push a commit (or **Retry build**). The build log should say `Catalogue (google-sheet, checkout mode): …`.
+   If the sheet can't be read, or returns no products, the build stops on purpose and the previous version stays online.
+8. In the Orders sheet: menu **oneMore → Set website address…** → `SITE_URL` (the workers.dev address, or your domain
+   later) and `DEPLOY_HOOK_URL`. Also set `shop.config.json` → `siteUrl`.
 
 **Optional – bot protection (free)**: Cloudflare → Turnstile → Add widget for your domain. Put the *site key* in
 `shop.config.json` → `turnstileSiteKey` and the *secret key* in the `TURNSTILE_SECRET` variable.
 
-**Free visitor statistics**: Pages project → Metrics → enable **Web Analytics** (no cookies, no banner needed).
+**Free visitor statistics**: Cloudflare → **Web Analytics** → add the site (no cookies, no banner needed).
 
 ### Step 4 – Domain
 1. Buy the domain (for example `onemore.in`) from an Indian registrar that takes UPI.
 2. Cloudflare → **Add a domain** (free plan) → it gives you two nameservers → enter them at your registrar
    (takes up to a few hours).
-3. Pages project → **Custom domains** → add `onemore.in` and `www.onemore.in`.
+3. Worker → Settings → **Domains & Routes** → Add → **Custom domain** → `onemore.in`, and again for `www.onemore.in`.
 4. Update `siteUrl` in `shop.config.json` and `SITE_URL` in the Apps Script properties to the new domain.
 5. **Email**: Cloudflare → your domain → Email → **Email Routing** → forward `info@onemore.in` to your Gmail. Free.
 
@@ -254,7 +267,7 @@ and the 2027 rule about showing the lowest price of the last 30 days next to a d
 ## Part 4 – For developers
 
 **Stack**: [Astro](https://astro.build) (static pages, fast on cheap phones) + small [Preact](https://preactjs.com) islands
-(cart, filters, checkout) + Tailwind CSS 4, on Cloudflare Pages with Pages Functions and KV. Orders and catalogue live in
+(cart, filters, checkout) + Tailwind CSS 4, on a Cloudflare Worker with static assets and KV. Orders and catalogue live in
 Google Sheets behind a Google Apps Script web app. No framework server, no database to run.
 
 ```
@@ -263,7 +276,9 @@ src/shared/catalog.js     catalogue rules: columns, settings, visibility, live f
 src/shared/order.js       order rules: validation, delivery fee, WhatsApp text, UPI link
 src/pages/                pages (/, /shop/, /shop/<category>/, /p/<slug>/, /checkout/, /order/, policies)
 src/components/*.jsx      Preact islands; src/client/store.js = cart, live feed, saved orders
-functions/api/            order.js, utr.js, live.js, refresh.js  (Cloudflare Pages Functions)
+functions/api/            order.js, utr.js, live.js, refresh.js  (API handlers, Pages Functions shape)
+worker/index.js           Cloudflare Worker entry: routes /api/* to functions/api/, the rest is static files
+wrangler.jsonc            Worker name, KV binding, asset settings (no secrets: the repository is public)
 functions/_lib/data/      the ONLY place that talks to the order store (Apps Script today)
 apps-script/              Google Apps Script code (copy into the Orders spreadsheet's script editor)
 scripts/prepare-data.mjs  runs before every build: fetches the catalogue (or uses data/seed/) → src/data/catalog.json, public/feed.json
@@ -282,13 +297,14 @@ docs/api-contract.md      contract between the site and the Apps Script
 npm install
 npm run dev        # http://localhost:4321 (uses data/seed/ unless APPS_SCRIPT_URL/KEY are in .env)
 npm run build      # → dist/
-npm test           # unit tests for shared rules and the Pages Functions
+npm test           # unit tests for shared rules, the API handlers and the Worker routing
 npm run seed       # rebuild the starter catalogue files
 node scripts/make-images.mjs   # re-render og.png and icons
 ```
 
-`npm run dev` serves the pages only. To run the Functions locally, use `npx wrangler pages dev dist` with a `.dev.vars` file
-holding the same variables as Cloudflare.
+`npm run dev` serves the pages only. To run the API locally too, `npm run build` then `npx wrangler dev` with a
+`.dev.vars` file holding the same secrets as Cloudflare. `functions/api/*.js` keep the Pages Functions shape
+(`onRequestGet({ request, env, waitUntil })`); `worker/index.js` routes `/api/*` to them.
 
 **Moving orders to Cloudflare D1 later**: write `functions/_lib/data/d1.js` exporting `createStore(env)` with
 `getCatalog`, `createOrder`, `attachPaymentRef` and `notifyOrder` (same results as `apps-script.js`), change the one line in
