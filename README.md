@@ -138,7 +138,9 @@ in the Orders tab → **Send to supplier** column (far right). Share that file w
 - Copied: order number, date, items and quantities, customer name, phone, address, landmark, area, pincode, notes.
   **Never copied**: prices, totals, delivery fee, payment method or status, UTR. The supplier never gets the Orders file.
 - It updates within seconds of ticking (menu **oneMore → Send ticked orders to supplier now** forces it).
-- The supplier fills **Shipped** and **Tracking / note**; the other columns are locked to you.
+- The supplier fills **Shipped** and **Tracking / note**; the other columns are locked to you. Their updates appear in
+  your Orders tab → **Supplier shipped** / **Supplier note** (far right) within seconds. Setting **Status** is still up
+  to you.
 - Untick an order or set it to **Cancelled** after sending, and the supplier sees it marked **CANCELLED – do not ship**.
 
 ### Change the UPI ID customers pay to
