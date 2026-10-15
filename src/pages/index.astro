@@ -3,7 +3,7 @@ import { SHOW_PRICES, asset, url } from '../lib/env.js';
 import Layout from '../layouts/Layout.astro';
 import BrandTicker from '../components/BrandTicker.astro';
 import ProductGrid from '../components/ProductGrid.jsx';
-import { absUrl, cardData, catalog, categoriesWithProducts, isPlaceholder, shop, telHref, waHref } from '../lib/site.js';
+import { absUrl, cardData, catalog, categoriesWithProducts, codOn, isPlaceholder, payWays, pickupOn, shop, telHref, waHref } from '../lib/site.js';
 import { formatINR } from '../shared/order.js';
 
 const s = catalog.settings;
@@ -21,20 +21,22 @@ const heroCats = categoriesWithProducts.slice(0, 4).map((c, i) => {
 const trust = [
   { t: 'Genuine products', d: 'From authorised importers and brands. Invoice on request.' },
   { t: 'One-day home delivery', d: `All over ${shop.serviceArea}${SHOW_PRICES && s.FreeDeliveryAbove > 0 ? ` · free above ${formatINR(s.FreeDeliveryAbove)}` : ''}` },
-  { t: 'UPI or pay on delivery', d: s.PickupEnabled ? 'Or pick up from the shop and pay there.' : 'Cash or UPI at your door.' },
+  codOn
+    ? { t: 'UPI or pay on delivery', d: pickupOn ? 'Or pick up from the shop and pay there.' : 'Cash or UPI at your door.' }
+    : { t: 'Easy UPI payment', d: pickupOn ? 'GPay, PhonePe, Paytm or any UPI app – or pick up from the shop.' : 'GPay, PhonePe, Paytm or any UPI app.' },
   { t: 'Real people on WhatsApp', d: s.ReplyPromise },
 ];
 
 const steps = SHOW_PRICES
   ? [
       { t: 'Add to cart', d: 'Pick your size and flavour. Stock is live from our shelf.' },
-      { t: 'Place the order', d: 'Delivery or pickup. Pay by UPI, on delivery or at the shop.' },
+      { t: 'Place the order', d: `${pickupOn ? 'Delivery or pickup' : 'Home delivery'}. Pay by ${payWays}.` },
       { t: 'Send it on WhatsApp', d: 'One tap sends us your order. We confirm and pack it.' },
     ]
   : [
       { t: 'Add to cart', d: 'Pick your products, size and flavour.' },
       { t: 'Send it on WhatsApp', d: 'One tap opens WhatsApp with your list. Just press send.' },
-      { t: 'We confirm', d: 'We reply with today’s price and delivery. Pay by UPI, on delivery or at the shop.' },
+      { t: 'We confirm', d: `We reply with today’s price and delivery. Pay by ${payWays}.` },
     ];
 
 const store = {
@@ -68,7 +70,7 @@ const store = {
           Fuel for<br /><span class="italic text-lime">one more</span><br />rep.
         </h1>
         <p class="mt-5 max-w-md text-lg text-muted">
-          {`Whey, gainers, creatine and pre-workouts from the brands you trust. ${SHOW_PRICES ? `Order here, pay by UPI or on delivery, and get it at your door in one day, anywhere in ${shop.serviceArea}.` : `Add what you need, send the list to us on WhatsApp, and get it at your door in one day, anywhere in ${shop.serviceArea}.`}`}
+          {`Whey, gainers, creatine and pre-workouts from the brands you trust. ${SHOW_PRICES ? `Order here, pay by ${codOn ? 'UPI or on delivery' : 'UPI'}, and get it at your door in one day, anywhere in ${shop.serviceArea}.` : `Add what you need, send the list to us on WhatsApp, and get it at your door in one day, anywhere in ${shop.serviceArea}.`}`}
         </p>
         <p lang="ta" class="ta mt-2">தமிழ்நாடு முழுவதும் ஒரே நாளில் வீட்டுக்கு டெலிவரி.</p>
         <div class="mt-8 flex flex-wrap gap-3">

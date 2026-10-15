@@ -1,14 +1,14 @@
 ---
 import { SHOW_PRICES, url } from '../lib/env.js';
 import Page from '../layouts/Page.astro';
-import { catalog, shop, waHref } from '../lib/site.js';
+import { catalog, codOn, pickupOn, shop, waHref } from '../lib/site.js';
 import { formatINR } from '../shared/order.js';
 
 const s = catalog.settings;
 const zones = catalog.delivery;
 ---
 
-<Page title="Delivery, returns & refunds" description={`Delivery areas, fees, pickup, returns and refunds at ${shop.name}.`} updated="October 2026">
+<Page title="Delivery, returns & refunds" description={`Delivery areas, fees, ${pickupOn ? 'pickup, ' : ''}returns and refunds at ${shop.name}.`} updated="October 2026">
   <h2>Delivery</h2>
   {
     SHOW_PRICES ? (
@@ -19,7 +19,7 @@ const zones = catalog.delivery;
       </p>
     ) : (
       <p>
-        We deliver to homes all over {shop.serviceArea}, usually within one day. We tell you the delivery charge on WhatsApp before you pay, and store pickup is free.
+        We deliver to homes all over {shop.serviceArea}, usually within one day. We tell you the delivery charge on WhatsApp before you pay{pickupOn ? ', and store pickup is free' : ''}.
         {s.SameDayCutoff && <> Orders confirmed after {s.SameDayCutoff} go out the next day.</>}
       </p>
     )
@@ -77,7 +77,7 @@ const zones = catalog.delivery;
   <h2>Refunds</h2>
   <ul>
     <li>UPI payments: refunded to the UPI account you paid from, within 7 days of us agreeing the refund.</li>
-    <li>Cash payments: refunded by UPI or in cash at the shop, as you prefer.</li>
+    {(codOn || pickupOn) && <li>Cash payments: refunded by UPI or in cash at the shop, as you prefer.</li>}
   </ul>
 
   <h2>Questions or complaints</h2>

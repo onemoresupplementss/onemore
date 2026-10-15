@@ -1,6 +1,6 @@
 ---
 import Page from '../layouts/Page.astro';
-import { catalog, shop, waHref } from '../lib/site.js';
+import { catalog, codOn, pickupOn, shop, waHref } from '../lib/site.js';
 import { SHOW_PRICES } from '../lib/env.js';
 import { formatINR } from '../shared/order.js';
 
@@ -25,8 +25,8 @@ const orderingWhatsApp = [
   },
   {
     q: 'How do I pay?',
-    a: 'After we confirm your order on WhatsApp you can pay by UPI, in cash or by UPI when it is delivered, or at the shop if you pick it up. We never ask for your UPI PIN or OTP.',
-    ta: 'UPI, டெலிவரியின் போது பணம், அல்லது கடையில் செலுத்தலாம்.',
+    a: `After we confirm your order on WhatsApp you can pay by UPI${codOn ? ', in cash or by UPI when it is delivered' : ''}${pickupOn ? ', or at the shop if you pick it up' : ''}. We never ask for your UPI PIN or OTP.`,
+    ta: codOn && pickupOn ? 'UPI, டெலிவரியின் போது பணம், அல்லது கடையில் செலுத்தலாம்.' : 'UPI மூலம் பணம் செலுத்தலாம்.',
   },
 ];
 
@@ -45,7 +45,7 @@ const orderingCheckout = [
     q: 'What is the UTR number?',
     a: 'It is the 12-digit reference number of your UPI payment. You find it in your UPI app under the payment’s details, sometimes called “UPI Ref No.” or “UPI transaction ID”. Entering it is optional but helps us match your payment faster.',
   },
-  {
+  codOn && {
     q: 'Can I pay on delivery?',
     a: `Yes, for orders up to ${formatINR(s.CODMax)}. Pay in cash or by UPI when the order arrives. For a first pay-on-delivery order above ${formatINR(s.CallFirstCODAbove)} we call you to confirm before packing.`,
     ta: 'ஆம், டெலிவரியின் போது பணம் அல்லது UPI மூலம் செலுத்தலாம்.',
@@ -62,10 +62,10 @@ const faqs = [
   SHOW_PRICES
     ? {
         q: 'How much is delivery?',
-        a: s.FreeDeliveryAbove > 0 ? `${formatINR(s.DeliveryFee)} for most areas, and free for orders of ${formatINR(s.FreeDeliveryAbove)} or more. Store pickup is always free.` : `${formatINR(s.DeliveryFee)} for most areas. Store pickup is free.`,
+        a: s.FreeDeliveryAbove > 0 ? `${formatINR(s.DeliveryFee)} for most areas, and free for orders of ${formatINR(s.FreeDeliveryAbove)} or more.${pickupOn ? ' Store pickup is always free.' : ''}` : `${formatINR(s.DeliveryFee)} for most areas.${pickupOn ? ' Store pickup is free.' : ''}`,
       }
-    : { q: 'How much is delivery?', a: 'It depends on your area and order. We tell you the delivery charge on WhatsApp before you pay. Store pickup is always free.' },
-  {
+    : { q: 'How much is delivery?', a: `It depends on your area and order. We tell you the delivery charge on WhatsApp before you pay.${pickupOn ? ' Store pickup is always free.' : ''}` },
+  pickupOn && {
     q: 'Can I pick up from the shop?',
     a: SHOW_PRICES
       ? 'Yes. Choose “Pick up from shop” at checkout. We message you when the order is packed. Pay by UPI before or at the counter.'
@@ -88,7 +88,7 @@ const faqs = [
     q: 'Which supplement should I take?',
     a: 'We are happy to explain the products and what the label says. For medical conditions, pregnancy, or for anyone under 18, please ask your doctor first.',
   },
-];
+].filter(Boolean); // switched-off answers (pickup, pay on delivery) are false
 
 const ld = {
   '@context': 'https://schema.org',

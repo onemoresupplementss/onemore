@@ -4,7 +4,7 @@ import Layout from '../../layouts/Layout.astro';
 import ProductBuy from '../../components/ProductBuy.jsx';
 import ProductGrid from '../../components/ProductGrid.jsx';
 import ProductPhoto from '../../components/ProductPhoto.jsx';
-import { absUrl, cardData, catalog, filled, shop, waHref } from '../../lib/site.js';
+import { absUrl, cardData, catalog, filled, pickupOn, shop, waHref } from '../../lib/site.js';
 import { formatNetQty, lineLabel } from '../../shared/order.js';
 
 export function getStaticPaths() {
@@ -32,7 +32,7 @@ const missingLabel = !info.ingredients || !info.nutrition || !info.countryOfOrig
 
 const description =
   p.description ||
-  `${p.brand} ${p.name} (${p.sizes.join(', ')}) at ${shop.name}. Genuine stock, ${SHOW_PRICES ? 'live availability' : 'order on WhatsApp'}, one-day home delivery across ${shop.serviceArea} or store pickup.`;
+  `${p.brand} ${p.name} (${p.sizes.join(', ')}) at ${shop.name}. Genuine stock, ${SHOW_PRICES ? 'live availability' : 'order on WhatsApp'}, one-day home delivery across ${shop.serviceArea}${pickupOn ? ' or store pickup' : ''}.`;
 const ask = `Hi ${shop.name}, can you send the label photo of ${p.brand} ${p.name}?`;
 
 // Search-engine product data needs a price, so it is only added in checkout mode.

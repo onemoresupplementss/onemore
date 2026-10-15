@@ -2,7 +2,7 @@
 import shop from '../../shop.config.json';
 import catalog from '../data/catalog.json';
 import { CATEGORIES } from '../shared/catalog.js';
-import { asset } from './env.js';
+import { SHOW_PRICES, asset } from './env.js';
 
 export { shop, catalog };
 
@@ -24,6 +24,17 @@ export function absUrl(pathOrSrc) {
 }
 
 export const telHref = `tel:${shop.phoneDial}`;
+
+// What the shop offers right now (Settings tab): store pickup, and pay on delivery (CODMax 0 = off).
+// Pages say only what is on; the checkout reads the same settings live. WhatsApp mode has no money
+// settings (CODMax) on the site, and payment is agreed on WhatsApp, so pay on delivery stays mentioned.
+export const pickupOn = Boolean(catalog.settings.PickupEnabled);
+export const codOn = SHOW_PRICES ? catalog.settings.CODMax > 0 : true;
+/** "UPI, on delivery or at the shop" – the ways to pay that are switched on. */
+export const payWays = ['UPI', codOn && 'on delivery', pickupOn && 'at the shop']
+  .filter(Boolean)
+  .join(', ')
+  .replace(/, ([^,]*)$/, ' or $1');
 
 export function waHref(text = '') {
   return `https://wa.me/${shop.whatsappNumber}${text ? '?text=' + encodeURIComponent(text) : ''}`;

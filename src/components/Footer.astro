@@ -2,14 +2,14 @@
 import { SHOW_PRICES, url } from '../lib/env.js';
 import Logo from './Logo.astro';
 import SellerDetails from './SellerDetails.astro';
-import { catalog, categoriesWithProducts, filled, shop, telHref, waHref } from '../lib/site.js';
+import { catalog, categoriesWithProducts, filled, pickupOn, shop, telHref, waHref } from '../lib/site.js';
 ---
 
 <footer class="mt-16 border-t border-line bg-surface">
   <div class="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
     <div class="space-y-3">
       <Logo size="text-3xl" />
-      <p class="text-sm text-muted">{shop.tagline} Gym supplements with one-day home delivery all over {shop.serviceArea}, and store pickup.</p>
+      <p class="text-sm text-muted">{shop.tagline} Gym supplements with one-day home delivery all over {shop.serviceArea}{pickupOn ? ', and store pickup' : ''}.</p>
       <p class="text-sm">
         <a class="font-bold hover:text-lime" href={telHref}>{shop.phoneDisplay}</a><br />
         <a class="text-muted hover:text-lime" href={waHref()} target="_blank" rel="noopener">WhatsApp us</a>

@@ -2,7 +2,7 @@
 import { SHOW_PRICES, url } from '../lib/env.js';
 import Page from '../layouts/Page.astro';
 import SellerDetails from '../components/SellerDetails.astro';
-import { catalog, filled, shop } from '../lib/site.js';
+import { catalog, codOn, filled, pickupOn, shop } from '../lib/site.js';
 import { formatINR } from '../shared/order.js';
 
 const s = catalog.settings;
@@ -39,8 +39,8 @@ const s = catalog.settings;
         <h2>5. Payment</h2>
         <ul>
           <li>UPI: pay the exact amount to our UPI ID shown on your order page. Your order is marked paid only when the payment shows in our account.</li>
-          <li>Pay on delivery: available for orders up to {formatINR(s.CODMax)}. Pay in cash or by UPI at your door.</li>
-          <li>Pay at the shop: for store pickup orders.</li>
+          {codOn && <li>Pay on delivery: available for orders up to {formatINR(s.CODMax)}. Pay in cash or by UPI at your door.</li>}
+          {pickupOn && <li>Pay at the shop: for store pickup orders.</li>}
           <li>We never ask for your UPI PIN, OTP or card details. Do not share them with anyone.</li>
         </ul>
       </>
@@ -58,7 +58,7 @@ const s = catalog.settings;
 
         <h2>5. Payment</h2>
         <ul>
-          <li>UPI to the UPI ID we send you on WhatsApp, cash or UPI on delivery, or payment at the shop for pickup orders.</li>
+          <li>UPI to the UPI ID we send you on WhatsApp{codOn ? ', cash or UPI on delivery' : ''}{pickupOn ? ', or payment at the shop for pickup orders' : ''}.</li>
           <li>Your order is marked paid only when the payment shows in our account.</li>
           <li>We never ask for your UPI PIN, OTP or card details. Do not share them with anyone.</li>
         </ul>

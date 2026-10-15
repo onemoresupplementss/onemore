@@ -4,7 +4,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Toast from '../components/Toast.jsx';
-import { absUrl, catalog, shop, waHref } from '../lib/site.js';
+import { absUrl, catalog, payWays, pickupOn, shop, waHref } from '../lib/site.js';
 
 interface Props {
   title?: string;
@@ -18,7 +18,7 @@ interface Props {
 
 const {
   title,
-  description = `${shop.name} – gym supplements with one-day home delivery all over ${shop.serviceArea}. Whey protein, mass gainers, creatine and pre-workouts from authorised importers. ${SHOW_PRICES ? 'UPI, pay on delivery or store pickup.' : 'Order on WhatsApp – delivery or store pickup.'}`,
+  description = `${shop.name} – gym supplements with one-day home delivery all over ${shop.serviceArea}. Whey protein, mass gainers, creatine and pre-workouts from authorised importers. ${SHOW_PRICES ? `Pay by ${payWays}.` : `Order on WhatsApp – ${pickupOn ? 'delivery or store pickup' : 'home delivery'}.`}`,
   image = '/og.png',
   noindex = false,
   jsonLd,

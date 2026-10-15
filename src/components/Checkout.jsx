@@ -250,8 +250,8 @@ export default function Checkout({ settings, delivery, shop }) {
   return (
     <form ref={formRef} onSubmit={placeOrder} noValidate class="grid gap-6 lg:grid-cols-[1fr_380px] lg:items-start">
       <div class="space-y-6">
-        <Section n="1" title="Delivery or pickup">
-          <div class="grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label="Delivery or pickup">
+        <Section n="1" title={st.PickupEnabled ? 'Delivery or pickup' : 'Delivery'}>
+          <div class="grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label={st.PickupEnabled ? 'Delivery or pickup' : 'Delivery'}>
             <Choice checked={c.fulfilment === 'delivery'} onSelect={() => set({ fulfilment: 'delivery' })} title="Home delivery" sub={`One day, all over Tamil Nadu · ${st.FreeDeliveryAbove > 0 ? `free above ${formatINR(st.FreeDeliveryAbove)}` : 'fee shown below'}`} />
             {st.PickupEnabled && <Choice checked={c.fulfilment === 'pickup'} onSelect={() => set({ fulfilment: 'pickup' })} title="Pick up from shop" sub="Free · we message you when it is ready" />}
           </div>
@@ -317,7 +317,8 @@ export default function Checkout({ settings, delivery, shop }) {
             {options.map((o) => (
               <Choice checked={payment === o} onSelect={() => setPayment(o)} title={o === 'upi' ? 'UPI (GPay, PhonePe, Paytm…)' : PAYMENT_LABELS[o]} sub={PAY_HELP[o].en} ta={PAY_HELP[o].ta} />
             ))}
-            {c.fulfilment === 'delivery' && total > st.CODMax && <p class="text-sm text-muted">Pay on delivery is available for orders up to {formatINR(st.CODMax)}.</p>}
+            {/* CODMax 0 = pay on delivery switched off: say nothing about it. */}
+            {c.fulfilment === 'delivery' && st.CODMax > 0 && total > st.CODMax && <p class="text-sm text-muted">Pay on delivery is available for orders up to {formatINR(st.CODMax)}.</p>}
           </div>
         </Section>
       </div>
