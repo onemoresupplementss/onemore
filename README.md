@@ -131,11 +131,27 @@ type its file name in the **Image** column, then tick **PublishNow**.
 
 **Delivery** tab: one row per area with Fee (blank = DeliveryFee) and ETA. Untick Active to stop delivering there.
 
-### Change the WhatsApp number, UPI ID or shop details
+### Change the UPI ID customers pay to
+It is in the **Payment** tab of **oneMore Orders – private**, the file only you can open (not in oneMore Products,
+which staff can edit):
+
+| Setting | Value |
+|---|---|
+| UpiId | your shop UPI ID, e.g. `onemore@okicici` |
+| UpiName | the exact name a UPI app shows for that ID (start a payment from another phone and stop before the PIN) |
+
+- A change works for the **next** order at once; no rebuild. Each order keeps the UPI ID it was shown.
+- **Every change emails you** (AlertEmail and the Google account that owns the script) with before/after, who and when.
+  If you get that email and didn't make the change, fix the tab, check who has access to the Orders file, and change
+  your Google password.
+- A value that is not a valid UPI ID is ignored. The site then uses `upiId` in `shop.config.json` (normally left as the
+  placeholder), or tells the customer the UPI ID comes on WhatsApp.
+
+### Change the WhatsApp number or shop details
 These are in **`shop.config.json`** on GitHub (rarely changed, and kept away from the sheet so nobody can tamper with them):
 1. Open the repository on github.com → `shop.config.json` → pencil icon (Edit).
-2. Change the value between the quotes, for example `"upiId": "oneMore@okicici"`.
-   The WhatsApp number is digits only with 91 in front: `"whatsappNumber": "916385824752"`.
+2. Change the value between the quotes. The WhatsApp number is digits only with 91 in front:
+   `"whatsappNumber": "916385824752"`.
 3. **Commit changes**. Cloudflare rebuilds the site in about 2 minutes.
 
 > Keep `"upiPayLinkTested": false` unless a ₹1 payment through the "Open UPI app" button has worked in
@@ -239,7 +255,7 @@ Use `?src=ig` in your Instagram bio and `?src=bag` on the QR sticker on carry ba
 - [ ] Written answer from the Tiruvarur **Food Safety Officer** on whether website sales need a separate/Central FSSAI licence.
 - [ ] FSSAI number in `shop.config.json` → `fssaiNumber` (it shows in the footer and on terms).
 - [ ] Every `[placeholder]` in `shop.config.json` replaced (the build log lists any that are left).
-- [ ] UPI ID set; ₹1 test payment by "Pay to UPI ID" works and shows the right name (`upiNameCustomersSee`).
+- [ ] UPI ID and UpiName in the Orders file → **Payment** tab; ₹1 test payment by "Pay to UPI ID" works and shows that name.
 - [ ] Real prices, MRP, stock, NetQty/Unit and BestBefore for every product; placeholder rows fixed or set inactive.
 - [ ] **Verified** ticked only for tubs with an importer sticker and a distributor bill.
 - [ ] Product info (label details) filled at least for bestsellers; label photos added.

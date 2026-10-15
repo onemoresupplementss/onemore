@@ -103,12 +103,15 @@ Response:
     "deliveryFee": 0,
     "total": 0,
     "customer": { "name": "", "phone": "", "fulfilment": "", "area": "", "pincode": "", "address": "", "landmark": "", "notes": "" },
-    "callFirst": false
+    "callFirst": false,
+    "pay": { "upiId": "onemore@okicici", "upiName": "ONEMORE SUPPLEMENTS" }
   }
 }
 ```
 
 `callFirst` = method cod and total > CallFirstCODAbove and this phone has no earlier Delivered order.
+
+`pay` (UPI orders only) = `UpiId` / `UpiName` from the **Payment** tab of the private Orders file, read when the order is placed. It is left out when that tab is missing or the ID is not a valid UPI ID; the order page then falls back to `upiId` / `upiNameCustomersSee` in `shop.config.json`, or tells the customer the UPI ID comes on WhatsApp. Any edit to the Payment tab is emailed to AlertEmail and the script owner.
 
 After releasing the lock the script pushes the live feed (below) so stock on the site updates at once.
 

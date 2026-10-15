@@ -33,7 +33,8 @@
  *   Also used internally: ORDERS_SHEET_ID, FEED_PUSH_SCHEDULED_AT, STATUS_*, PRICE_CACHE_*.
  *
  * TRIGGERS (made by the setup functions)
- *   onOrdersEdit        when the Orders sheet is edited (Status/Payment → Updated; Cancelled → stock back)
+ *   onOrdersEdit        when the Orders sheet is edited (Status/Payment → Updated; Cancelled → stock back;
+ *                       Payment tab (UPI ID) changed → email to the owner)
  *   onProductsEdit      when the Products file is edited (push to website ~30 s later; Publish now)
  *   runScheduledFeedPush  one-off, ~30 s after a Products edit (removes itself)
  *   timerTick           every 5 minutes: Check column + push the feed if anything changed
@@ -181,6 +182,16 @@ function actionCreateOrder_(data) {
       pushLiveFeed('order', { data: out.feedData });
     } catch (err) {
       console.error('Live feed push after order failed: ' + err);
+    }
+  }
+  // The UPI ID to pay comes from the Payment tab of this private file at the moment of ordering.
+  // If it can't be read, the order page falls back to upiId in shop.config.json.
+  if (out.response.ok && out.response.order.method === 'upi') {
+    try {
+      const pay = paymentDetails_();
+      if (pay.upiId) out.response.order.pay = { upiId: pay.upiId, upiName: pay.upiName };
+    } catch (err) {
+      console.error('Payment tab could not be read: ' + err);
     }
   }
   return out.response;

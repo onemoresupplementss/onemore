@@ -55,6 +55,12 @@ test('order: forwards a valid order and notifies the owner', async () => {
   assert.equal(calls[0].data.source, 'ig');
 });
 
+test('order: passes the UPI details from the Orders file through to the order page', async () => {
+  gasReply = () => ({ ok: true, order: { id: 'ORD-1002', method: 'upi', pay: { upiId: 'onemore@okicici', upiName: 'ONEMORE' } } });
+  const res = await order({ request: post('/api/order', goodOrder), env });
+  assert.deepEqual((await res.json()).order.pay, { upiId: 'onemore@okicici', upiName: 'ONEMORE' });
+});
+
 test('order: rejects other websites', async () => {
   const res = await order({ request: post('/api/order', goodOrder, { Origin: 'https://evil.test' }), env });
   assert.equal(res.status, 403);

@@ -132,9 +132,12 @@ else if (existsSync(feedFile)) unlinkSync(feedFile);
 
 for (const w of catalog.warnings) console.warn('Sheet: ' + w);
 
-// Remind the owner about "[...]" placeholders still in shop.config.json.
+// Remind the owner about "[...]" placeholders still in shop.config.json. The UPI fields are only a
+// fallback (the Payment tab of the Orders sheet holds the real UPI ID), so they may stay placeholders.
+const FALLBACK_ONLY = ['upiId', 'upiNameCustomersSee'];
 const todo = [];
 (function walk(v, path) {
+  if (FALLBACK_ONLY.includes(path)) return;
   if (typeof v === 'string' && /\[[^\]]*\]/.test(v)) todo.push(path);
   else if (v && typeof v === 'object') for (const [k, x] of Object.entries(v)) if (!k.startsWith('_')) walk(x, path ? `${path}.${k}` : k);
 })(shop, '');

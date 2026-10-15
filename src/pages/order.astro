@@ -7,7 +7,7 @@ const s = catalog.settings;
 const publicShop = {
   name: shop.name,
   whatsappNumber: shop.whatsappNumber,
-  upiId: shop.upiId,
+  upiId: isPlaceholder(shop.upiId) ? '' : shop.upiId, // fallback; the Payment tab of the Orders file wins
   upiPayeeName: shop.upiPayeeName,
   upiNameCustomersSee: isPlaceholder(shop.upiNameCustomersSee) ? '' : shop.upiNameCustomersSee,
   upiPayLinkTested: shop.upiPayLinkTested === true,

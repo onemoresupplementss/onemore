@@ -350,6 +350,7 @@ function setupOrdersFile() {
     L('total') + ") 'Total spent', max(" + L('created') + ") 'Last order' format sum(" + L('total') + ") '#,##0', max(" + L('created') +
     ") 'd mmm yyyy'"));
 
+  setupPaymentTab_(ss);
   removeEmptyDefaultSheet_(ss);
   if (!props.getProperty('ORDER_SEQ')) props.setProperty('ORDER_SEQ', '1000');
 
@@ -420,6 +421,10 @@ function selfTest() {
     const s = normalizeSettings(settingsMap_(data.settings.values));
     s.AcceptingOrders === 'Open' ? ok('AcceptingOrders = Open') : note('AcceptingOrders = Closed (no online orders)');
     s.AlertEmail ? ok('AlertEmail = ' + s.AlertEmail) : note('AlertEmail blank - no order emails or stale reminders');
+    const pay = paymentDetails_();
+    if (pay.upiId) ok('Payment tab: UPI ID ' + pay.upiId + (pay.upiName ? ' (' + pay.upiName + ')' : ' - UpiName is blank'));
+    else if (pay.rawId) bad('Payment tab: "' + pay.rawId + '" is not a valid UPI ID');
+    else note('Payment tab: UpiId blank - the order page uses upiId from shop.config.json');
     if (s.MaxOpenOrdersPerPhone < 1) bad('MaxOpenOrdersPerPhone is ' + s.MaxOpenOrdersPerPhone + ' - this blocks every order');
     if (s.MaxQtyPerLine < 1) bad('MaxQtyPerLine is ' + s.MaxQtyPerLine + ' - this blocks every order');
     if (s.PreviewBanner) note('PreviewBanner is on - set it to No at launch');

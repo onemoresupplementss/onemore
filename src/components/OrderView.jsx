@@ -105,7 +105,11 @@ export default function OrderView({ shop, replyPromise, reviewLink, callFirstAbo
   const { order, token } = rec;
   const c = order.customer;
   const isUpi = order.method === 'upi';
-  const upi = upiLink({ vpa: shop.upiId, payee: shop.upiPayeeName, amount: order.total, note: order.id });
+  // The UPI ID comes with the order, from the private Orders file (Payment tab) at the moment of ordering;
+  // shop.config.json is only the fallback for orders without one.
+  const upiId = order.pay?.upiId || shop.upiId;
+  const upiName = order.pay?.upiId ? order.pay.upiName : shop.upiNameCustomersSee;
+  const upi = upiLink({ vpa: upiId, payee: upiName || shop.upiPayeeName, amount: order.total, note: order.id });
   const wa = whatsappLink(shop.whatsappNumber, buildWhatsAppText(order, shop, { utr: utrState === 'saved' ? utr : '' }));
   const amount = order.total.toFixed(Number.isInteger(order.total) ? 0 : 2);
 
@@ -172,7 +176,14 @@ export default function OrderView({ shop, replyPromise, reviewLink, callFirstAbo
           <p class="mt-3 font-semibold">One more step: send this order to us on WhatsApp so we can start packing.</p>
         </div>
 
-        {isUpi ? (
+        {isUpi && !upiId ? (
+          <section class="card space-y-2 p-5" aria-labelledby="pay-h">
+            <h2 id="pay-h" class="text-xl font-black">
+              1. Pay {formatINR(order.total)} by UPI
+            </h2>
+            <p class="text-sm text-muted">Send this order to us on WhatsApp (below). We reply with our UPI ID and the amount to pay.</p>
+          </section>
+        ) : isUpi ? (
           <section class="card space-y-4 p-5" aria-labelledby="pay-h">
             <h2 id="pay-h" class="text-xl font-black">
               1. Pay {formatINR(order.total)} by UPI
@@ -186,11 +197,11 @@ export default function OrderView({ shop, replyPromise, reviewLink, callFirstAbo
               UPI ஆப்பைத் திறந்து “UPI ID-க்கு பணம் அனுப்பு” என்பதைத் தேர்வு செய்து, கீழே உள்ள UPI ID மற்றும் தொகையை ஒட்டவும்.
             </p>
             <div class="space-y-2">
-              <CopyRow label="Our UPI ID" value={shop.upiId} />
+              <CopyRow label="Our UPI ID" value={upiId} />
               <CopyRow label="Amount" value={amount} display={formatINR(order.total)} />
               <CopyRow label="Note (order number)" value={order.id} />
             </div>
-            {shop.upiNameCustomersSee && <p class="text-sm text-muted">Your UPI app will show the name <b class="text-fg">{shop.upiNameCustomersSee}</b>. Check it before you pay.</p>}
+            {upiName && <p class="text-sm text-muted">Your UPI app will show the name <b class="text-fg">{upiName}</b>. Check it before you pay.</p>}
             {shop.upiPayLinkTested && (
               <a class="btn btn-ghost w-full" href={upi}>
                 Open UPI app
