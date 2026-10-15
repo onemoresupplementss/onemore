@@ -89,6 +89,10 @@ export function cartCount(lines) {
   return lines.reduce((n, l) => n + l.qty, 0);
 }
 
+/* ---------- Product page: the size/flavour picked (so the photo can follow it) ---------- */
+
+export const selectedVariant = signal(null);
+
 /* ---------- "Added to cart" notice ---------- */
 
 // { text, id } while showing, else null. The cart drawer opens only when the customer asks.

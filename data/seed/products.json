@@ -104,11 +104,11 @@
     "Name": "Nitro-Tech Whey Gold",
     "Category": "Whey Protein",
     "Size": "2 kg",
-    "Flavour": "Chocolate",
+    "Flavour": "Double Rich Chocolate",
     "Price": 5499,
     "MRP": 6499,
     "Stock": 5,
-    "Image": "",
+    "Image": "muscletech-nitro-tech-whey-gold.webp",
     "Description": "",
     "NetQty": 2000,
     "Unit": "g",
@@ -117,7 +117,7 @@
     "Badge": "",
     "Sort": 30,
     "Keywords": "nitrotech, nitro tech",
-    "Check": "Placeholder price, stock and photo – replace. Confirm: which 4 MuscleTech wheys do you stock? Rename/replace this row. Tick Verified after checking the Indian importer sticker and distributor bill."
+    "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Confirm: which 4 MuscleTech wheys do you stock? Rename/replace this row. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
   {
     "ID": "MT-NTWP-2KG",
@@ -780,7 +780,7 @@
     "Price": 3999,
     "MRP": 4699,
     "Stock": 5,
-    "Image": "",
+    "Image": "muscleblaze-super-gainer-xxl.webp",
     "Description": "",
     "NetQty": 3000,
     "Unit": "g",
@@ -789,7 +789,7 @@
     "Badge": "",
     "Sort": 260,
     "Keywords": "mb, gainer",
-    "Check": "Placeholder price, stock and photo – replace. Confirm the exact product name from the label."
+    "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Confirm the exact product name from the label."
   },
   {
     "ID": "LABR-MMG-3KG",
@@ -900,7 +900,7 @@
     "Price": 3999,
     "MRP": 4699,
     "Stock": 5,
-    "Image": "",
+    "Image": "dignity-maxxx-gain.webp",
     "Description": "",
     "NetQty": 3000,
     "Unit": "g",
@@ -909,7 +909,7 @@
     "Badge": "",
     "Sort": 310,
     "Keywords": "max gain, gainer",
-    "Check": "Placeholder price, stock and photo – replace. Name from your pack photo – confirm the sizes and flavours you stock. Tick Verified after checking the Indian importer sticker and distributor bill."
+    "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
   {
     "ID": "BN-HMG-27KG",
@@ -1632,7 +1632,7 @@
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Photo shows the 400 g pack."
   },
   {
-    "ID": "DSC-PO-750G-BANA",
+    "ID": "DSC-PO-750G-BC",
     "Group": "doctor-s-choice-protein-oats",
     "Active": true,
     "Verified": true,
@@ -1640,11 +1640,11 @@
     "Name": "Protein Oats",
     "Category": "Protein Oats",
     "Size": "750 g",
-    "Flavour": "Banana",
+    "Flavour": "Banana Caramel",
     "Price": 499,
     "MRP": 599,
     "Stock": 5,
-    "Image": "doctor-s-choice-protein-oats.webp",
+    "Image": "doctor-s-choice-protein-oats--banana-caramel.webp",
     "Description": "",
     "NetQty": 750,
     "Unit": "g",
@@ -1653,7 +1653,7 @@
     "Badge": "",
     "Sort": 620,
     "Keywords": "oats, doctors choice, dr choice, breakfast",
-    "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Photo shows the Strawberry 750 g pack."
+    "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Flavour names as printed on the packs. Photos show the 750 g boxes."
   },
   {
     "ID": "DSC-PO-750G-STRA",
@@ -1677,10 +1677,10 @@
     "Badge": "",
     "Sort": 620,
     "Keywords": "oats, doctors choice, dr choice, breakfast",
-    "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Photo shows the Strawberry 750 g pack."
+    "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Flavour names as printed on the packs. Photos show the 750 g boxes."
   },
   {
-    "ID": "DSC-PO-750G-CHOC",
+    "ID": "DSC-PO-750G-DCB",
     "Group": "doctor-s-choice-protein-oats",
     "Active": true,
     "Verified": true,
@@ -1688,11 +1688,11 @@
     "Name": "Protein Oats",
     "Category": "Protein Oats",
     "Size": "750 g",
-    "Flavour": "Chocolate",
+    "Flavour": "Dark Choco Berry",
     "Price": 499,
     "MRP": 599,
     "Stock": 5,
-    "Image": "doctor-s-choice-protein-oats.webp",
+    "Image": "doctor-s-choice-protein-oats--dark-choco-berry.webp",
     "Description": "",
     "NetQty": 750,
     "Unit": "g",
@@ -1701,10 +1701,10 @@
     "Badge": "",
     "Sort": 620,
     "Keywords": "oats, doctors choice, dr choice, breakfast",
-    "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Photo shows the Strawberry 750 g pack."
+    "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Flavour names as printed on the packs. Photos show the 750 g boxes."
   },
   {
-    "ID": "DSC-PO-2KG-BANA",
+    "ID": "DSC-PO-2KG-BC",
     "Group": "doctor-s-choice-protein-oats",
     "Active": true,
     "Verified": true,
@@ -1712,11 +1712,11 @@
     "Name": "Protein Oats",
     "Category": "Protein Oats",
     "Size": "2 kg",
-    "Flavour": "Banana",
+    "Flavour": "Banana Caramel",
     "Price": 499,
     "MRP": 599,
     "Stock": 5,
-    "Image": "doctor-s-choice-protein-oats.webp",
+    "Image": "doctor-s-choice-protein-oats--banana-caramel.webp",
     "Description": "",
     "NetQty": 2000,
     "Unit": "g",
@@ -1725,7 +1725,7 @@
     "Badge": "",
     "Sort": 620,
     "Keywords": "oats, doctors choice, dr choice, breakfast",
-    "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Photo shows the Strawberry 750 g pack."
+    "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Flavour names as printed on the packs. Photos show the 750 g boxes."
   },
   {
     "ID": "DSC-PO-2KG-STRA",
@@ -1749,10 +1749,10 @@
     "Badge": "",
     "Sort": 620,
     "Keywords": "oats, doctors choice, dr choice, breakfast",
-    "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Photo shows the Strawberry 750 g pack."
+    "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Flavour names as printed on the packs. Photos show the 750 g boxes."
   },
   {
-    "ID": "DSC-PO-2KG-CHOC",
+    "ID": "DSC-PO-2KG-DCB",
     "Group": "doctor-s-choice-protein-oats",
     "Active": true,
     "Verified": true,
@@ -1760,11 +1760,11 @@
     "Name": "Protein Oats",
     "Category": "Protein Oats",
     "Size": "2 kg",
-    "Flavour": "Chocolate",
+    "Flavour": "Dark Choco Berry",
     "Price": 499,
     "MRP": 599,
     "Stock": 5,
-    "Image": "doctor-s-choice-protein-oats.webp",
+    "Image": "doctor-s-choice-protein-oats--dark-choco-berry.webp",
     "Description": "",
     "NetQty": 2000,
     "Unit": "g",
@@ -1773,22 +1773,22 @@
     "Badge": "",
     "Sort": 620,
     "Keywords": "oats, doctors choice, dr choice, breakfast",
-    "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Photo shows the Strawberry 750 g pack."
+    "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Flavour names as printed on the packs. Photos show the 750 g boxes."
   },
   {
-    "ID": "ALPI-HPSO-1KG",
-    "Group": "alpino-high-protein-super-oats",
+    "ID": "ALPI-HPO-1KG",
+    "Group": "alpino-high-protein-oats",
     "Active": true,
     "Verified": true,
     "Brand": "Alpino",
-    "Name": "High Protein Super Oats",
+    "Name": "High Protein Oats",
     "Category": "Protein Oats",
     "Size": "1 kg",
     "Flavour": "Dark Chocolate",
     "Price": 499,
     "MRP": 599,
     "Stock": 5,
-    "Image": "alpino-high-protein-super-oats.webp",
+    "Image": "alpino-high-protein-oats.webp",
     "Description": "",
     "NetQty": 1000,
     "Unit": "g",
@@ -1796,23 +1796,23 @@
     "Bestseller": false,
     "Badge": "",
     "Sort": 630,
-    "Keywords": "oats, super oats, breakfast",
-    "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Photo shows the Classic Coffee pack."
+    "Keywords": "oats, alpino oats, breakfast",
+    "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Dark Chocolate is in Alpino's High Protein Oats line (not Super Oats)."
   },
   {
-    "ID": "ALPI-HPSO-2KG",
-    "Group": "alpino-high-protein-super-oats",
+    "ID": "ALPI-HPO-2KG",
+    "Group": "alpino-high-protein-oats",
     "Active": true,
     "Verified": true,
     "Brand": "Alpino",
-    "Name": "High Protein Super Oats",
+    "Name": "High Protein Oats",
     "Category": "Protein Oats",
     "Size": "2 kg",
     "Flavour": "Dark Chocolate",
     "Price": 499,
     "MRP": 599,
     "Stock": 5,
-    "Image": "alpino-high-protein-super-oats.webp",
+    "Image": "alpino-high-protein-oats.webp",
     "Description": "",
     "NetQty": 2000,
     "Unit": "g",
@@ -1820,7 +1820,7 @@
     "Bestseller": false,
     "Badge": "",
     "Sort": 630,
-    "Keywords": "oats, super oats, breakfast",
-    "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Photo shows the Classic Coffee pack."
+    "Keywords": "oats, alpino oats, breakfast",
+    "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Dark Chocolate is in Alpino's High Protein Oats line (not Super Oats)."
   }
 ]

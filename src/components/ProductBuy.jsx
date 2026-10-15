@@ -1,7 +1,7 @@
 // Product page buy box: size/flavour picker, live price and stock, quantity, add to cart.
 // In WhatsApp mode there is no price or stock; "Order on WhatsApp" sends just this item.
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { addToCart, feed, liveVariant, loadFeed, showAddedToast, useSignal } from '../client/store.js';
+import { addToCart, feed, liveVariant, loadFeed, selectedVariant, showAddedToast, useSignal } from '../client/store.js';
 import { SHOW_PRICES, url } from '../lib/env.js';
 import { buildOrderListText, formatINR, formatNetQty, percentOff, unitPrice, whatsappLink } from '../shared/order.js';
 
@@ -40,6 +40,9 @@ export default function ProductBuy({ product, settings, shop }) {
   useEffect(() => {
     if (qty > maxQty) setQty(Math.max(1, maxQty));
   }, [maxQty]);
+
+  // Lets the product photo show this option's own picture, if it has one.
+  useEffect(() => selectedVariant.set(v.id), [v.id]);
 
   function pickSize(size) {
     const same = vs.find((x) => x.size === size && x.flavour === v.flavour) || vs.find((x) => x.size === size);

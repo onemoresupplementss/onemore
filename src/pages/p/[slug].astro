@@ -3,7 +3,7 @@ import { asset, SHOW_PRICES, url } from '../../lib/env.js';
 import Layout from '../../layouts/Layout.astro';
 import ProductBuy from '../../components/ProductBuy.jsx';
 import ProductGrid from '../../components/ProductGrid.jsx';
-import ProductImage from '../../components/ProductImage.jsx';
+import ProductPhoto from '../../components/ProductPhoto.jsx';
 import { absUrl, cardData, catalog, filled, shop, waHref } from '../../lib/site.js';
 import { formatNetQty, lineLabel } from '../../shared/order.js';
 
@@ -76,14 +76,14 @@ const crumbsLd = {
     <div class="grid gap-8 lg:grid-cols-2 lg:gap-12">
       <div class="space-y-3">
         <div class="card overflow-hidden">
-          <ProductImage src={images[0]} brand={p.brand} name={p.name} size={v0.size} eager />
+          <ProductPhoto client:idle variants={p.variants.map((v) => ({ id: v.id, image: v.image, size: v.size }))} image={p.image} brand={p.brand} name={p.name} />
         </div>
         {
-          (images.length > 1 || info.labelImages?.length > 0) && (
+          info.labelImages?.length > 0 && (
             <ul class="grid grid-cols-4 gap-2">
-              {[...images.slice(1), ...(info.labelImages || [])].map((src, i) => (
+              {info.labelImages.map((src, i) => (
                 <li>
-                  <a href={asset(src)} target="_blank" rel="noopener" class="card block overflow-hidden" aria-label={`Open photo ${i + 2}`}>
+                  <a href={asset(src)} target="_blank" rel="noopener" class="card block overflow-hidden" aria-label={`Open label photo ${i + 1}`}>
                     <img src={asset(src)} alt="" loading="lazy" width="150" height="150" class="aspect-square w-full object-cover" />
                   </a>
                 </li>

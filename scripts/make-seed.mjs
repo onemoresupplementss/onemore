@@ -24,7 +24,7 @@ const LIST = [
   // Whey
   C('Whey Protein', 'Optimum Nutrition', 'Gold Standard 100% Whey', ['1 kg', '2 kg'], 'Double Rich Chocolate', 'Yes', { best: true, keywords: 'on, gsw, gold standard, optimum' }),
   C('Whey Protein', 'Optimum Nutrition', 'Performance Whey', ['1 kg', '2 kg'], 'Chocolate', 'Yes', { keywords: 'on, optimum' }),
-  C('Whey Protein', 'MuscleTech', 'Nitro-Tech Whey Gold', ['2 kg'], 'Chocolate', 'Yes', { best: true, check: CONFIRM_MT, keywords: 'nitrotech, nitro tech' }),
+  C('Whey Protein', 'MuscleTech', 'Nitro-Tech Whey Gold', ['2 kg'], 'Double Rich Chocolate', 'Yes', { best: true, check: CONFIRM_MT, keywords: 'nitrotech, nitro tech' }),
   C('Whey Protein', 'MuscleTech', 'Nitro-Tech Whey Protein', ['2 kg'], 'Milk Chocolate', 'Yes', { check: FROM_PACK, keywords: 'nitrotech, nitro tech' }),
   C('Whey Protein', 'MuscleTech', 'Platinum 100% Whey Isolate', ['2 kg'], 'Milk Chocolate', 'Yes', { check: FROM_PACK, keywords: 'isolate, platinum' }),
   C('Whey Protein', 'MuscleTech', 'Nitro-Tech Ripped', ['2 kg'], 'Chocolate Fudge Brownie', 'Yes', { check: FROM_PACK, keywords: 'nitrotech, nitro tech' }),
@@ -90,8 +90,8 @@ const LIST = [
   C('Pre-Workout', 'ProManiax', 'Blood Lock Stim Loaded', ['315 g'], 'Cola Burst', 'No', { check: FROM_PACK, keywords: 'bloodlock, blood lock, preworkout' }),
   // Protein oats
   C('Protein Oats', 'One Science', 'Daily High Protein Oats', ['900 g'], 'Dark Chocolate', 'No', { check: 'Photo shows the 400 g pack.', keywords: 'oats, breakfast' }),
-  C('Protein Oats', "Doctor's Choice", 'Protein Oats', ['750 g', '2 kg'], ['Banana', 'Strawberry', 'Chocolate'], 'No', { check: 'Photo shows the Strawberry 750 g pack.', keywords: 'oats, doctors choice, dr choice, breakfast' }),
-  C('Protein Oats', 'Alpino', 'High Protein Super Oats', ['1 kg', '2 kg'], 'Dark Chocolate', 'No', { check: 'Photo shows the Classic Coffee pack.', keywords: 'oats, super oats, breakfast' }),
+  C('Protein Oats', "Doctor's Choice", 'Protein Oats', ['750 g', '2 kg'], ['Banana Caramel', 'Strawberry', 'Dark Choco Berry'], 'No', { check: 'Flavour names as printed on the packs. Photos show the 750 g boxes.', keywords: 'oats, doctors choice, dr choice, breakfast' }),
+  C('Protein Oats', 'Alpino', 'High Protein Oats', ['1 kg', '2 kg'], 'Dark Chocolate', 'No', { check: "Dark Chocolate is in Alpino's High Protein Oats line (not Super Oats).", keywords: 'oats, alpino oats, breakfast' }),
 ];
 
 // Placeholder prices [price, mrp] - the owner replaces all of these in the sheet.
@@ -155,6 +155,9 @@ for (const item of LIST) {
     const [price, mrp] = placeholderPrice(item.category, size);
     const [nq, unit] = netQty(size);
     let id = `${abbr(item.brand)}-${abbr(item.name)}-${sizeCode(size)}${flavours.length > 1 ? '-' + abbr(flavour) : ''}`;
+    // A flavour's own photo (<group>--<flavour>.webp) wins over the product photo.
+    const own = `${group}--${slugify(flavour)}.webp`;
+    const variantImage = flavour && existsSync(join(root, 'public/products', own)) ? own : image;
     let n = 2;
     while (usedIds.has(id)) id = `${id.replace(/-\d+$/, '')}-${n++}`;
     usedIds.add(id);
@@ -174,7 +177,7 @@ for (const item of LIST) {
       Price: price,
       MRP: mrp,
       Stock: 5,
-      Image: image,
+      Image: variantImage,
       Description: '',
       NetQty: nq,
       Unit: unit,
