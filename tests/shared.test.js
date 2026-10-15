@@ -10,7 +10,7 @@ const settings = normalizeSettings({});
 test('seed catalogue normalises without warnings', () => {
   const c = normalizeCatalog({ products: seed('products'), info: seed('info'), settings: seed('settings'), delivery: seed('delivery') }, { today: '2026-10-14' });
   assert.deepEqual(c.warnings, []);
-  assert.equal(c.products.length, 60);
+  assert.equal(c.products.length, new Set(seed('products').map((p) => p.Group)).size);
   const ids = c.products.flatMap((p) => p.variants.map((v) => v.id));
   assert.equal(new Set(ids).size, ids.length);
 });

@@ -19,6 +19,7 @@ const CATEGORIES = [
   { slug: 'fish-oil', name: 'Fish Oil' },
   { slug: 'multivitamin', name: 'Multivitamin' },
   { slug: 'minerals', name: 'Minerals' },
+  { slug: 'protein-oats', name: 'Protein Oats' },
 ];
 
 const UNITS = ['g', 'ml', 'tablets', 'capsules', 'softgels'];

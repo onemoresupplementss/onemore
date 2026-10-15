@@ -13,6 +13,7 @@ export const CATEGORIES = [
   { slug: 'fish-oil', name: 'Fish Oil', blurb: 'Omega-3' },
   { slug: 'multivitamin', name: 'Multivitamin', blurb: 'Daily micronutrients' },
   { slug: 'minerals', name: 'Minerals', blurb: 'Magnesium and more' },
+  { slug: 'protein-oats', name: 'Protein Oats', blurb: 'High-protein breakfast' },
 ];
 
 const CATEGORY_BY_KEY = new Map();

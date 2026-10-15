@@ -22,7 +22,7 @@ Products headers (row 1, in this order; the site matches headers by name, so ord
 
 - `ID` unique, never reused (e.g. `ON-GSW-2KG-01`). `Group` = product page key; script fills it once from Brand + Name (slug) when blank and never overwrites it.
 - `Active`, `Verified`, `Bestseller` are checkboxes. `Verified` = importer sticker + distributor bill checked (or Indian brand).
-- `Category` dropdown: Whey Protein, Mass Gainer, Creatine, Pre-Workout, BCAA, EAA, Glutamine, Fish Oil, Multivitamin, Minerals.
+- `Category` dropdown: Whey Protein, Mass Gainer, Creatine, Pre-Workout, BCAA, EAA, Glutamine, Fish Oil, Multivitamin, Minerals, Protein Oats.
 - `Price`, `MRP` rupees; `Stock` whole number the owner types (shelf count). The script subtracts ordered units at order time and adds them back once when an order is Cancelled.
 - `NetQty` number, `Unit` one of g, ml, tablets, capsules, softgels (for unit price).
 - `BestBefore` date of the earliest batch on the shelf.

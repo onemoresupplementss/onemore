@@ -42,7 +42,7 @@
     "Imported": "Yes"
   },
   {
-    "Group": "muscletech-nitro-tech-performance-series",
+    "Group": "muscletech-nitro-tech-whey-protein",
     "GenericName": "Whey Protein – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -56,7 +56,7 @@
     "Imported": "Yes"
   },
   {
-    "Group": "muscletech-platinum-100-whey",
+    "Group": "muscletech-platinum-100-whey-isolate",
     "GenericName": "Whey Protein – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -98,7 +98,7 @@
     "Imported": "Check"
   },
   {
-    "Group": "apex-vital-whey-protein",
+    "Group": "apex-vitals-whey-2-pure",
     "GenericName": "Whey Protein – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -109,7 +109,7 @@
     "CountryOfOrigin": "",
     "ConsumerCare": "",
     "LabelImages": "",
-    "Imported": "Check"
+    "Imported": "Yes"
   },
   {
     "Group": "myprotein-impact-whey-protein",
@@ -154,7 +154,7 @@
     "Imported": "Yes"
   },
   {
-    "Group": "kevin-levrone-anabolic-whey",
+    "Group": "kevin-levrone-anabolic-iso-whey",
     "GenericName": "Whey Protein – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -168,7 +168,7 @@
     "Imported": "Yes"
   },
   {
-    "Group": "kevin-levrone-supreme-whey",
+    "Group": "kevin-levrone-levro-whey-supreme",
     "GenericName": "Whey Protein – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -210,7 +210,7 @@
     "Imported": "Check"
   },
   {
-    "Group": "prosupps-whey-protein",
+    "Group": "prosupps-whey",
     "GenericName": "Whey Protein – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -252,7 +252,7 @@
     "Imported": "Check"
   },
   {
-    "Group": "balkan-pharma-whey-protein",
+    "Group": "balkan-pharma-prime-whey-extreme",
     "GenericName": "Whey Protein – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -266,7 +266,7 @@
     "Imported": "Yes"
   },
   {
-    "Group": "tri-whey-tri-whey-protein",
+    "Group": "elev-tri-whey",
     "GenericName": "Whey Protein – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -392,7 +392,7 @@
     "Imported": "Check"
   },
   {
-    "Group": "one-science-mass-gainer",
+    "Group": "one-science-anabolic-mass",
     "GenericName": "Mass Gainer – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -403,7 +403,7 @@
     "CountryOfOrigin": "",
     "ConsumerCare": "",
     "LabelImages": "",
-    "Imported": "Check"
+    "Imported": "No"
   },
   {
     "Group": "maxn-mass-gainer",
@@ -420,7 +420,7 @@
     "Imported": "Check"
   },
   {
-    "Group": "dignity-mass-gainer",
+    "Group": "dignity-maxxx-gain",
     "GenericName": "Mass Gainer – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -434,7 +434,7 @@
     "Imported": "Check"
   },
   {
-    "Group": "hulk-mass-gainer",
+    "Group": "bodyholic-nutrition-hulk-mass-gainer",
     "GenericName": "Mass Gainer – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -518,7 +518,7 @@
     "Imported": "Yes"
   },
   {
-    "Group": "muscletech-eaa",
+    "Group": "muscletech-eaa-energy",
     "GenericName": "EAA – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -546,7 +546,7 @@
     "Imported": "Yes"
   },
   {
-    "Group": "optimum-nutrition-bcaa",
+    "Group": "optimum-nutrition-instantized-bcaa-5000-powder",
     "GenericName": "BCAA – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -560,7 +560,7 @@
     "Imported": "Yes"
   },
   {
-    "Group": "youwefit-fish-oil",
+    "Group": "youwefit-omega-3-fish-oil",
     "GenericName": "Fish Oil – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -571,7 +571,7 @@
     "CountryOfOrigin": "",
     "ConsumerCare": "",
     "LabelImages": "",
-    "Imported": "Check"
+    "Imported": "No"
   },
   {
     "Group": "optimum-nutrition-fish-oil",
@@ -602,7 +602,7 @@
     "Imported": "Yes"
   },
   {
-    "Group": "slow-fish-oil",
+    "Group": "wellbeing-nutrition-slow-triple-strength-omega-3",
     "GenericName": "Fish Oil – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -613,7 +613,7 @@
     "CountryOfOrigin": "",
     "ConsumerCare": "",
     "LabelImages": "",
-    "Imported": "Check"
+    "Imported": "No"
   },
   {
     "Group": "maxn-fish-oil",
@@ -686,7 +686,7 @@
     "Imported": "Check"
   },
   {
-    "Group": "slow-slow-magnesium",
+    "Group": "wellbeing-nutrition-slow-triple-magnesium-complex",
     "GenericName": "Minerals – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -697,7 +697,7 @@
     "CountryOfOrigin": "",
     "ConsumerCare": "",
     "LabelImages": "",
-    "Imported": "Check"
+    "Imported": "No"
   },
   {
     "Group": "cellucor-c4-original",
@@ -714,7 +714,7 @@
     "Imported": "Yes"
   },
   {
-    "Group": "dynamite-dynamite-original",
+    "Group": "wellversed-dynamite-pre-workout-original",
     "GenericName": "Pre-Workout – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -725,10 +725,10 @@
     "CountryOfOrigin": "",
     "ConsumerCare": "",
     "LabelImages": "",
-    "Imported": "Check"
+    "Imported": "No"
   },
   {
-    "Group": "dynamite-dynamite-extreme",
+    "Group": "wellversed-dynamite-pre-workout-extreme",
     "GenericName": "Pre-Workout – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -739,10 +739,10 @@
     "CountryOfOrigin": "",
     "ConsumerCare": "",
     "LabelImages": "",
-    "Imported": "Check"
+    "Imported": "No"
   },
   {
-    "Group": "wrath-x-wrath-x-pre-workout",
+    "Group": "muscleblaze-wrath-x-pre-workout",
     "GenericName": "Pre-Workout – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -753,7 +753,7 @@
     "CountryOfOrigin": "",
     "ConsumerCare": "",
     "LabelImages": "",
-    "Imported": "Check"
+    "Imported": "No"
   },
   {
     "Group": "optimum-nutrition-gold-standard-pre-workout",
@@ -770,7 +770,21 @@
     "Imported": "Yes"
   },
   {
-    "Group": "one-science-pre-workout",
+    "Group": "one-science-psycho-pump",
+    "GenericName": "Pre-Workout – Health Supplement",
+    "VegNonVeg": "",
+    "Ingredients": "",
+    "Nutrition": "",
+    "Warnings": "[Copy the caffeine/stimulant warnings from the label]",
+    "Manufacturer": "",
+    "Importer": "",
+    "CountryOfOrigin": "",
+    "ConsumerCare": "",
+    "LabelImages": "",
+    "Imported": "No"
+  },
+  {
+    "Group": "deja-vu-pre-workout",
     "GenericName": "Pre-Workout – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -784,21 +798,7 @@
     "Imported": "Check"
   },
   {
-    "Group": "dejavu-pre-workout",
-    "GenericName": "Pre-Workout – Health Supplement",
-    "VegNonVeg": "",
-    "Ingredients": "",
-    "Nutrition": "",
-    "Warnings": "[Copy the caffeine/stimulant warnings from the label]",
-    "Manufacturer": "",
-    "Importer": "",
-    "CountryOfOrigin": "",
-    "ConsumerCare": "",
-    "LabelImages": "",
-    "Imported": "Check"
-  },
-  {
-    "Group": "gaspari-pre-workout",
+    "Group": "gaspari-superpump-aggression",
     "GenericName": "Pre-Workout – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -812,7 +812,7 @@
     "Imported": "Yes"
   },
   {
-    "Group": "murphy-pre-workout",
+    "Group": "power-fuel-nutrition-murphy-pre-workout",
     "GenericName": "Pre-Workout – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -823,10 +823,10 @@
     "CountryOfOrigin": "",
     "ConsumerCare": "",
     "LabelImages": "",
-    "Imported": "Check"
+    "Imported": "No"
   },
   {
-    "Group": "blood-lock-pre-workout",
+    "Group": "promaniax-blood-lock-stim-loaded",
     "GenericName": "Pre-Workout – Health Supplement",
     "VegNonVeg": "",
     "Ingredients": "",
@@ -837,6 +837,48 @@
     "CountryOfOrigin": "",
     "ConsumerCare": "",
     "LabelImages": "",
-    "Imported": "Check"
+    "Imported": "No"
+  },
+  {
+    "Group": "one-science-daily-high-protein-oats",
+    "GenericName": "Protein Oats – Health Supplement",
+    "VegNonVeg": "",
+    "Ingredients": "",
+    "Nutrition": "",
+    "Warnings": "",
+    "Manufacturer": "",
+    "Importer": "",
+    "CountryOfOrigin": "",
+    "ConsumerCare": "",
+    "LabelImages": "",
+    "Imported": "No"
+  },
+  {
+    "Group": "doctor-s-choice-protein-oats",
+    "GenericName": "Protein Oats – Health Supplement",
+    "VegNonVeg": "",
+    "Ingredients": "",
+    "Nutrition": "",
+    "Warnings": "",
+    "Manufacturer": "",
+    "Importer": "",
+    "CountryOfOrigin": "",
+    "ConsumerCare": "",
+    "LabelImages": "",
+    "Imported": "No"
+  },
+  {
+    "Group": "alpino-high-protein-super-oats",
+    "GenericName": "Protein Oats – Health Supplement",
+    "VegNonVeg": "",
+    "Ingredients": "",
+    "Nutrition": "",
+    "Warnings": "",
+    "Manufacturer": "",
+    "Importer": "",
+    "CountryOfOrigin": "",
+    "ConsumerCare": "",
+    "LabelImages": "",
+    "Imported": "No"
   }
 ]
