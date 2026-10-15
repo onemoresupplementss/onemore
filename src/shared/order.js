@@ -164,6 +164,14 @@ export function upiLink({ vpa, payee, amount, note }) {
   return `upi://pay?${p.toString().replace(/\+/g, '%20')}`;
 }
 
+/** Net quantity for people: 2000 g -> "2 kg", 750 g -> "750 g", 60 capsules -> "60 capsules". */
+export function formatNetQty(netQty, unit) {
+  if (!(netQty > 0)) return '';
+  const u = String(unit || '').toLowerCase();
+  if ((u === 'g' || u === 'ml') && netQty >= 1000) return `${+(netQty / 1000).toFixed(2)} ${u === 'g' ? 'kg' : 'L'}`;
+  return `${netQty} ${u}`.trim();
+}
+
 // Legal Metrology unit sale price: per g/ml below 1 kg/1 L, per kg/L at or above; per unit for counts.
 export function unitPrice(price, netQty, unit) {
   if (!(price > 0) || !(netQty > 0)) return '';

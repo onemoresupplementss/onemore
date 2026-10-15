@@ -11,7 +11,7 @@ import { slugify } from '../src/shared/catalog.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-// [category, brand, name, sizes, flavour, imported('Yes'|'No'|'Check'), extra]
+// [category, brand, name, sizes, flavour (or [flavours]), imported('Yes'|'No'|'Check'), extra]
 // extra: { best: true, check: 'note', keywords: '' }
 const C = (category, brand, name, sizes, flavour, imported, extra = {}) => ({ category, brand, name, sizes, flavour, imported, ...extra });
 const CONFIRM_MT = 'Confirm: which 4 MuscleTech wheys do you stock? Rename/replace this row.';
@@ -89,9 +89,9 @@ const LIST = [
   C('Pre-Workout', 'Power Fuel Nutrition', 'Murphy Pre-Workout', ['300 g'], 'Mango', 'No', { check: FROM_PACK, keywords: 'murphy, pfn, preworkout' }),
   C('Pre-Workout', 'ProManiax', 'Blood Lock Stim Loaded', ['315 g'], 'Cola Burst', 'No', { check: FROM_PACK, keywords: 'bloodlock, blood lock, preworkout' }),
   // Protein oats
-  C('Protein Oats', 'One Science', 'Daily High Protein Oats', ['400 g'], 'Dark Chocolate', 'No', { check: FROM_PACK, keywords: 'oats, breakfast' }),
-  C('Protein Oats', "Doctor's Choice", 'Protein Oats', ['750 g'], 'Strawberry', 'No', { check: FROM_PACK, keywords: 'oats, doctors choice, breakfast' }),
-  C('Protein Oats', 'Alpino', 'High Protein Super Oats', ['1 kg'], 'Classic Coffee', 'No', { check: 'Confirm the pack size – the photo does not show it.', keywords: 'oats, super oats, breakfast' }),
+  C('Protein Oats', 'One Science', 'Daily High Protein Oats', ['900 g'], 'Dark Chocolate', 'No', { check: 'Photo shows the 400 g pack.', keywords: 'oats, breakfast' }),
+  C('Protein Oats', "Doctor's Choice", 'Protein Oats', ['750 g', '2 kg'], ['Banana', 'Strawberry', 'Chocolate'], 'No', { check: 'Photo shows the Strawberry 750 g pack.', keywords: 'oats, doctors choice, dr choice, breakfast' }),
+  C('Protein Oats', 'Alpino', 'High Protein Super Oats', ['1 kg', '2 kg'], 'Dark Chocolate', 'No', { check: 'Photo shows the Classic Coffee pack.', keywords: 'oats, super oats, breakfast' }),
 ];
 
 // Placeholder prices [price, mrp] - the owner replaces all of these in the sheet.
@@ -149,10 +149,12 @@ for (const item of LIST) {
   const verified = item.imported === 'No';
   // Photos made with scripts/add-photos.mjs are named after the group.
   const image = existsSync(join(root, 'public/products', `${group}.webp`)) ? `${group}.webp` : '';
-  for (const size of item.sizes) {
+  // One row per size × flavour. Several flavours add a flavour code to the ID (DC-PO-750G-BANA).
+  const flavours = Array.isArray(item.flavour) ? item.flavour : [item.flavour];
+  for (const [size, flavour] of item.sizes.flatMap((s) => flavours.map((f) => [s, f]))) {
     const [price, mrp] = placeholderPrice(item.category, size);
     const [nq, unit] = netQty(size);
-    let id = `${abbr(item.brand)}-${abbr(item.name)}-${sizeCode(size)}`;
+    let id = `${abbr(item.brand)}-${abbr(item.name)}-${sizeCode(size)}${flavours.length > 1 ? '-' + abbr(flavour) : ''}`;
     let n = 2;
     while (usedIds.has(id)) id = `${id.replace(/-\d+$/, '')}-${n++}`;
     usedIds.add(id);
@@ -168,7 +170,7 @@ for (const item of LIST) {
       Name: item.name,
       Category: item.category,
       Size: size,
-      Flavour: item.flavour,
+      Flavour: flavour,
       Price: price,
       MRP: mrp,
       Stock: 5,
@@ -187,7 +189,7 @@ for (const item of LIST) {
   const isPre = item.category === 'Pre-Workout';
   info.push({
     Group: group,
-    GenericName: `${item.category} – Health Supplement`,
+    GenericName: item.category === 'Protein Oats' ? 'High-protein oats – breakfast cereal' : `${item.category} – Health Supplement`,
     VegNonVeg: '',
     Ingredients: '',
     Nutrition: '',

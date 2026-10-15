@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { addToCart, feed, liveVariant, loadFeed, showAddedToast, useSignal } from '../client/store.js';
 import { SHOW_PRICES, url } from '../lib/env.js';
-import { buildOrderListText, formatINR, percentOff, unitPrice, whatsappLink } from '../shared/order.js';
+import { buildOrderListText, formatINR, formatNetQty, percentOff, unitPrice, whatsappLink } from '../shared/order.js';
 
 function formatMonth(iso) {
   if (!iso) return '';
@@ -190,7 +190,7 @@ export default function ProductBuy({ product, settings, shop }) {
           <>
             <dt class="text-muted">Net quantity</dt>
             <dd>
-              {v.netQty} {v.unit}
+              {formatNetQty(v.netQty, v.unit)}
             </dd>
           </>
         )}

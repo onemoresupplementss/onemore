@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { buildFeed, normalizeCatalog, normalizeSettings, parseDate, variantVisible } from '../src/shared/catalog.js';
-import { buildOrderListText, buildWhatsAppText, deliveryFeeFor, paymentOptions, pincodeProblem, unitPrice, validateCustomer } from '../src/shared/order.js';
+import { buildOrderListText, buildWhatsAppText, formatNetQty, deliveryFeeFor, paymentOptions, pincodeProblem, unitPrice, validateCustomer } from '../src/shared/order.js';
 
 const seed = (f) => JSON.parse(readFileSync(new URL(`../data/seed/${f}.json`, import.meta.url)));
 const settings = normalizeSettings({});
@@ -139,4 +139,12 @@ test('WhatsApp message carries every field', () => {
     assert.ok(t.includes(s), `missing ${s}`);
   }
   assert.match(buildWhatsAppText(order, { name: 'oneMore' }, { notSaved: true }), /NOT SAVED/);
+});
+
+test('net quantity reads naturally', () => {
+  assert.equal(formatNetQty(2000, 'g'), '2 kg');
+  assert.equal(formatNetQty(2270, 'g'), '2.27 kg');
+  assert.equal(formatNetQty(750, 'g'), '750 g');
+  assert.equal(formatNetQty(60, 'capsules'), '60 capsules');
+  assert.equal(formatNetQty(0, 'g'), '');
 });

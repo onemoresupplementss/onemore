@@ -5,7 +5,7 @@ import ProductBuy from '../../components/ProductBuy.jsx';
 import ProductGrid from '../../components/ProductGrid.jsx';
 import ProductImage from '../../components/ProductImage.jsx';
 import { absUrl, cardData, catalog, filled, shop, waHref } from '../../lib/site.js';
-import { lineLabel } from '../../shared/order.js';
+import { formatNetQty, lineLabel } from '../../shared/order.js';
 
 export function getStaticPaths() {
   return catalog.products.map((p) => ({ params: { slug: p.slug }, props: { p } }));
@@ -139,7 +139,7 @@ const crumbsLd = {
           }
           <div class="grid gap-1 p-3 sm:grid-cols-[160px_1fr]">
             <dt class="font-bold text-muted">Net quantity</dt>
-            <dd>{p.variants.map((v) => (v.netQty ? `${v.netQty} ${v.unit}` : v.size)).filter((x, i, a) => a.indexOf(x) === i).join(' / ')}</dd>
+            <dd>{p.variants.map((v) => (v.netQty ? formatNetQty(v.netQty, v.unit) : v.size)).filter((x, i, a) => a.indexOf(x) === i).join(' / ')}</dd>
           </div>
           <div class="grid gap-1 p-3 sm:grid-cols-[160px_1fr]">
             <dt class="font-bold text-muted">Seller</dt>
