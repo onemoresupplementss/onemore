@@ -21,7 +21,12 @@ try {
 
 const readJson = (rel) => JSON.parse(readFileSync(join(root, rel), 'utf8'));
 const shop = readJson('shop.config.json');
-const showPrices = shop.orderMode === 'checkout';
+// PUBLIC_ORDER_MODE (a build variable) overrides shop.config.json, see src/lib/env.js.
+const orderMode = process.env.PUBLIC_ORDER_MODE || shop.orderMode;
+if (!['whatsapp', 'checkout'].includes(orderMode)) {
+  throw new Error(`orderMode must be "whatsapp" or "checkout", not "${orderMode}"`);
+}
+const showPrices = orderMode === 'checkout';
 
 async function fetchFromSheet(url, key) {
   let lastError;

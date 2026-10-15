@@ -180,8 +180,9 @@ function setupProductsTab_(ss) {
   sheet.setColumnWidth(c('description'), 220);
   sheet.setColumnWidth(c('check'), 360);
 
-  // Fill from SEED only when the tab has no products yet.
-  if (sheet.getLastRow() <= 1 && typeof SEED !== 'undefined' && SEED.products.length) {
+  // Fill from SEED only when the tab has no products yet. (Not getLastRow(): the checkbox
+  // columns count as filled all the way down, so the tab never looks empty.)
+  if (!hasEntries_(sheet, c('id')) && typeof SEED !== 'undefined' && SEED.products.length) {
     const values = SEED.products.map((p) => header.map((h) => (normKey(h) === 'check' ? '' : seedValue_(p, h, PRODUCT_COLUMNS))));
     sheet.getRange(2, 1, values.length, header.length).setValues(values);
     // The seed's to-do notes go into cell notes so the Check column can be rewritten by the script.
@@ -267,7 +268,7 @@ function setupDeliveryTab_(ss) {
   sheet.getRange(2, c('eta'), rows, 1).setNumberFormat('@');
   sheet.getRange(2, c('fee'), rows, 1).setNumberFormat(MONEY_FORMAT);
   sheet.getRange(2, c('active'), rows, 1).setDataValidation(SpreadsheetApp.newDataValidation().requireCheckbox().build());
-  if (sheet.getLastRow() <= 1 && typeof SEED !== 'undefined' && SEED.delivery.length) {
+  if (!hasEntries_(sheet, c('area')) && typeof SEED !== 'undefined' && SEED.delivery.length) {
     const values = SEED.delivery.map((d) => header.map((h) => seedValue_(d, h, DELIVERY_COLUMNS)));
     sheet.getRange(2, 1, values.length, header.length).setValues(values);
   }
@@ -495,6 +496,12 @@ function ensureHeaders_(sheet, headers, aliasTable) {
 function styleHeader_(sheet, width) {
   sheet.setFrozenRows(1);
   sheet.getRange(1, 1, 1, width).setFontWeight('bold').setBackground('#f1f3f4');
+}
+
+// True when any row below the header has text in column `col` (1-based).
+function hasEntries_(sheet, col) {
+  if (sheet.getMaxRows() < 2) return false;
+  return sheet.getRange(2, col, sheet.getMaxRows() - 1, 1).getValues().some((r) => String(r[0]).trim() !== '');
 }
 
 function ensureRows_(sheet, n) {

@@ -4,6 +4,9 @@ dist/
 .wrangler/
 .env
 .dev.vars
+# clasp (Apps Script upload): which Google script this computer pushes to
+.clasp.json
+.clasprc.json
 # Written by scripts/prepare-data.mjs on every build
 src/data/catalog.json
 public/feed.json

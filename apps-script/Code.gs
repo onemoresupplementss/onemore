@@ -344,7 +344,11 @@ function createOrderLocked_(req) {
   set('idemKey', req.idemKey);
   for (let i = 0; i < row.length; i++) if (typeof row[i] === 'string') row[i] = guardText(row[i]);
 
-  const newRow = values.length + 1;
+  // Next row after the last order. Not values.length: the StockHeld checkboxes make the
+  // sheet's data range reach the bottom of the pre-formatted rows.
+  let last = values.length;
+  while (last > 1 && !text(values[last - 1][col.orderId])) last--;
+  const newRow = last + 1;
   if (newRow > sheet.getMaxRows()) sheet.insertRowsAfter(sheet.getMaxRows(), 500);
   const range = sheet.getRange(newRow, 1, 1, width);
   const formats = range.getNumberFormats()[0];

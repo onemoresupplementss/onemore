@@ -3,7 +3,9 @@ import { orderMode } from '../../shop.config.json';
 
 // "whatsapp" (phase 1): no prices or stock on the site; the cart is sent to the shop as a WhatsApp message.
 // "checkout" (phase 2): prices, live stock and the full checkout (needs Cloudflare + Google Sheets).
-export const SHOW_PRICES = orderMode === 'checkout';
+// The build variable PUBLIC_ORDER_MODE overrides the file, so Cloudflare can build checkout mode
+// while GitHub Pages keeps building the WhatsApp site from the same code.
+export const SHOW_PRICES = (import.meta.env.PUBLIC_ORDER_MODE || orderMode) === 'checkout';
 
 // GitHub Pages serves a project site from a sub-folder (https://user.github.io/onemore/),
 // so every internal link and file path goes through url().
