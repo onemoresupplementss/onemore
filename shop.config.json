@@ -20,8 +20,9 @@
 
   "legalName": "[Legal business name]",
   "ownerName": "[Owner name]",
-  "addressLines": ["[Shop address line]", "Thiruthuraipoondi, Tiruvarur District", "Tamil Nadu – [pincode]"],
-  "addressLocality": "Thiruthuraipoondi",
+  "addressLines": ["[Shop address line]", "Tiruvarur District", "Tamil Nadu – [pincode]"],
+  "addressLocality": "",
+  "serviceArea": "Tamil Nadu",
   "addressRegion": "Tamil Nadu",
   "postalCode": "",
   "mapsUrl": "",

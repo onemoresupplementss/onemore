@@ -85,7 +85,8 @@ const generatedAt = new Date().toISOString();
 
 // Only variants that can be bought online get onto the site (unverified,
 // unpriced or short-dated rows stay in the sheet). A product with none is left out.
-// In WhatsApp mode prices and stock are removed, so they are not even in the page source.
+// In WhatsApp mode prices and stock counts are removed, so they are not even in the page source;
+// only "soldOut" (Stock 0) is kept, to show "Out of stock".
 const products = catalog.products
   .map((p) => {
     const variants = p.variants
@@ -93,7 +94,7 @@ const products = catalog.products
       .map(({ active, verified, visible, price, mrp, stock, ...v }) => ({
         ...v,
         image: imageUrl(v.image),
-        ...(showPrices ? { price, mrp, stock } : {}),
+        ...(showPrices ? { price, mrp, stock } : stock > 0 ? {} : { soldOut: true }),
       }));
     const { minPrice, minMrp, inStock, ...rest } = p;
     return {

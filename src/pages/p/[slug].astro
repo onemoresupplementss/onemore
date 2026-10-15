@@ -32,7 +32,7 @@ const missingLabel = !info.ingredients || !info.nutrition || !info.countryOfOrig
 
 const description =
   p.description ||
-  `${p.brand} ${p.name} (${p.sizes.join(', ')}) at ${shop.name}, ${shop.addressLocality}. Genuine stock, ${SHOW_PRICES ? 'live availability' : 'order on WhatsApp'}, local delivery or store pickup.`;
+  `${p.brand} ${p.name} (${p.sizes.join(', ')}) at ${shop.name}. Genuine stock, ${SHOW_PRICES ? 'live availability' : 'order on WhatsApp'}, one-day home delivery across ${shop.serviceArea} or store pickup.`;
 const ask = `Hi ${shop.name}, can you send the label photo of ${p.brand} ${p.name}?`;
 
 // Search-engine product data needs a price, so it is only added in checkout mode.
@@ -143,7 +143,7 @@ const crumbsLd = {
           </div>
           <div class="grid gap-1 p-3 sm:grid-cols-[160px_1fr]">
             <dt class="font-bold text-muted">Seller</dt>
-            <dd>{filled(shop.legalName) || shop.name}, {shop.addressLocality}</dd>
+            <dd>{filled(shop.legalName) || shop.name}, {shop.addressRegion}</dd>
           </div>
         </dl>
         {

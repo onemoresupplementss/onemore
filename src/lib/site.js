@@ -41,7 +41,7 @@ export function cardData(p) {
     badge: p.badge,
     bestseller: p.bestseller,
     keywords: p.keywords,
-    variants: p.variants.map((v) => ({ id: v.id, size: v.size, flavour: v.flavour, price: v.price, mrp: v.mrp, stock: v.stock, image: v.image })),
+    variants: p.variants.map((v) => ({ id: v.id, size: v.size, flavour: v.flavour, price: v.price, mrp: v.mrp, stock: v.stock, soldOut: v.soldOut, image: v.image })),
   };
 }
 

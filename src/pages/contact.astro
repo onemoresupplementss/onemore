@@ -3,12 +3,15 @@ import Layout from '../layouts/Layout.astro';
 import SellerDetails from '../components/SellerDetails.astro';
 import { catalog, filled, shop, telHref, waHref } from '../lib/site.js';
 
-const query = encodeURIComponent(`${shop.name} ${shop.addressLocality} ${shop.addressRegion}`);
+// The map needs a real street address or a Google Maps link; until then it is left out.
+const street = shop.addressLines.map(filled).filter(Boolean);
+const hasMap = Boolean(shop.mapsUrl || filled(shop.addressLines[0]));
+const query = encodeURIComponent([shop.name, ...street].join(' '));
 const mapsLink = shop.mapsUrl || `https://www.google.com/maps/search/?api=1&query=${query}`;
 const embed = `https://www.google.com/maps?q=${query}&output=embed`;
 ---
 
-<Layout title="Contact & shop location" description={`Call, WhatsApp or visit ${shop.name} in ${shop.addressLocality}. Shop hours, address and map.`}>
+<Layout title="Contact & shop location" description={`Call or WhatsApp ${shop.name}. One-day home delivery all over ${shop.serviceArea}. Shop hours and address.`}>
   <div class="mx-auto max-w-5xl px-4 py-10">
     <h1 class="display text-3xl sm:text-4xl">Contact us</h1>
     <div class="mt-8 grid gap-6 md:grid-cols-2">
@@ -30,13 +33,14 @@ const embed = `https://www.google.com/maps?q=${query}&output=embed`;
           <p class="text-muted">{catalog.settings.ShopHours || filled(shop.hoursText)}</p>
           <h2 class="mt-4 font-black">Address</h2>
           <address class="not-italic text-muted">
-            {shop.addressLines.map(filled).filter(Boolean).map((l) => <>{l}<br /></>)}
+            {street.map((l) => <>{l}<br /></>)}
           </address>
-          <a href={mapsLink} target="_blank" rel="noopener" class="btn btn-ghost mt-4 w-full">Open in Google Maps</a>
+          {hasMap && <a href={mapsLink} target="_blank" rel="noopener" class="btn btn-ghost mt-4 w-full">Open in Google Maps</a>}
         </div>
         {filled(shop.email) && <p class="text-sm text-muted">Email: <a class="text-lime underline" href={`mailto:${shop.email}`}>{shop.email}</a></p>}
       </div>
       <div class="space-y-6">
+        {hasMap && (
         <div class="card relative aspect-[4/3] overflow-hidden" id="map">
           {
             shop.mapImage ? (
@@ -44,12 +48,13 @@ const embed = `https://www.google.com/maps?q=${query}&output=embed`;
             ) : (
               <div class="flex size-full flex-col items-center justify-center gap-2 bg-surface-2 p-6 text-center">
                 <svg class="size-10 text-lime" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
-                <p class="font-bold">{shop.addressLocality}</p>
+                <p class="font-bold">{street[0]}</p>
               </div>
             )
           }
           <button type="button" data-embed={embed} class="btn btn-lime absolute bottom-3 left-1/2 -translate-x-1/2">Show map</button>
         </div>
+        )}
         <div class="card p-4"><SellerDetails /></div>
       </div>
     </div>

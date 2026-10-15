@@ -57,7 +57,7 @@ const faqs = [
   ...(SHOW_PRICES ? orderingCheckout : orderingWhatsApp),
   {
     q: 'Where do you deliver and how fast?',
-    a: `Around ${shop.addressLocality} and nearby towns. See the full list on our delivery page. ${s.SameDayCutoff ? `Orders placed before ${s.SameDayCutoff} are usually delivered the same day in town.` : ''}`,
+    a: `We deliver to homes all over ${shop.serviceArea}, usually within one day. ${s.SameDayCutoff ? `Orders confirmed after ${s.SameDayCutoff} go out the next day. ` : ''}See our delivery page for details.`,
   },
   SHOW_PRICES
     ? {

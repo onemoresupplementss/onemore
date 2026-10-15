@@ -13,6 +13,9 @@
 /products/*
   Cache-Control: public, max-age=604800
 
+/fonts/*
+  Cache-Control: public, max-age=604800
+
 # The fallback stock snapshot changes with every build.
 /feed.json
   Cache-Control: public, max-age=60

@@ -12,7 +12,7 @@ import { slugify } from '../src/shared/catalog.js';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 // [category, brand, name, sizes, flavour (or [flavours]), imported('Yes'|'No'|'Check'), extra]
-// extra: { best: true, check: 'note', keywords: '' }
+// extra: { best: true, check: 'note', keywords: '', stock: 0 (out of stock; default 5) }
 const C = (category, brand, name, sizes, flavour, imported, extra = {}) => ({ category, brand, name, sizes, flavour, imported, ...extra });
 const CONFIRM_MT = 'Confirm: which 4 MuscleTech wheys do you stock? Rename/replace this row.';
 const CONFIRM_NAME = 'Confirm the exact product name from the label.';
@@ -31,7 +31,7 @@ const LIST = [
   C('Whey Protein', 'GNC', 'Pro Performance 100% Whey', ['2 kg'], 'Double Rich Chocolate', 'Check', { check: FROM_PACK }),
   C('Whey Protein', 'Apex Vitals', 'Whey 2 Pure', ['1 kg', '2 kg'], 'Yoghurt', 'Yes', { check: FROM_PACK, keywords: 'apex vital, whey2pure' }),
   C('Whey Protein', 'Myprotein', 'Impact Whey Protein', ['2 kg'], 'Chocolate Smooth', 'Yes', { keywords: 'my protein, impact' }),
-  C('Whey Protein', 'Mutant', 'Mutant Whey', ['2 kg'], 'Chocolate', 'Yes'),
+  C('Whey Protein', 'Mutant', 'Mutant Whey', ['2 kg'], 'Chocolate', 'Yes', { stock: 0 }),
   C('Whey Protein', 'BSN', 'Syntha-6', ['2 kg'], 'Chocolate Milkshake', 'Yes', { keywords: 'syntha 6, syntha6' }),
   C('Whey Protein', 'Kevin Levrone', 'Anabolic Iso Whey', ['2 kg'], 'Chocolate', 'Yes', { check: FROM_PACK, keywords: 'levrone, levro, isolate' }),
   C('Whey Protein', 'Kevin Levrone', 'Levro Whey Supreme', ['2 kg'], 'Chocolate', 'Yes', { check: FROM_PACK, keywords: 'levrone, levro, supreme whey' }),
@@ -41,7 +41,6 @@ const LIST = [
   C('Whey Protein', 'Atom', 'Whey Protein', ['2 kg'], 'Chocolate', 'No', { keywords: 'asitis, as-it-is' }),
   C('Whey Protein', 'Gibbon', 'My Whey', ['1 kg', '2 kg'], 'Swiss Chocolate', 'Check'),
   C('Whey Protein', 'Balkan Pharma', 'Prime Whey Extreme', ['2 kg'], 'Milk Chocolate', 'Yes', { check: FROM_PACK, keywords: 'balkan, prime whey' }),
-  C('Whey Protein', 'ELEV', 'Tri Whey', ['2 kg'], 'Triple Chocolate', 'Check', { check: FROM_PACK, keywords: 'triwhey, tri whey' }),
   C('Whey Protein', 'MuscleBlaze', 'Biozyme Performance Whey', ['1 kg', '2 kg'], 'Rich Milk Chocolate', 'No', { best: true, check: FROM_PACK, keywords: 'mb, muscle blaze' }),
   C('Whey Protein', 'One Science', 'Premium Whey Protein', ['1 kg', '2 kg'], 'Chocolate Charge', 'Check', { check: FROM_PACK }),
   C('Whey Protein', 'One Science', 'Nitra Whey', ['2 kg'], 'Chocolate', 'Check', { check: FROM_PACK }),
@@ -176,7 +175,7 @@ for (const item of LIST) {
       Flavour: flavour,
       Price: price,
       MRP: mrp,
-      Stock: 5,
+      Stock: item.stock ?? 5,
       Image: variantImage,
       Description: '',
       NetQty: nq,
@@ -210,7 +209,7 @@ for (const item of LIST) {
 const settings = [
   ['AcceptingOrders', 'Open', 'Open or Closed. Closed hides checkout and shows ClosedMessage.'],
   ['ClosedMessage', 'We are not taking online orders right now. Please call or WhatsApp us.', ''],
-  ['Announcement', 'Delivery in Thiruthuraipoondi & nearby · Store pickup · Order on WhatsApp', 'Text in the top bar. Leave blank to hide.'],
+  ['Announcement', 'One-day home delivery all over Tamil Nadu', 'Text in the top bar. Leave blank to hide.'],
   ['PreviewBanner', 'Yes', 'Yes shows "Prices are placeholders" on every page. Set No at launch.'],
   ['DeliveryFee', 40, 'Flat delivery charge in ₹ (a Delivery-tab Fee overrides it for that area).'],
   ['FreeDeliveryAbove', 2999, 'Orders at or above this subtotal get free delivery. 0 = never free.'],
@@ -233,12 +232,7 @@ const settings = [
 ];
 
 const delivery = [
-  { Area: 'Thiruthuraipoondi town', Pincodes: '', Fee: '', ETA: 'Same day if ordered by 6 pm', Active: true },
-  { Area: 'Villages around Thiruthuraipoondi', Pincodes: '', Fee: '', ETA: 'Same day or next day', Active: true },
-  { Area: 'Muthupet', Pincodes: '', Fee: '', ETA: 'Next day', Active: true },
-  { Area: 'Mannargudi', Pincodes: '', Fee: '', ETA: 'Next day', Active: true },
-  { Area: 'Tiruvarur', Pincodes: '', Fee: '', ETA: 'Next day', Active: true },
-  { Area: 'Vedaranyam', Pincodes: '', Fee: '', ETA: 'Next day', Active: true },
+  { Area: 'All over Tamil Nadu', Pincodes: '', Fee: '', ETA: 'One day', Active: true },
   { Area: 'Karaikal (Puducherry)', Pincodes: '', Fee: 80, ETA: '1–2 days', Active: true },
   { Area: 'Puducherry', Pincodes: '', Fee: 120, ETA: '2–3 days', Active: true },
 ];

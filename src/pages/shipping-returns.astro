@@ -13,18 +13,18 @@ const zones = catalog.delivery;
   {
     SHOW_PRICES ? (
       <p>
-        We deliver ourselves around {shop.addressLocality}. The delivery fee is {formatINR(s.DeliveryFee)} unless shown otherwise below
+        We deliver to homes all over {shop.serviceArea}, usually within one day. The delivery fee is {formatINR(s.DeliveryFee)} unless shown otherwise below
         {s.FreeDeliveryAbove > 0 ? <>, and delivery is <b>free for orders of {formatINR(s.FreeDeliveryAbove)} or more</b></> : ''}.
         {s.SameDayCutoff && <> Orders placed after {s.SameDayCutoff} go out the next day.</>}
       </p>
     ) : (
       <p>
-        We deliver ourselves around {shop.addressLocality}. We tell you the delivery charge on WhatsApp before you pay, and store pickup is free.
+        We deliver to homes all over {shop.serviceArea}, usually within one day. We tell you the delivery charge on WhatsApp before you pay, and store pickup is free.
         {s.SameDayCutoff && <> Orders confirmed after {s.SameDayCutoff} go out the next day.</>}
       </p>
     )
   }
-  <p lang="ta" class="ta">திருத்துறைப்பூண்டி மற்றும் அருகிலுள்ள ஊர்களுக்கு நாங்களே டெலிவரி செய்கிறோம்.</p>
+  <p lang="ta" class="ta">தமிழ்நாடு முழுவதும் ஒரே நாளில் வீட்டுக்கு டெலிவரி செய்கிறோம்.</p>
   <div class="not-prose card mt-4 overflow-x-auto">
     <table class="w-full text-left text-sm">
       <thead class="text-xs uppercase tracking-wider text-muted">

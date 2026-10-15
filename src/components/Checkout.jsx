@@ -252,7 +252,7 @@ export default function Checkout({ settings, delivery, shop }) {
       <div class="space-y-6">
         <Section n="1" title="Delivery or pickup">
           <div class="grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label="Delivery or pickup">
-            <Choice checked={c.fulfilment === 'delivery'} onSelect={() => set({ fulfilment: 'delivery' })} title="Home delivery" sub={`Thiruthuraipoondi and nearby · ${st.FreeDeliveryAbove > 0 ? `free above ${formatINR(st.FreeDeliveryAbove)}` : 'fee shown below'}`} />
+            <Choice checked={c.fulfilment === 'delivery'} onSelect={() => set({ fulfilment: 'delivery' })} title="Home delivery" sub={`One day, all over Tamil Nadu · ${st.FreeDeliveryAbove > 0 ? `free above ${formatINR(st.FreeDeliveryAbove)}` : 'fee shown below'}`} />
             {st.PickupEnabled && <Choice checked={c.fulfilment === 'pickup'} onSelect={() => set({ fulfilment: 'pickup' })} title="Pick up from shop" sub="Free · we message you when it is ready" />}
           </div>
         </Section>

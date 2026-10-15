@@ -299,7 +299,7 @@
     "Flavour": "Chocolate",
     "Price": 5499,
     "MRP": 6499,
-    "Stock": 5,
+    "Stock": 0,
     "Image": "mutant-mutant-whey.webp",
     "Description": "",
     "NetQty": 2000,
@@ -576,30 +576,6 @@
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
   {
-    "ID": "ELEV-TW-2KG",
-    "Group": "elev-tri-whey",
-    "Active": true,
-    "Verified": false,
-    "Brand": "ELEV",
-    "Name": "Tri Whey",
-    "Category": "Whey Protein",
-    "Size": "2 kg",
-    "Flavour": "Triple Chocolate",
-    "Price": 5499,
-    "MRP": 6499,
-    "Stock": 5,
-    "Image": "elev-tri-whey.webp",
-    "Description": "",
-    "NetQty": 2000,
-    "Unit": "g",
-    "BestBefore": "",
-    "Bestseller": false,
-    "Badge": "",
-    "Sort": 200,
-    "Keywords": "triwhey, tri whey",
-    "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock. Tick Verified after checking the Indian importer sticker and distributor bill."
-  },
-  {
     "ID": "MB-BPW-1KG",
     "Group": "muscleblaze-biozyme-performance-whey",
     "Active": true,
@@ -619,7 +595,7 @@
     "BestBefore": "",
     "Bestseller": true,
     "Badge": "",
-    "Sort": 210,
+    "Sort": 200,
     "Keywords": "mb, muscle blaze",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock."
   },
@@ -643,7 +619,7 @@
     "BestBefore": "",
     "Bestseller": true,
     "Badge": "",
-    "Sort": 210,
+    "Sort": 200,
     "Keywords": "mb, muscle blaze",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock."
   },
@@ -667,7 +643,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 220,
+    "Sort": 210,
     "Keywords": "",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -691,7 +667,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 220,
+    "Sort": 210,
     "Keywords": "",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -715,7 +691,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 230,
+    "Sort": 220,
     "Keywords": "",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -739,7 +715,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 240,
+    "Sort": 230,
     "Keywords": "levrone, levro, gainer",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -763,7 +739,7 @@
     "BestBefore": "",
     "Bestseller": true,
     "Badge": "",
-    "Sort": 250,
+    "Sort": 240,
     "Keywords": "on, gainer",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -787,7 +763,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 260,
+    "Sort": 250,
     "Keywords": "mb, gainer",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Confirm the exact product name from the label."
   },
@@ -811,7 +787,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 270,
+    "Sort": 260,
     "Keywords": "gainer",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -835,7 +811,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 280,
+    "Sort": 270,
     "Keywords": "",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -859,7 +835,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 290,
+    "Sort": 280,
     "Keywords": "gainer, super mass gainer",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock."
   },
@@ -883,7 +859,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 300,
+    "Sort": 290,
     "Keywords": "",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -907,7 +883,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 310,
+    "Sort": 300,
     "Keywords": "max gain, gainer",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -931,7 +907,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 320,
+    "Sort": 310,
     "Keywords": "hulk, gainer",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -955,7 +931,7 @@
     "BestBefore": "",
     "Bestseller": true,
     "Badge": "",
-    "Sort": 330,
+    "Sort": 320,
     "Keywords": "on, creatine monohydrate",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -979,7 +955,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 340,
+    "Sort": 330,
     "Keywords": "mb",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can."
   },
@@ -1003,7 +979,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 350,
+    "Sort": 340,
     "Keywords": "",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can."
   },
@@ -1027,7 +1003,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 360,
+    "Sort": 350,
     "Keywords": "",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -1051,7 +1027,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 370,
+    "Sort": 360,
     "Keywords": "",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -1075,7 +1051,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 380,
+    "Sort": 370,
     "Keywords": "eaa, essential amino acids",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -1099,7 +1075,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 390,
+    "Sort": 380,
     "Keywords": "scivation",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Fill NetQty/Unit from the label. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -1123,7 +1099,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 400,
+    "Sort": 390,
     "Keywords": "on, onn, bcaa",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -1147,7 +1123,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 410,
+    "Sort": 400,
     "Keywords": "wellversed, omega 3",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock."
   },
@@ -1171,7 +1147,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 420,
+    "Sort": 410,
     "Keywords": "on, omega 3",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -1195,7 +1171,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 430,
+    "Sort": 420,
     "Keywords": "omega 3",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -1219,7 +1195,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 440,
+    "Sort": 430,
     "Keywords": "slow, omega 3",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock."
   },
@@ -1243,7 +1219,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 450,
+    "Sort": 440,
     "Keywords": "omega 3",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -1267,7 +1243,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 460,
+    "Sort": 450,
     "Keywords": "on, optimen, multi vitamin",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -1291,7 +1267,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 470,
+    "Sort": 460,
     "Keywords": "asitis, multi vitamin",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can."
   },
@@ -1315,7 +1291,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 480,
+    "Sort": 470,
     "Keywords": "multi vitamin",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -1339,7 +1315,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 490,
+    "Sort": 480,
     "Keywords": "multi vitamin",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -1363,7 +1339,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 500,
+    "Sort": 490,
     "Keywords": "slow, magnesium, slow mag",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock."
   },
@@ -1387,7 +1363,7 @@
     "BestBefore": "",
     "Bestseller": true,
     "Badge": "",
-    "Sort": 510,
+    "Sort": 500,
     "Keywords": "c4, preworkout",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Fill NetQty/Unit from the label. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -1411,7 +1387,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 520,
+    "Sort": 510,
     "Keywords": "dynamite, preworkout",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock."
   },
@@ -1435,7 +1411,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 530,
+    "Sort": 520,
     "Keywords": "dynamite, preworkout",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock."
   },
@@ -1459,7 +1435,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 540,
+    "Sort": 530,
     "Keywords": "wrath, mb, preworkout",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock."
   },
@@ -1483,7 +1459,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 550,
+    "Sort": 540,
     "Keywords": "on, preworkout",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Fill NetQty/Unit from the label. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -1507,7 +1483,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 560,
+    "Sort": 550,
     "Keywords": "psycho, preworkout",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock."
   },
@@ -1531,7 +1507,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 570,
+    "Sort": 560,
     "Keywords": "dejavu, preworkout",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Confirm the brand and product name from the label. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -1555,7 +1531,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 580,
+    "Sort": 570,
     "Keywords": "superpump, super pump, preworkout",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock. Fill NetQty/Unit. Tick Verified after checking the Indian importer sticker and distributor bill."
   },
@@ -1579,7 +1555,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 590,
+    "Sort": 580,
     "Keywords": "murphy, pfn, preworkout",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock."
   },
@@ -1603,7 +1579,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 600,
+    "Sort": 590,
     "Keywords": "bloodlock, blood lock, preworkout",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Name from your pack photo – confirm the sizes and flavours you stock."
   },
@@ -1627,7 +1603,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 610,
+    "Sort": 600,
     "Keywords": "oats, breakfast",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Photo shows the 400 g pack."
   },
@@ -1651,7 +1627,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 620,
+    "Sort": 610,
     "Keywords": "oats, doctors choice, dr choice, breakfast",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Flavour names as printed on the packs. Photos show the 750 g boxes."
   },
@@ -1675,7 +1651,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 620,
+    "Sort": 610,
     "Keywords": "oats, doctors choice, dr choice, breakfast",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Flavour names as printed on the packs. Photos show the 750 g boxes."
   },
@@ -1699,7 +1675,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 620,
+    "Sort": 610,
     "Keywords": "oats, doctors choice, dr choice, breakfast",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Flavour names as printed on the packs. Photos show the 750 g boxes."
   },
@@ -1723,7 +1699,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 620,
+    "Sort": 610,
     "Keywords": "oats, doctors choice, dr choice, breakfast",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Flavour names as printed on the packs. Photos show the 750 g boxes."
   },
@@ -1747,7 +1723,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 620,
+    "Sort": 610,
     "Keywords": "oats, doctors choice, dr choice, breakfast",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Flavour names as printed on the packs. Photos show the 750 g boxes."
   },
@@ -1771,7 +1747,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 620,
+    "Sort": 610,
     "Keywords": "oats, doctors choice, dr choice, breakfast",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Flavour names as printed on the packs. Photos show the 750 g boxes."
   },
@@ -1795,7 +1771,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 630,
+    "Sort": 620,
     "Keywords": "oats, alpino oats, breakfast",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Dark Chocolate is in Alpino's High Protein Oats line (not Super Oats)."
   },
@@ -1819,7 +1795,7 @@
     "BestBefore": "",
     "Bestseller": false,
     "Badge": "",
-    "Sort": 630,
+    "Sort": 620,
     "Keywords": "oats, alpino oats, breakfast",
     "Check": "Placeholder price and stock – replace. Photo is from the brand website; swap for your own shelf photo when you can. Dark Chocolate is in Alpino's High Protein Oats line (not Super Oats)."
   }

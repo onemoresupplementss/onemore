@@ -18,7 +18,7 @@ interface Props {
 
 const {
   title,
-  description = `${shop.name} – gym supplements in ${shop.addressLocality}. Whey protein, mass gainers, creatine and pre-workouts from authorised importers. ${SHOW_PRICES ? 'UPI, pay on delivery or store pickup.' : 'Order on WhatsApp – delivery or store pickup.'}`,
+  description = `${shop.name} – gym supplements with one-day home delivery all over ${shop.serviceArea}. Whey protein, mass gainers, creatine and pre-workouts from authorised importers. ${SHOW_PRICES ? 'UPI, pay on delivery or store pickup.' : 'Order on WhatsApp – delivery or store pickup.'}`,
   image = '/og.png',
   noindex = false,
   jsonLd,
@@ -26,7 +26,7 @@ const {
   waRaised = false,
 } = Astro.props;
 
-const fullTitle = title ? `${title} | ${shop.name}` : `${shop.name} – ${shop.tagline} | Supplements in ${shop.addressLocality}`;
+const fullTitle = title ? `${title} | ${shop.name}` : `${shop.name} – ${shop.tagline} | One-day delivery across ${shop.serviceArea}`;
 // Astro.url.pathname already includes the GitHub Pages sub-folder.
 const canonical = new URL(Astro.url.pathname, Astro.site || shop.siteUrl).toString();
 const s = catalog.settings;

@@ -1,7 +1,7 @@
 Setting,Value,Notes
 AcceptingOrders,Open,Open or Closed. Closed hides checkout and shows ClosedMessage.
 ClosedMessage,We are not taking online orders right now. Please call or WhatsApp us.,
-Announcement,Delivery in Thiruthuraipoondi & nearby · Store pickup · Order on WhatsApp,Text in the top bar. Leave blank to hide.
+Announcement,One-day home delivery all over Tamil Nadu,Text in the top bar. Leave blank to hide.
 PreviewBanner,Yes,"Yes shows ""Prices are placeholders"" on every page. Set No at launch."
 DeliveryFee,40,Flat delivery charge in ₹ (a Delivery-tab Fee overrides it for that area).
 FreeDeliveryAbove,2999,Orders at or above this subtotal get free delivery. 0 = never free.

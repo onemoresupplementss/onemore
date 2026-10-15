@@ -11,6 +11,6 @@ const { c } = Astro.props;
 const products = catalog.products.filter((p) => p.category === c.slug).map(cardData);
 ---
 
-<Layout title={`${c.name} – buy online`} description={`${c.name} in ${shop.addressLocality}: ${products.length} products from brands like ${[...new Set(products.map((p) => p.brand))].slice(0, 4).join(', ')}. Local delivery, UPI or pay on delivery.`}>
+<Layout title={`${c.name} – buy online`} description={`${c.name} with one-day delivery across ${shop.serviceArea}: ${products.length} products from brands like ${[...new Set(products.map((p) => p.brand))].slice(0, 4).join(', ')}. Order on WhatsApp or pick up from the shop.`}>
   <ShopPage title={c.name} intro={c.blurb} current={c.slug} products={products} />
 </Layout>

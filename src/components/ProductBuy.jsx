@@ -13,7 +13,8 @@ function formatMonth(iso) {
 export default function ProductBuy({ product, settings, shop }) {
   const f = useSignal(feed);
   const vs = product.variants;
-  const [id, setId] = useState(vs[0].id);
+  // Open on an option that is in stock, when there is one.
+  const [id, setId] = useState((vs.find((x) => !x.soldOut) || vs[0]).id);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const addedTimer = useRef();
@@ -27,7 +28,7 @@ export default function ProductBuy({ product, settings, shop }) {
 
   const s = f?.settings ? { ...settings, ...f.settings } : settings;
   const v = vs.find((x) => x.id === id) || vs[0];
-  const live = SHOW_PRICES ? liveVariant(v, f) : { buyable: true, stock: Infinity };
+  const live = SHOW_PRICES ? liveVariant(v, f) : { buyable: true, stock: v.soldOut ? 0 : Infinity };
   const maxQty = Math.max(0, Math.min(live.stock, s.MaxQtyPerLine || 10));
   const sizes = [...new Set(vs.map((x) => x.size).filter(Boolean))];
   const flavours = [...new Set(vs.filter((x) => x.size === v.size).map((x) => x.flavour).filter(Boolean))];
@@ -68,7 +69,10 @@ export default function ProductBuy({ product, settings, shop }) {
   }
 
   const orderNow = whatsappLink(shop.whatsappNumber, buildOrderListText([{ ...line, qty }], shop));
-  const ask = `Hi ${shop.name}, is ${product.brand} ${product.name} ${[v.size, v.flavour].filter(Boolean).join(' ')} available?`;
+  // "Mutant Whey" already names its brand; don't say "Mutant Mutant Whey".
+  const title = product.name.startsWith(product.brand) ? product.name : `${product.brand} ${product.name}`;
+  const ask = `Hi ${shop.name}, is ${title} ${[v.size, v.flavour].filter(Boolean).join(' ')} available?`;
+  const backInStock = `Hi ${shop.name}, please tell me when ${title} ${[v.size, v.flavour].filter(Boolean).join(' ')} is back in stock.`;
   const stockLine = !live.buyable ? (
     <span class="text-danger">Not available online right now</span>
   ) : live.stock <= 0 ? (
@@ -178,6 +182,10 @@ export default function ProductBuy({ product, settings, shop }) {
       {SHOW_PRICES ? (
         <a class="btn btn-ghost w-full text-sm" href={whatsappLink(shop.whatsappNumber, ask)} target="_blank" rel="noopener">
           Ask about this on WhatsApp
+        </a>
+      ) : !canBuy ? (
+        <a class="btn btn-ghost w-full text-sm" href={whatsappLink(shop.whatsappNumber, backInStock)} target="_blank" rel="noopener">
+          Ask on WhatsApp when it’s back
         </a>
       ) : (
         <p class="text-sm text-muted">

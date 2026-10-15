@@ -10,6 +10,7 @@
   "scripts": {
     "seed": "node scripts/make-seed.mjs",
     "photos": "node scripts/add-photos.mjs",
+    "brand-fonts": "node scripts/make-brand-fonts.mjs",
     "data": "node scripts/prepare-data.mjs",
     "dev": "node scripts/prepare-data.mjs && astro dev",
     "build": "node scripts/prepare-data.mjs && astro build",

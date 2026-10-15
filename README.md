@@ -1,6 +1,6 @@
 # oneMore – supplement shop website
 
-Online shop for **oneMore**, a gym supplement shop in Thiruthuraipoondi, Tamil Nadu.
+Online shop for **oneMore**, a gym supplement shop in Tamil Nadu with one-day home delivery across the state.
 
 The site has two modes, set by `orderMode` in `shop.config.json`:
 
@@ -36,7 +36,9 @@ Free, no other accounts needed. The site updates by itself about 2 minutes after
 ### Changing products
 Products live in `data/seed/products.json` (one block per size/flavour) and label details in `data/seed/info.json`.
 On GitHub open the file → pencil icon → edit → **Commit changes**. Copy an existing block to add a product; keep the
-`ID` unique. `Active: false` hides a product. Prices in these files are **not** shown in phase 1.
+`ID` unique. `Active: false` hides a product. `Stock: 0` keeps it listed but shows **Out of stock** (customers can
+ask on WhatsApp when it's back); any number above 0 makes it orderable again. Prices and stock numbers are **not**
+shown in phase 1.
 Photos: see `public/products/README.txt`.
 
 > `npm run seed` regenerates these files from `scripts/make-seed.mjs` and **overwrites** hand edits – only use it to start over.

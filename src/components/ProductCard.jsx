@@ -24,8 +24,11 @@ export function cardState(p, f) {
 }
 
 export default function ProductCard({ p, f, settings, eager = false }) {
-  // WhatsApp mode: no prices or stock, every listed product can be added.
-  const s = SHOW_PRICES ? cardState(p, f) : { buyable: true, inStock: true, single: p.variants.length === 1 ? p.variants[0] : null, stockLeft: null };
+  // WhatsApp mode: no prices or stock counts; only "soldOut" (Stock 0) blocks adding.
+  const inStockVariants = p.variants.filter((v) => !v.soldOut);
+  const s = SHOW_PRICES
+    ? cardState(p, f)
+    : { buyable: true, inStock: inStockVariants.length > 0, single: p.variants.length === 1 ? inStockVariants[0] || null : null, stockLeft: null };
   const off = SHOW_PRICES ? percentOff(s.price, s.mrp) : 0;
   const href = url(`/p/${p.slug}/`);
   const lowAt = settings?.ShowLowStockAt ?? 3;
@@ -53,9 +56,10 @@ export default function ProductCard({ p, f, settings, eager = false }) {
   return (
     <article class="card group relative flex h-full flex-col overflow-hidden">
       <a href={href} class="relative block bg-surface-2" tabIndex={-1} aria-hidden="true">
-        <ProductImage src={p.image} brand={p.brand} name={p.name} size={sizes[0]} eager={eager} class="transition-transform duration-300 group-hover:scale-[1.03]" />
+        <ProductImage src={p.image} brand={p.brand} name={p.name} size={sizes[0]} eager={eager} class={`transition-transform duration-300 group-hover:scale-[1.03] ${s.inStock ? '' : 'opacity-50 grayscale'}`} />
         <div class="absolute left-2 top-2 flex flex-col items-start gap-1">
           {tag && <span class="rounded bg-lime px-2 py-0.5 text-[11px] font-black uppercase tracking-wide text-ink">{tag}</span>}
+          {!s.inStock && <span class="rounded bg-ink/85 px-2 py-0.5 text-[11px] font-bold text-fg">Out of stock</span>}
           {off >= 5 && s.inStock && <span class="rounded bg-ink/80 px-2 py-0.5 text-[11px] font-bold text-lime">{off}% off</span>}
         </div>
       </a>

@@ -16,7 +16,7 @@ const og = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
   <text x="130" y="230" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-style="italic" font-size="150" fill="#f4f4f2">one<tspan fill="#c6ff00">MORE</tspan></text>
   <text x="134" y="320" font-family="Arial, sans-serif" font-weight="700" font-size="48" fill="#f4f4f2">${esc(shop.tagline)}</text>
   <text x="134" y="420" font-family="Arial, sans-serif" font-size="34" fill="#a6a6a1">Whey · Gainers · Creatine · Pre-workout</text>
-  <text x="134" y="480" font-family="Arial, sans-serif" font-size="34" fill="#a6a6a1">${esc(shop.addressLocality)} · UPI · Pay on delivery · Pickup</text>
+  <text x="134" y="480" font-family="Arial, sans-serif" font-size="34" fill="#a6a6a1">One-day home delivery all over ${esc(shop.serviceArea)}</text>
 </svg>`;
 
 const icon = (size) => `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 64 64">

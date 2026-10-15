@@ -1,44 +1,9 @@
 [
   {
-    "Area": "Thiruthuraipoondi town",
+    "Area": "All over Tamil Nadu",
     "Pincodes": "",
     "Fee": "",
-    "ETA": "Same day if ordered by 6 pm",
-    "Active": true
-  },
-  {
-    "Area": "Villages around Thiruthuraipoondi",
-    "Pincodes": "",
-    "Fee": "",
-    "ETA": "Same day or next day",
-    "Active": true
-  },
-  {
-    "Area": "Muthupet",
-    "Pincodes": "",
-    "Fee": "",
-    "ETA": "Next day",
-    "Active": true
-  },
-  {
-    "Area": "Mannargudi",
-    "Pincodes": "",
-    "Fee": "",
-    "ETA": "Next day",
-    "Active": true
-  },
-  {
-    "Area": "Tiruvarur",
-    "Pincodes": "",
-    "Fee": "",
-    "ETA": "Next day",
-    "Active": true
-  },
-  {
-    "Area": "Vedaranyam",
-    "Pincodes": "",
-    "Fee": "",
-    "ETA": "Next day",
+    "ETA": "One day",
     "Active": true
   },
   {
