@@ -8,7 +8,7 @@
 // the host then keeps the last good version of the site online instead of
 // publishing placeholder data.
 import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { createHash } from 'node:crypto'; import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildFeed, normalizeCatalog, publicSettings, SETTINGS, todayIST } from '../src/shared/catalog.js';
 
@@ -57,7 +57,7 @@ function imageUrl(v) {
   const s = String(v || '').trim();
   if (!s) return '';
   if (/^https:\/\/[^\s"'<>]+$/i.test(s)) return s;
-  if (/^[\w.-]+\.(webp|jpe?g|png|avif)$/i.test(s)) return `products/${s}`;
+  if (/^[\w.-]+\.(webp|jpe?g|png|avif)$/i.test(s)) return `products/${s}${existsSync(join(root, 'public/products', s)) ? '?v=' + createHash('sha1').update(readFileSync(join(root, 'public/products', s))).digest('hex').slice(0, 8) : ''}`;
   return '';
 }
 
