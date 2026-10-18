@@ -153,6 +153,13 @@
     border: 1px solid var(--color-line);
     border-radius: 0.875rem;
   }
+  .desc-body.is-collapsed {
+    max-height: 380px;
+    overflow: hidden;
+  }
+  .desc-body:not(.is-collapsed) .desc-fade {
+    display: none;
+  }
   .prose-shop h2 {
     font-family: var(--font-display);
     font-weight: 900;
