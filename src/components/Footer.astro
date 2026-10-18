@@ -1,7 +1,7 @@
 ---
 import { SHOW_PRICES, url } from '../lib/env.js';
 import Logo from './Logo.astro';
-import { catalog, categoriesWithProducts, filled, shop, telHref, waHref } from '../lib/site.js';
+import { categoriesWithProducts, filled, shop, telHref, waHref } from '../lib/site.js';
 
 const g = shop.grievanceOfficer;
 const address = shop.addressLines.map(filled).filter(Boolean);
@@ -17,7 +17,6 @@ const link = 'text-[#d4d4cf] hover:text-lime';
       <ul class="space-y-2 text-sm">
         <li><a class="font-bold hover:text-lime" href={telHref}>{shop.phoneDisplay}</a></li>
         <li><a class={link} href={waHref()} target="_blank" rel="noopener">WhatsApp us</a></li>
-        {catalog.settings.ShopHours && <li class="text-muted">{catalog.settings.ShopHours}</li>}
       </ul>
     </div>
 
