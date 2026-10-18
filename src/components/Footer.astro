@@ -1,53 +1,61 @@
 ---
 import { SHOW_PRICES, url } from '../lib/env.js';
 import Logo from './Logo.astro';
-import SellerDetails from './SellerDetails.astro';
-import { catalog, categoriesWithProducts, filled, pickupOn, shop, telHref, waHref } from '../lib/site.js';
+import { catalog, categoriesWithProducts, filled, shop, telHref, waHref } from '../lib/site.js';
+
+const g = shop.grievanceOfficer;
+const address = shop.addressLines.map(filled).filter(Boolean);
+const heading = 'mb-4 text-xs font-black uppercase tracking-wider text-muted';
+const link = 'text-[#d4d4cf] hover:text-lime';
 ---
 
 <footer class="mt-16 border-t border-line bg-surface">
-  <div class="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
-    <div class="space-y-3">
+  <div class="mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-10 px-4 py-12 lg:grid-cols-[1.2fr_1.6fr_1fr_1.2fr] lg:gap-10">
+    <div class="col-span-2 space-y-4 lg:col-span-1">
       <Logo size="text-3xl" />
-      <p class="text-sm text-muted">{shop.tagline} Gym supplements with one-day home delivery all over {shop.serviceArea}{pickupOn ? ', and store pickup' : ''}.</p>
-      <p class="text-sm">
-        <a class="font-bold hover:text-lime" href={telHref}>{shop.phoneDisplay}</a><br />
-        <a class="text-muted hover:text-lime" href={waHref()} target="_blank" rel="noopener">WhatsApp us</a>
-      </p>
-      {catalog.settings.ShopHours && <p class="text-sm text-muted">{catalog.settings.ShopHours}</p>}
+      <p class="max-w-xs text-sm text-muted">{shop.tagline} One-day delivery across {shop.serviceArea}.</p>
+      <ul class="space-y-2 text-sm">
+        <li><a class="font-bold hover:text-lime" href={telHref}>{shop.phoneDisplay}</a></li>
+        <li><a class={link} href={waHref()} target="_blank" rel="noopener">WhatsApp us</a></li>
+        {catalog.settings.ShopHours && <li class="text-muted">{catalog.settings.ShopHours}</li>}
+      </ul>
     </div>
-    <nav aria-label="Categories">
-      <h2 class="mb-3 text-xs font-black uppercase tracking-wider text-muted">Shop</h2>
-      <ul class="space-y-2 text-sm">
-        <li><a class="hover:text-lime" href={url('/shop/')}>All products</a></li>
-        {
-          categoriesWithProducts.map((c) => (
-            <li>
-              <a class="hover:text-lime" href={url(`/shop/${c.slug}/`)}>
-                {c.name}
-              </a>
-            </li>
-          ))
-        }
+
+    <nav aria-label="Categories" class="col-span-2 sm:col-span-1">
+      <h2 class={heading}>Shop</h2>
+      <ul class="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+        <li><a class={link} href={url('/shop/')}>All products</a></li>
+        {categoriesWithProducts.map((c) => <li><a class={link} href={url(`/shop/${c.slug}/`)}>{c.name}</a></li>)}
       </ul>
     </nav>
+
     <nav aria-label="Help">
-      <h2 class="mb-3 text-xs font-black uppercase tracking-wider text-muted">Help</h2>
+      <h2 class={heading}>Help</h2>
       <ul class="space-y-2 text-sm">
-        <li><a class="hover:text-lime" href={url('/about/')}>About us</a></li>
-        <li><a class="hover:text-lime" href={url('/contact/')}>Contact & shop location</a></li>
-        <li><a class="hover:text-lime" href={url('/faq/')}>FAQ</a></li>
-        <li><a class="hover:text-lime" href={url('/shipping-returns/')}>Delivery, returns & refunds</a></li>
-        <li><a class="hover:text-lime" href={url('/terms/')}>Terms of sale</a></li>
-        <li><a class="hover:text-lime" href={url('/privacy/')}>Privacy policy</a></li>
+        <li><a class={link} href={url('/about/')}>About us</a></li>
+        <li><a class={link} href={url('/faq/')}>FAQ</a></li>
+        <li><a class={link} href={url('/shipping-returns/')}>Delivery & returns</a></li>
+        <li><a class={link} href={url('/terms/')}>Terms</a></li>
+        <li><a class={link} href={url('/privacy/')}>Privacy</a></li>
       </ul>
     </nav>
-    <SellerDetails />
+
+    <div class="text-sm">
+      <h2 class={heading}>Seller</h2>
+      <p class="text-[#d4d4cf]">
+        <b class="text-fg">{filled(shop.legalName) || shop.name}</b><br />
+        {address.map((l, i) => <>{l}{i < address.length - 1 && <br />}</>)}
+      </p>
+      {filled(shop.fssaiNumber) && <p class="mt-2 text-muted">FSSAI: <span class="text-fg">{shop.fssaiNumber}</span></p>}
+      <p class="mt-2 text-muted">
+        Grievance officer:<br />
+        <a class={link} href={`tel:${g.phone.replace(/\s/g, '')}`}>{g.phone}</a>
+      </p>
+    </div>
   </div>
   <div class="border-t border-line">
     <p class="mx-auto max-w-7xl px-4 py-5 text-xs text-muted">
-      © {new Date().getFullYear()} {filled(shop.legalName) || shop.name}.{SHOW_PRICES && ' All prices in ₹ and inclusive of all taxes.'} Brand names belong to their owners; we are an independent retailer.
-      Supplements are not medicines. Not for children, pregnant or nursing women unless a doctor advises.
+      © {new Date().getFullYear()} {filled(shop.legalName) || shop.name}.{SHOW_PRICES && ' Prices include all taxes.'} Supplements are not medicines.
     </p>
   </div>
 </footer>
