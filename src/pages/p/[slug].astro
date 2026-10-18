@@ -6,6 +6,7 @@ import ProductGrid from '../../components/ProductGrid.jsx';
 import ProductPhoto from '../../components/ProductPhoto.jsx';
 import { absUrl, cardData, catalog, filled, pickupOn, shop, waHref } from '../../lib/site.js';
 import { formatNetQty, lineLabel } from '../../shared/order.js';
+import { parseDescription } from '../../lib/describe.js';
 
 export function getStaticPaths() {
   return catalog.products.map((p) => ({ params: { slug: p.slug }, props: { p } }));
@@ -28,6 +29,8 @@ const labelRows = [
   ['Country of origin', info.countryOfOrigin],
   ['Consumer care', info.consumerCare],
 ].filter(([, val]) => val);
+const desc = parseDescription(p.description);
+const packSizes = p.variants.map((v) => (v.netQty ? formatNetQty(v.netQty, v.unit) : v.size)).filter((x, i, a) => x && a.indexOf(x) === i);
 const missingLabel = !info.ingredients || !info.nutrition || !info.countryOfOrigin || (/yes/i.test(info.imported || '') && !info.importer);
 
 const description =
@@ -115,36 +118,96 @@ const crumbsLd = {
       </div>
     </div>
 
-    <div class="mt-12 grid gap-8 lg:grid-cols-2">
-      <section class="prose-shop">
-        <h2>About this product</h2>
-        {p.description ? <p class="whitespace-pre-line">{p.description}</p> : <p>Full description coming soon. Ask us on WhatsApp for details, serving size or a label photo.</p>}
-        <h3>Good to know</h3>
-        <ul>
-          <li>Every tub is sealed. Imported products carry the Indian importer’s sticker.</li>
-          <li>Supplements are not a substitute for a varied diet. Do not exceed the serving size on the label.</li>
-        </ul>
-      </section>
-      <section aria-labelledby="label-h">
-        <h2 id="label-h" class="display mb-3 text-xl">Label details</h2>
-        <dl class="card divide-y divide-line text-sm">
-          {
-            labelRows.map(([k, val]) => (
-              <div class="grid gap-1 p-3 sm:grid-cols-[160px_1fr]">
-                <dt class="font-bold text-muted">{k}</dt>
-                <dd class="whitespace-pre-line">{val}</dd>
+    <div class="mt-10 grid gap-6 lg:mt-12 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-10">
+      <section aria-labelledby="about-h" class="min-w-0">
+        <h2 id="about-h" class="display mb-4 text-xl sm:text-2xl">About this product</h2>
+        {
+          (desc.stats || packSizes.length > 0) && (
+            <div class="mb-5">
+              {desc.stats && <p class="mb-2 text-xs font-bold uppercase tracking-wider text-muted">{desc.stats.title}</p>}
+              <ul class="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-4">
+                {desc.stats?.tiles.map((t) => (
+                  <li class="rounded-xl border border-line bg-surface p-3">
+                    <span class="block text-xl font-black leading-tight text-lime sm:text-2xl">{t.value}</span>
+                    <span class="mt-0.5 block text-sm leading-snug text-[#d4d4cf]">{t.label}</span>
+                  </li>
+                ))}
+                {packSizes.length > 0 && (
+                  <li class="rounded-xl border border-line bg-surface p-3">
+                    <span class="block text-xl font-black leading-tight text-fg sm:text-2xl">{packSizes.join(' / ')}</span>
+                    <span class="mt-0.5 block text-sm leading-snug text-[#d4d4cf]">pack size</span>
+                  </li>
+                )}
+              </ul>
+              {desc.stats?.extras.length > 0 && (
+                <ul class="mt-2 flex flex-wrap gap-2">
+                  {desc.stats.extras.map((x) => (
+                    <li class="rounded-full border border-line px-3 py-1 text-xs text-[#d4d4cf]">{x}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )
+        }
+        <div id="desc-body" class="desc-body relative">
+          <div class="prose-shop">
+            {p.description ? desc.intro.map((t) => <p class="whitespace-pre-line">{t}</p>) : <p>Full description coming soon. Ask us on WhatsApp for details, serving size or a label photo.</p>}
+            {desc.sections.map((sec) => (
+              <>
+                <h3>{sec.title}</h3>
+                <ul class="!list-none !pl-0">
+                  {sec.items.map((it) => (
+                    <li class="relative pl-6">
+                      <span aria-hidden="true" class="absolute left-0 top-[0.55em] inline-block size-2.5 rounded-full bg-lime" />
+                      {it}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ))}
+            {desc.howTo && (
+              <div class="mt-5 rounded-xl border border-lime/40 bg-lime/5 p-4">
+                <p class="!mt-0 text-xs font-bold uppercase tracking-wider text-lime">{desc.howTo.title}</p>
+                <p class="!mt-1">{desc.howTo.text}</p>
               </div>
-            ))
-          }
-          <div class="grid gap-1 p-3 sm:grid-cols-[160px_1fr]">
-            <dt class="font-bold text-muted">Net quantity</dt>
-            <dd>{p.variants.map((v) => (v.netQty ? formatNetQty(v.netQty, v.unit) : v.size)).filter((x, i, a) => a.indexOf(x) === i).join(' / ')}</dd>
+            )}
+            <h3>Good to know</h3>
+            <ul>
+              <li>Every tub is sealed. Imported products carry the Indian importer’s sticker.</li>
+              <li>Supplements are not a substitute for a varied diet. Do not exceed the serving size on the label.</li>
+            </ul>
           </div>
-          <div class="grid gap-1 p-3 sm:grid-cols-[160px_1fr]">
-            <dt class="font-bold text-muted">Seller</dt>
-            <dd>{filled(shop.legalName) || shop.name}, {shop.addressRegion}</dd>
-          </div>
-        </dl>
+          <div class="desc-fade pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink to-transparent lg:hidden" aria-hidden="true" />
+        </div>
+        <button type="button" id="desc-toggle" class="btn btn-ghost mt-3 w-full lg:hidden" aria-controls="desc-body" aria-expanded="false" hidden>
+          Read full description
+        </button>
+      </section>
+      <section aria-labelledby="label-h" class="min-w-0">
+        <details id="label-box" class="card group" open>
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-3 p-4 [&::-webkit-details-marker]:hidden">
+            <h2 id="label-h" class="display text-lg sm:text-xl">Label details</h2>
+            <span aria-hidden="true" class="text-2xl leading-none text-lime transition-transform group-open:rotate-45">+</span>
+          </summary>
+          <dl class="divide-y divide-line border-t border-line text-sm">
+            {
+              labelRows.map(([k, val]) => (
+                <div class="grid gap-1 p-3 sm:grid-cols-[150px_1fr]">
+                  <dt class="font-bold text-muted">{k}</dt>
+                  <dd class="whitespace-pre-line break-words">{val}</dd>
+                </div>
+              ))
+            }
+            <div class="grid gap-1 p-3 sm:grid-cols-[150px_1fr]">
+              <dt class="font-bold text-muted">Net quantity</dt>
+              <dd>{packSizes.join(' / ')}</dd>
+            </div>
+            <div class="grid gap-1 p-3 sm:grid-cols-[150px_1fr]">
+              <dt class="font-bold text-muted">Seller</dt>
+              <dd>{filled(shop.legalName) || shop.name}, {shop.addressRegion}</dd>
+            </div>
+          </dl>
+        </details>
         {
           missingLabel && (
             <p class="mt-3 text-sm text-muted">
@@ -158,6 +221,26 @@ const crumbsLd = {
         }
       </section>
     </div>
+    <script is:inline>
+      (function () {
+        var small = window.matchMedia('(max-width: 1023px)');
+        var body = document.getElementById('desc-body');
+        var btn = document.getElementById('desc-toggle');
+        var box = document.getElementById('label-box');
+        if (small.matches && box) box.removeAttribute('open');
+        if (!body || !btn) return;
+        if (small.matches && body.scrollHeight > 420) {
+          body.classList.add('is-collapsed');
+          btn.hidden = false;
+          btn.addEventListener('click', function () {
+            var open = body.classList.toggle('is-collapsed') === false;
+            btn.setAttribute('aria-expanded', String(open));
+            btn.textContent = open ? 'Show less' : 'Read full description';
+            if (!open) body.scrollIntoView({ block: 'start', behavior: 'smooth' });
+          });
+        }
+      })();
+    </script>
 
     {
       related.length > 0 && (
