@@ -1,26 +1,48 @@
 ---
-import { SHOW_PRICES, url } from '../lib/env.js';
 import Page from '../layouts/Page.astro';
-import { pickupOn, shop, waHref } from '../lib/site.js';
+import { shop, waHref } from '../lib/site.js';
+
+const founders = [
+  { name: 'Fayz', role: 'Founder', initial: 'F' },
+  { name: 'Safi', role: 'Co-founder', initial: 'S' },
+];
 ---
 
-<Page title="About us" description={`${shop.name} is a gym supplement shop with one-day home delivery all over ${shop.serviceArea}.`}>
-  <p>
-    {shop.name} is a supplement shop in {shop.serviceArea} for people who train. We stock whey protein, mass gainers, creatine,
-    pre-workouts, amino acids and vitamins from brands we know and trust, and we help you pick what suits your goal and budget.
+<Page title="About us" description={`${shop.name} – genuine gym supplements and honest advice from Thiruthuraipoondi, delivered across ${shop.serviceArea}.`}>
+  <p class="!text-lg !leading-relaxed !text-fg">
+    Every rep is a promise you keep to yourself. <b class="text-lime">oneMore</b> is here for that one more rep.
   </p>
-  <p lang="ta" class="ta">தமிழ்நாடு முழுவதும் டெலிவரி செய்யும் உடற்பயிற்சி சப்ளிமெண்ட் கடை.</p>
 
-  <h2>What we promise</h2>
+  <h2>Why we started</h2>
+  <p>
+    More people in Thiruthuraipoondi and Tiruvarur are training than ever – but genuine supplements and honest advice were hard to find.
+    Fake tubs online, guesswork from videos, and myths like "protein is steroids". So we built a shop from our own town, for our own people.
+  </p>
+
+  <h2>What we believe</h2>
   <ul>
-    <li><b>Genuine stock.</b> We buy from authorised importers and brand distributors. Imported tubs carry the Indian importer’s sticker, and we will show you the invoice if you ask.</li>
-    <li><b>Honest prices.</b> {SHOW_PRICES ? 'Prices on the website are the same as at our counter.' : 'The price we send you on WhatsApp is the same as at our counter.'} All prices include taxes.</li>
-    <li><b>Real help.</b> Message us on WhatsApp or walk in. We will answer questions about dosage on the label, flavours and alternatives.</li>
+    <li><b>Food, sleep and training first.</b> Supplements only fill the gaps.</li>
+    <li><b>Protein is food.</b> Whey comes from milk – nothing to fear.</li>
+    <li><b>Genuine only.</b> Authorised importers and distributors, invoice on request.</li>
+    <li><b>Honest prices.</b> Same as our counter, taxes included.</li>
   </ul>
 
-  <h2>Visit or order online</h2>
+  <h2>The team</h2>
+  <ul class="not-prose !my-4 grid !list-none grid-cols-2 gap-3 !pl-0">
+    {
+      founders.map((f) => (
+        <li class="flex items-center gap-3 rounded-xl border border-line bg-surface p-3 sm:p-4">
+          <span class="display flex size-12 shrink-0 items-center justify-center rounded-full bg-lime text-xl text-ink" aria-hidden="true">{f.initial}</span>
+          <div>
+            <p class="!m-0 text-lg font-black !text-fg">{f.name}</p>
+            <p class="!m-0 whitespace-nowrap text-xs font-bold uppercase tracking-wider !text-lime">{f.role}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+
   <p>
-    {SHOW_PRICES ? 'Order here' : 'Send us your list from the website on WhatsApp'} for one-day home delivery anywhere in {shop.serviceArea}{pickupOn ? ', or pick up from the shop' : ''}. Not sure what to buy?{' '}
-    <a href={waHref()} target="_blank" rel="noopener">Ask us on WhatsApp</a>.
+    One-day delivery across {shop.serviceArea}. Questions? <a href={waHref()} target="_blank" rel="noopener">Ask us on WhatsApp</a> – we are with you, one more rep at a time.
   </p>
 </Page>
