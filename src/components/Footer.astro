@@ -1,7 +1,7 @@
 ---
 import { SHOW_PRICES, url } from '../lib/env.js';
 import Logo from './Logo.astro';
-import { categoriesWithProducts, filled, shop, telHref, waHref } from '../lib/site.js';
+import { categoriesWithProducts, filled, shop } from '../lib/site.js';
 
 const g = shop.grievanceOfficer;
 const address = shop.addressLines.map(filled).filter(Boolean);
@@ -10,16 +10,11 @@ const link = 'text-[#d4d4cf] hover:text-lime';
 ---
 
 <footer class="mt-16 border-t border-line bg-surface">
-  <div class="mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-10 px-4 py-12 lg:grid-cols-[1.2fr_1.6fr_1fr_1.2fr] lg:gap-10">
-    <div class="col-span-2 space-y-4 lg:col-span-1">
-      <Logo size="text-3xl" />
-      <p class="max-w-xs text-sm text-muted">{shop.tagline} One-day delivery across {shop.serviceArea}.</p>
-      <ul class="space-y-2 text-sm">
-        <li><a class="font-bold hover:text-lime" href={telHref}>{shop.phoneDisplay}</a></li>
-        <li><a class={link} href={waHref()} target="_blank" rel="noopener">WhatsApp us</a></li>
-      </ul>
-    </div>
-
+  <div class="mx-auto max-w-7xl px-4 pt-12 text-center">
+    <a href={url('/')} aria-label="oneMore home" class="inline-block"><Logo size="text-5xl sm:text-6xl" /></a>
+    <p class="mx-auto mt-3 max-w-md text-base text-[#d4d4cf] sm:text-lg">{shop.tagline} One-day delivery across {shop.serviceArea}.</p>
+  </div>
+  <div class="mx-auto mt-10 grid max-w-7xl grid-cols-2 gap-x-6 gap-y-10 border-t border-line px-4 py-10 sm:grid-cols-[1.6fr_1fr_1.2fr] lg:gap-10">
     <nav aria-label="Categories" class="col-span-2 sm:col-span-1">
       <h2 class={heading}>Shop</h2>
       <ul class="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
