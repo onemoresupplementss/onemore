@@ -20,7 +20,7 @@ import { pickupOn, shop, waHref } from '../lib/site.js';
 
   <h2>Visit or order online</h2>
   <p>
-    {SHOW_PRICES ? 'Order here' : 'Send us your list from the website on WhatsApp'} for one-day home delivery anywhere in {shop.serviceArea}{pickupOn ? ', or pick up from the shop' : ''}. Not sure what to buy?
+    {SHOW_PRICES ? 'Order here' : 'Send us your list from the website on WhatsApp'} for one-day home delivery anywhere in {shop.serviceArea}{pickupOn ? ', or pick up from the shop' : ''}. Not sure what to buy?{' '}
     <a href={waHref()} target="_blank" rel="noopener">Ask us on WhatsApp</a>.
   </p>
 </Page>
