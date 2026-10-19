@@ -44,7 +44,7 @@ export default function ProductPhoto({ variants, image, brand, name, labels = []
 
   return (
     <div>
-      <div class="card overflow-hidden">
+      <div class="card relative overflow-hidden">
         <div
           ref={track}
           class="no-scrollbar flex snap-x snap-mandatory overflow-x-auto"
@@ -69,6 +69,35 @@ export default function ProductPhoto({ variants, image, brand, name, labels = []
             </div>
           ))}
         </div>
+        {slides.length > 1 && (
+          <>
+            {/* Dots: show there are more pictures and which one is on screen. */}
+            <div class="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center">
+              <div class="pointer-events-auto flex items-center gap-1.5 rounded-full bg-ink/70 px-2.5 py-1.5 backdrop-blur">
+                {slides.map((_, i) => (
+                  <button
+                    type="button"
+                    key={i}
+                    onClick={() => go(i)}
+                    aria-label={`Show picture ${i + 1} of ${slides.length}`}
+                    class={`h-2 rounded-full transition-all duration-200 ${at === i ? 'w-6 bg-lime' : 'w-2 bg-white/50 hover:bg-white/80'}`}
+                  />
+                ))}
+              </div>
+            </div>
+            {/* Arrows on laptops; phones swipe. */}
+            {at > 0 && (
+              <button type="button" onClick={() => go(at - 1)} aria-label="Previous picture" class="absolute left-3 top-1/2 hidden size-10 -translate-y-1/2 items-center justify-center rounded-full bg-ink/70 text-2xl font-bold text-white backdrop-blur hover:bg-ink sm:flex">
+                ‹
+              </button>
+            )}
+            {at < slides.length - 1 && (
+              <button type="button" onClick={() => go(at + 1)} aria-label="Next picture" class="absolute right-3 top-1/2 hidden size-10 -translate-y-1/2 items-center justify-center rounded-full bg-ink/70 text-2xl font-bold text-white backdrop-blur hover:bg-ink sm:flex">
+                ›
+              </button>
+            )}
+          </>
+        )}
       </div>
       {slides.length > 1 && (
         <div class="mt-3 flex gap-2">
