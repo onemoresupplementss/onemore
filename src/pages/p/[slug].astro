@@ -78,22 +78,15 @@ const crumbsLd = {
     </nav>
     <div class="grid gap-8 lg:grid-cols-2 lg:gap-12">
       <div class="space-y-3">
-        <div class="card overflow-hidden">
-          <ProductPhoto client:idle variants={p.variants.map((v) => ({ id: v.id, image: v.image, size: v.size }))} image={p.image} brand={p.brand} name={p.name} />
-        </div>
-        {
-          info.labelImages?.length > 0 && (
-            <ul class="grid grid-cols-4 gap-2">
-              {info.labelImages.map((src, i) => (
-                <li>
-                  <a href={asset(src)} target="_blank" rel="noopener" class="card block overflow-hidden" aria-label={`Open label photo ${i + 1}`}>
-                    <img src={asset(src)} alt="" loading="lazy" width="150" height="150" class="aspect-square w-full object-cover" />
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )
-        }
+        <ProductPhoto
+          client:idle
+          variants={p.variants.map((v) => ({ id: v.id, image: v.image, size: v.size }))}
+          image={p.image}
+          brand={p.brand}
+          name={p.name}
+          labels={info.labelImages || []}
+          facts={desc.stats || info.ingredients ? { title: desc.stats?.title, tiles: (desc.stats?.tiles || []).slice(0, 4), ingredients: info.ingredients } : null}
+        />
       </div>
       <div>
         <p class="text-sm font-bold uppercase tracking-wider text-lime">{p.brand}</p>
