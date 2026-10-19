@@ -49,6 +49,69 @@ function CopyRow({ label, value, display }) {
   );
 }
 
+// Receipt picture: preview, save to the gallery, or share (WhatsApp etc.) from the phone's share sheet.
+function ReceiptCard({ order, shop }) {
+  const [img, setImg] = useState(null);
+  const [blob, setBlob] = useState(null);
+  const [canShare, setCanShare] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    let objUrl;
+    import('../client/receipt.js').then(({ receiptBlob }) =>
+      receiptBlob(order, shop).then((b) => {
+        if (!alive || !b) return;
+        objUrl = URL.createObjectURL(b);
+        setBlob(b);
+        setImg(objUrl);
+        try {
+          const f = new File([b], `${order.id}-receipt.png`, { type: 'image/png' });
+          setCanShare(!!(navigator.canShare && navigator.canShare({ files: [f] })));
+        } catch {
+          setCanShare(false);
+        }
+      })
+    );
+    return () => {
+      alive = false;
+      if (objUrl) URL.revokeObjectURL(objUrl);
+    };
+  }, [order.id]);
+
+  const name = `${order.id}-oneMore-receipt.png`;
+  async function share() {
+    try {
+      await navigator.share({ files: [new File([blob], name, { type: 'image/png' })], title: `oneMore order ${order.id}`, text: `My oneMore order ${order.id}` });
+    } catch {
+      // cancelled
+    }
+  }
+  return (
+    <section class="card space-y-3 p-4" aria-labelledby="rcpt-h">
+      <h2 id="rcpt-h" class="display text-lg">
+        Your receipt
+      </h2>
+      {img ? (
+        <a href={img} download={name} class="block overflow-hidden rounded-lg border border-line bg-white" aria-label="Save receipt picture">
+          <img src={img} alt={`Receipt for order ${order.id}`} class="w-full" />
+        </a>
+      ) : (
+        <div class="aspect-[3/4] w-full animate-pulse rounded-lg bg-white/10" />
+      )}
+      <div class={`grid gap-2 ${canShare ? 'grid-cols-2' : 'grid-cols-1'}`}>
+        <a class={`btn btn-ghost text-sm ${img ? '' : 'pointer-events-none opacity-50'}`} href={img || undefined} download={name}>
+          Save receipt
+        </a>
+        {canShare && (
+          <button type="button" class="btn btn-lime text-sm" onClick={share} disabled={!blob}>
+            Share / WhatsApp
+          </button>
+        )}
+      </div>
+      <p class="text-xs text-muted">Keep this picture for your records. It is saved on your phone only.</p>
+    </section>
+  );
+}
+
 function UpiQr({ link }) {
   const [svg, setSvg] = useState(null);
   useEffect(() => {
@@ -267,7 +330,9 @@ export default function OrderView({ shop, replyPromise, reviewLink, callFirstAbo
         <p class="text-sm text-muted">{replyPromise}</p>
       </div>
 
-      <aside class="card space-y-4 p-4">
+      <div class="space-y-6">
+        <ReceiptCard order={order} shop={shop} />
+        <aside class="card space-y-4 p-4">
         <h2 class="display text-lg">Your order</h2>
         <ul class="divide-y divide-line text-sm" role="list">
           {order.lines.map((l) => (
@@ -317,7 +382,8 @@ export default function OrderView({ shop, replyPromise, reviewLink, callFirstAbo
             Happy with us? Leave a Google review
           </a>
         )}
-      </aside>
+        </aside>
+      </div>
     </div>
   );
 }
