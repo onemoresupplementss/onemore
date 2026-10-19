@@ -32,6 +32,9 @@ function uuid() {
 }
 
 // Same order details -> same key, so a retry after a timeout can never create a second order.
+const COUPON_KEY = 'om_coupon';
+const cleanCoupon = (v) => String(v || '').toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 20);
+
 function idemKeyFor(fingerprint) {
   const saved = load(IDEM_KEY, null, 'sessionStorage');
   if (saved && saved.fp === fingerprint) return saved.key;
@@ -59,6 +62,8 @@ export default function Checkout({ settings, delivery, shop }) {
   const [ready, setReady] = useState(false);
   const [c, setC] = useState({ name: '', phone: '', fulfilment: 'delivery', area: '', pincode: '', address: '', landmark: '', notes: '' });
   const [payment, setPayment] = useState('upi');
+  // Trainer / gym code: no discount, it only tells the shop who sent the customer.
+  const [coupon, setCoupon] = useState('');
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -70,6 +75,8 @@ export default function Checkout({ settings, delivery, shop }) {
   useEffect(() => {
     loadFeed({ fresh: true });
     setC((x) => ({ ...x, ...load(CUSTOMER_KEY, {}) }));
+    const q = new URLSearchParams(location.search);
+    setCoupon(cleanCoupon(q.get('coupon') || q.get('ref') || load(COUPON_KEY, '')));
     setReady(true);
   }, []);
 
@@ -162,7 +169,7 @@ export default function Checkout({ settings, delivery, shop }) {
       return;
     }
     const items = lines.map((l) => ({ id: l.id, qty: l.qty }));
-    const fp = JSON.stringify([items, value, payment]);
+    const fp = JSON.stringify([items, value, payment, coupon]);
     const idemKey = idemKeyFor(fp);
     setBusy(true);
     setProblem(null);
@@ -172,7 +179,7 @@ export default function Checkout({ settings, delivery, shop }) {
       res = await fetch(url('/api/order'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idemKey, items, customer: value, payment, source: orderSource(), turnstile }),
+        body: JSON.stringify({ idemKey, items, customer: value, payment, coupon, source: orderSource(), turnstile }),
       });
       body = await res.json();
     } catch {
@@ -304,6 +311,26 @@ export default function Checkout({ settings, delivery, shop }) {
               <Field label="Notes (optional)" error={err('notes')}>
                 {(p) => <textarea {...p} class="field min-h-16" rows={2} value={c.notes} onInput={(e) => set({ notes: e.currentTarget.value })} maxLength={300} placeholder="Flavour preference, best time to call…" />}
               </Field>
+            </div>
+            <div>
+              <Field label="Coupon code (optional)">
+                {(p) => (
+                  <input
+                    {...p}
+                    class="field uppercase tracking-wider"
+                    value={coupon}
+                    onInput={(e) => {
+                      const v = cleanCoupon(e.currentTarget.value);
+                      setCoupon(v);
+                      save(COUPON_KEY, v);
+                    }}
+                    maxLength={20}
+                    autocomplete="off"
+                    placeholder="e.g. SRGYM01"
+                  />
+                )}
+              </Field>
+              <p class="mt-1 text-xs text-muted">Got a code from your trainer or gym? Enter it here.</p>
             </div>
           </div>
         </Section>
