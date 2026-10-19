@@ -45,6 +45,7 @@ export async function onRequestPost(context) {
     items: items.map((it) => ({ id: String(it.id), qty: it.qty })),
     customer,
     payment: body.payment,
+    coupon: String(body.coupon || '').toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 20),
     source: SOURCES.includes(body.source) ? body.source : 'direct',
   });
 
