@@ -44,6 +44,12 @@ const link = 'text-[#d4d4cf] hover:text-lime';
       <p class="mt-2 text-muted">
         Grievance officer:<br />
         <a class={link} href={`tel:${g.phone.replace(/\s/g, '')}`}>{g.phone}</a>
+        {filled(g.email) && (
+          <>
+            <br />
+            <a class={`${link} break-all`} href={`mailto:${g.email}`}>{g.email}</a>
+          </>
+        )}
       </p>
     </div>
   </div>
