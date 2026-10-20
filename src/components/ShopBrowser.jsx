@@ -80,14 +80,15 @@ export default function ShopBrowser({ products, settings }) {
     if (words.length && !words.every((w) => index.get(p.slug).includes(w))) return false;
     if (state.brands.length && !state.brands.includes(p.brand)) return false;
     if (state.sizes.length && !p.variants.some((v) => state.sizes.includes(v.size))) return false;
-    if (SHOW_PRICES && state.prices.length && !PRICE_BANDS.some((b) => state.prices.includes(b.key) && b.test(st.price))) return false;
+    if (SHOW_PRICES && state.prices.length && (st.ask || !PRICE_BANDS.some((b) => state.prices.includes(b.key) && b.test(st.price)))) return false;
     if (SHOW_PRICES && state.stock && !st.inStock) return false;
     return true;
   });
   const cmp = {
     featured: () => 0,
-    'price-asc': (a, b) => a.st.price - b.st.price,
-    'price-desc': (a, b) => b.st.price - a.st.price,
+    // Products without a price yet ("Ask") go after the priced ones.
+    'price-asc': (a, b) => a.st.ask - b.st.ask || a.st.price - b.st.price,
+    'price-desc': (a, b) => a.st.ask - b.st.ask || b.st.price - a.st.price,
     discount: (a, b) => percentOff(b.st.price, b.st.mrp) - percentOff(a.st.price, a.st.mrp),
     name: (a, b) => `${a.p.brand} ${a.p.name}`.localeCompare(`${b.p.brand} ${b.p.name}`),
   }[SORTS.some((o) => o.key === state.sort) ? state.sort : 'featured'];
