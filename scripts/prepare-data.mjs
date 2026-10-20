@@ -99,7 +99,7 @@ const products = catalog.products
       .map(({ active, verified, visible, price, mrp, soldOut, ...v }) => ({
         ...v,
         image: imageUrl(v.image),
-        ...(showPrices ? { price, mrp } : {}),
+        ...(showPrices && !v.ask ? { price, mrp } : {}),
         ...(soldOut ? { soldOut: true } : {}),
       }));
     const { minPrice, minMrp, inStock, ...rest } = p;
