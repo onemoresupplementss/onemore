@@ -89,6 +89,7 @@ export const SETTINGS = {
   RequireVerified: ['bool', true, false],
   AllowPuducherry: ['bool', true, true],
   AlertEmail: ['text', '', false],
+  AlertWhatsApp: ['text', '', false],
   ReviewLink: ['text', '', true],
 };
 
@@ -102,6 +103,12 @@ export function parseMoney(v) {
   if (s === '') return null;
   const n = Number(s);
   return Number.isFinite(n) ? n : null;
+}
+
+// A Price cell saying "Ask" (or WhatsApp / On request / Enquire): no price yet, customers ask on
+// WhatsApp. Typing a number later turns the variant into a normal one with a price.
+export function isAskPrice(v) {
+  return /^(ask|ask on whatsapp|whatsapp|on request|price on request|enquire|enquiry|tbc)$/i.test(String(v ?? '').trim());
 }
 
 export function parseIntSafe(v, fallback = 0) {
@@ -121,6 +128,11 @@ export function slugify(s) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 80);
+}
+
+/** "Piña Colada" -> "pina-colada" (accents dropped), used for flavour picture file names. */
+export function flavourSlug(s) {
+  return slugify(String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
 }
 
 export function categoryFor(value) {
@@ -183,10 +195,11 @@ export function normalizeDelivery(rows = []) {
 // The single rule for whether a variant is on the site. "Out of stock" variants stay listed
 // (shown as out of stock, can't be ordered); untick Active to take one off the site.
 // requirePrice is false in the WhatsApp-only phase, where the site shows no prices.
+// "Ask" variants (Price cell says Ask) are listed without a price and enquired about on WhatsApp.
 export function variantVisible(v, settings, { requirePrice = true } = {}) {
   if (!v.active) return false;
   if (settings.RequireVerified && !v.verified) return false;
-  if (requirePrice && !(v.price > 0)) return false;
+  if (requirePrice && !v.ask && !(v.price > 0)) return false;
   return true;
 }
 
@@ -234,8 +247,9 @@ export function normalizeCatalog(raw, { today, requirePrice = true }) {
     if (!brand || !name) return warnings.push(`Row ${rowNo} (${id}): brand and name are required - skipped`);
     const cat = categoryFor(m.category);
     if (!cat) return warnings.push(`Row ${rowNo} (${id}): unknown category "${text(m.category)}" - skipped`);
-    const price = parseMoney(m.price);
-    const mrp = parseMoney(m.mrp);
+    const ask = isAskPrice(m.price);
+    const price = ask ? null : parseMoney(m.price);
+    const mrp = ask ? null : parseMoney(m.mrp);
     if (price !== null && mrp !== null && price > mrp) warnings.push(`Row ${rowNo} (${id}): price is above MRP - hidden`);
     const slug = slugify(m.group) || slugify(`${brand} ${name}`);
     const v = {
@@ -251,6 +265,7 @@ export function normalizeCatalog(raw, { today, requirePrice = true }) {
       active: m.active === undefined ? true : parseBool(m.active),
       verified: parseBool(m.verified),
     };
+    if (ask) v.ask = true;
     if (price !== null && mrp !== null && price > mrp) v.active = false;
     v.visible = variantVisible(v, settings, { requirePrice });
     let g = groups.get(slug);
@@ -294,6 +309,7 @@ export function normalizeCatalog(raw, { today, requirePrice = true }) {
         sizes: unique(g.variants.map((v) => v.size)),
         flavours: unique(g.variants.map((v) => v.flavour)),
         inStock: visible.some((v) => !v.soldOut),
+        ...(pool.every((v) => v.ask) ? { ask: true } : {}),
       };
     })
     .sort((a, b) => a.sort - b.sort || a.brand.localeCompare(b.brand) || a.name.localeCompare(b.name));
@@ -322,7 +338,8 @@ export function hashString(s) {
 export function buildFeed(catalog, at) {
   const items = {};
   for (const p of catalog.products) {
-    for (const v of p.variants) items[v.id] = [v.price, v.mrp, v.soldOut ? 0 : 1, v.visible ? 1 : 0];
+    // "Ask" variants have no price, so they can never be ordered through the checkout.
+    for (const v of p.variants) items[v.id] = [v.price, v.mrp, v.soldOut ? 0 : 1, v.visible && !v.ask ? 1 : 0];
   }
   const body = { items, settings: publicSettings(catalog.settings), delivery: catalog.delivery };
   return { v: hashString(JSON.stringify(body)), at, ...body };
