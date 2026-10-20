@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import ProductImage from './ProductImage.jsx';
 import { addToCart, liveVariant, showAddedToast } from '../client/store.js';
 import { SHOW_PRICES, url } from '../lib/env.js';
-import { formatINR, percentOff } from '../shared/order.js';
+import { formatINR, percentOff, whatsappLink } from '../shared/order.js';
+import { name as shopName, whatsappNumber } from '../../shop.config.json';
 
 /**
  * Live state for a product card: cheapest buyable price, whether anything is in stock, and which
@@ -22,15 +23,20 @@ export function cardState(p, f) {
     buyable: buyable.length > 0,
     inStock: inStock.length > 0,
     single: inStock.length === 1 && vs.length === 1 ? inStock[0] : null,
+    // No price yet (Price cell "Ask"): enquire on WhatsApp instead of adding to the cart.
+    ask: vs.every((v) => v.live.ask),
   };
 }
 
 export default function ProductCard({ p, f, settings, eager = false }) {
   const s = cardState(p, SHOW_PRICES ? f : null);
-  const off = SHOW_PRICES ? percentOff(s.price, s.mrp) : 0;
+  const off = SHOW_PRICES && !s.ask ? percentOff(s.price, s.mrp) : 0;
   const href = url(`/p/${p.slug}/`);
   const maxQty = settings?.MaxQtyPerLine ?? 10;
   const sizes = [...new Set(p.variants.map((v) => v.size).filter(Boolean))];
+  const flavours = [...new Set(p.variants.map((v) => v.flavour).filter(Boolean))];
+  const title = p.name.startsWith(p.brand) ? p.name : `${p.brand} ${p.name}`;
+  const askText = `Hi ${shopName}, I'd like to know about ${title}${sizes.length ? ` (${sizes.join(' / ')})` : ''}. Which flavours are available?`;
   const tag = p.badge || (p.bestseller ? 'Bestseller' : '');
   const [added, setAdded] = useState(false);
   const timer = useRef();
@@ -68,7 +74,8 @@ export default function ProductCard({ p, f, settings, eager = false }) {
           </a>
         </h3>
         {sizes.length > 0 && <p class="text-xs text-muted">{sizes.join(' · ')}</p>}
-        {SHOW_PRICES && (
+        {s.ask && flavours.length > 1 && <p class="text-xs font-bold text-lime">{flavours.length} flavours</p>}
+        {SHOW_PRICES && !s.ask && (
           <div class="mt-auto pt-2">
             <p class="flex flex-wrap items-baseline gap-x-2">
               <span class="text-lg font-black">
@@ -83,8 +90,12 @@ export default function ProductCard({ p, f, settings, eager = false }) {
             </p>
           </div>
         )}
-        <div class={`relative z-10 pt-2 ${SHOW_PRICES ? '' : 'mt-auto'}`}>
-          {!s.buyable ? (
+        <div class={`relative z-10 pt-2 ${SHOW_PRICES && !s.ask ? '' : 'mt-auto'}`}>
+          {s.ask ? (
+            <a class="btn btn-wa w-full text-sm" href={whatsappLink(whatsappNumber, askText)} target="_blank" rel="noopener" aria-label={`Ask about ${p.brand} ${p.name} on WhatsApp`}>
+              Ask on WhatsApp
+            </a>
+          ) : !s.buyable ? (
             <button class="btn w-full text-sm" disabled>
               Unavailable
             </button>
