@@ -7,6 +7,8 @@ import ProductPhoto from '../../components/ProductPhoto.jsx';
 import { absUrl, cardData, catalog, filled, pickupOn, shop, waHref } from '../../lib/site.js';
 import { formatNetQty, lineLabel } from '../../shared/order.js';
 import { parseDescription } from '../../lib/describe.js';
+import { flavourSlug } from '../../shared/catalog.js';
+import { existsSync } from 'node:fs';
 
 export function getStaticPaths() {
   return catalog.products.map((p) => ({ params: { slug: p.slug }, props: { p } }));
@@ -30,6 +32,13 @@ const labelRows = [
   ['Consumer care', info.consumerCare],
 ].filter(([, val]) => val);
 const desc = parseDescription(p.description);
+// Flavour pictures for the "Choose your flavour" tiles: public/products/<group>-flavour-<flavour>.webp
+const swatches = Object.fromEntries(
+  p.flavours
+    .map((fl) => [fl, `products/${p.slug}-flavour-${flavourSlug(fl)}.webp`])
+    .filter(([, file]) => existsSync(`public/${file}`))
+    .map(([fl, file]) => [fl, asset(file)]),
+);
 const packSizes = p.variants.map((v) => (v.netQty ? formatNetQty(v.netQty, v.unit) : v.size)).filter((x, i, a) => x && a.indexOf(x) === i);
 const missingLabel = !info.ingredients || !info.nutrition || !info.countryOfOrigin || (/yes/i.test(info.imported || '') && !info.importer);
 
@@ -38,8 +47,10 @@ const description =
   `${p.brand} ${p.name} (${p.sizes.join(', ')}) at ${shop.name}. Genuine stock, ${SHOW_PRICES ? 'live availability' : 'order on WhatsApp'}, one-day home delivery across ${shop.serviceArea}${pickupOn ? ' or store pickup' : ''}.`;
 const ask = `Hi ${shop.name}, can you send the label photo of ${p.brand} ${p.name}?`;
 
-// Search-engine product data needs a price, so it is only added in checkout mode.
-const offers = p.variants.map((v) => ({
+// Search-engine product data needs a price, so it is only added in checkout mode
+// and never for options without a price yet ("Ask").
+const priced = p.variants.filter((v) => !v.ask);
+const offers = priced.map((v) => ({
   '@type': 'Offer',
   sku: v.id,
   name: lineLabel({ brand: p.brand, name: p.name, size: v.size, flavour: v.flavour }),
@@ -58,7 +69,7 @@ const productLd = {
   description,
   sku: v0.id,
   ...(images.length ? { image: images.map((i) => absUrl(i)) } : {}),
-  offers: offers.length === 1 ? offers[0] : { '@type': 'AggregateOffer', priceCurrency: 'INR', lowPrice: Math.min(...p.variants.map((v) => v.price)), highPrice: Math.max(...p.variants.map((v) => v.price)), offerCount: offers.length, offers },
+  offers: offers.length === 1 ? offers[0] : { '@type': 'AggregateOffer', priceCurrency: 'INR', lowPrice: Math.min(...priced.map((v) => v.price)), highPrice: Math.max(...priced.map((v) => v.price)), offerCount: offers.length, offers },
 };
 const crumbsLd = {
   '@context': 'https://schema.org',
@@ -71,7 +82,7 @@ const crumbsLd = {
 };
 ---
 
-<Layout title={`${p.brand} ${p.name}`} description={description} image={images[0] || '/og.png'} jsonLd={SHOW_PRICES ? [productLd, crumbsLd] : [crumbsLd]} waText={`Hi ${shop.name}, I have a question about ${p.brand} ${p.name}.`} waRaised>
+<Layout title={`${p.brand} ${p.name}`} description={description} image={images[0] || '/og.png'} jsonLd={SHOW_PRICES && priced.length ? [productLd, crumbsLd] : [crumbsLd]} waText={`Hi ${shop.name}, I have a question about ${p.brand} ${p.name}.`} waRaised>
   <div class="mx-auto max-w-7xl px-4 py-6 pb-28 lg:pb-6">
     <nav aria-label="Breadcrumb" class="mb-4 text-xs text-muted">
       <a href={url('/shop/')} class="hover:text-lime">Shop</a> / <a href={url(`/shop/${p.category}/`)} class="hover:text-lime">{p.categoryName}</a>
@@ -106,7 +117,7 @@ const crumbsLd = {
           {p.categoryName}{p.badge && <> · <span class="text-lime">{p.badge}</span></>}
         </p>
         <div class="mt-6">
-          <ProductBuy client:load product={{ slug: p.slug, brand: p.brand, name: p.name, image: p.image, variants: p.variants }} settings={catalog.settings} shop={{ name: shop.name, whatsappNumber: shop.whatsappNumber }} />
+          <ProductBuy client:load product={{ slug: p.slug, brand: p.brand, name: p.name, image: p.image, variants: p.variants }} settings={catalog.settings} shop={{ name: shop.name, whatsappNumber: shop.whatsappNumber }} swatches={swatches} />
         </div>
       </div>
     </div>
