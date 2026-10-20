@@ -151,6 +151,8 @@ export function loadFeed({ fresh = false } = {}) {
  * (always the case in WhatsApp mode). inStock = not ticked "Out of stock" in the sheet.
  */
 export function liveVariant(v, f) {
+  // "Ask" variants have no price anywhere: they are always enquired about on WhatsApp.
+  if (v.ask) return { price: 0, mrp: 0, inStock: !v.soldOut, buyable: true, ask: true };
   if (!f) return { price: v.price, mrp: v.mrp, inStock: !v.soldOut, buyable: true };
   const row = f.items?.[v.id];
   if (!row) return { price: v.price, mrp: v.mrp, inStock: false, buyable: false };
