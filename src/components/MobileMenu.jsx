@@ -49,14 +49,6 @@ export default function MobileMenu({ categories, pages, current, telHref, phoneD
             ))}
           </ul>
         </nav>
-        <div class="grid grid-cols-2 gap-2 border-t border-line p-4">
-          <a class="btn btn-ghost text-sm" href={telHref} aria-label={`Call the shop, ${phoneDisplay}`}>
-            Call the shop
-          </a>
-          <a class="btn btn-lime text-sm" href={waHref} target="_blank" rel="noopener">
-            WhatsApp us
-          </a>
-        </div>
       </Sheet>
     </>
   );
