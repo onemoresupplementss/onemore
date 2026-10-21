@@ -1,0 +1,114 @@
+---
+// Lime bar at the top of every page: the Announcement setting plus the bulk-order note.
+// Phones and tablets: a slow scrolling tape (pauses on hover/touch). Laptops: both messages side by side.
+import { waHref } from '../lib/site.js';
+
+interface Props {
+  announcement?: string;
+}
+const { announcement } = Astro.props;
+
+const items = [
+  announcement && { icon: 'truck', text: announcement },
+  { icon: 'box', text: 'Bulk orders: WhatsApp us 2 business days ahead · Delivered in 1–2 business days', href: waHref("Hi oneMore, I'd like to place a bulk order.") },
+].filter(Boolean) as { icon: string; text: string; href?: string }[];
+// Repeat so one set is always wider than the screen and the tape never shows a gap.
+const tape = [...items, ...items, ...items];
+---
+
+<div class="tb bg-lime text-xs font-bold text-ink sm:text-sm" role="region" aria-label="Delivery and bulk orders">
+  <div class="tb-track">
+    {
+      [0, 1].map((copy) => (
+        <ul class="tb-set" aria-hidden={copy ? 'true' : undefined}>
+          {tape.map((it, i) => (
+            <li class:list={['tb-item', i >= items.length && 'tb-rep']}>
+              {it.icon === 'truck' ? (
+                <svg class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 6h11v10H3zM14 9h4l3 3v4h-7" />
+                  <circle cx="7" cy="17.5" r="1.8" />
+                  <circle cx="17" cy="17.5" r="1.8" />
+                </svg>
+              ) : (
+                <svg class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 8 12 3 3 8v8l9 5 9-5V8ZM3 8l9 5 9-5M12 13v8" />
+                </svg>
+              )}
+              {it.href ? (
+                <a href={it.href} target="_blank" rel="noopener" class="underline-offset-2 hover:underline" tabindex={copy || i >= items.length ? -1 : undefined}>
+                  {it.text} <span aria-hidden="true">→</span>
+                </a>
+              ) : (
+                <span>{it.text}</span>
+              )}
+            </li>
+          ))}
+        </ul>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .tb {
+    overflow: hidden;
+  }
+  .tb-track {
+    display: flex;
+    width: max-content;
+    animation: tb-scroll 40s linear infinite;
+  }
+  .tb:hover .tb-track,
+  .tb:focus-within .tb-track {
+    animation-play-state: paused;
+  }
+  .tb-set {
+    display: flex;
+    flex-shrink: 0;
+  }
+  .tb-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0 0.5rem 1.25rem;
+    white-space: nowrap;
+  }
+  .tb-item::after {
+    content: '';
+    width: 0.3rem;
+    height: 0.3rem;
+    margin-left: 1.25rem;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.35;
+  }
+  @keyframes tb-scroll {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  /* Laptops, and anyone who prefers less motion: no scrolling, messages centred. */
+  @media (min-width: 1024px), (prefers-reduced-motion: reduce) {
+    .tb-track {
+      width: auto;
+      justify-content: center;
+      animation: none;
+    }
+    .tb-set[aria-hidden],
+    .tb-rep {
+      display: none;
+    }
+    .tb-set {
+      flex-wrap: wrap;
+      justify-content: center;
+      column-gap: 0;
+    }
+    .tb-item {
+      padding: 0.5rem 0.75rem;
+      white-space: normal;
+    }
+    .tb-item:not(:has(+ .tb-item:not(.tb-rep)))::after {
+      display: none;
+    }
+  }
+</style>
