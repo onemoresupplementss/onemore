@@ -1,0 +1,12 @@
+---
+// Only the products ticked Bestseller in the sheet ("See all" under Best sellers on the homepage).
+import Layout from '../../layouts/Layout.astro';
+import ShopPage from '../../components/ShopPage.astro';
+import { cardData, catalog, shop } from '../../lib/site.js';
+
+const products = catalog.products.filter((p) => p.bestseller).map(cardData);
+---
+
+<Layout title="Bestsellers" description={`Our most popular supplements at ${shop.name}: ${products.length} bestsellers with one-day home delivery across ${shop.serviceArea}.`}>
+  <ShopPage title="Bestsellers" intro="Our most ordered supplements." current="bestsellers" products={products} />
+</Layout>
