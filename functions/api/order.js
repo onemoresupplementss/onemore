@@ -56,7 +56,16 @@ export async function onRequestPost(context) {
   }
   if (UNAVAILABLE.includes(out.error)) {
     console.error('createOrder failed', out.error, out.message);
-    return fail('unavailable', 'Our order system is not answering right now.', 503);
+    // Tell the customer it is our side, not their details, and what to do next.
+    return fail('unavailable', outageMessage(out), 503, { reason: out.error });
   }
   return json({ ok: false, error: out.error, message: out.message || '', details: out.details }, out.error === 'bad_request' ? 400 : 409);
+}
+
+function outageMessage(out) {
+  if (out.error === 'busy') return 'Many orders are coming in right now. Please wait a few seconds and tap Try again.';
+  if (out.error === 'upstream_down' && /time/i.test(out.message || '')) {
+    return 'Our order system is slow right now. Please wait a few seconds and tap Try again.';
+  }
+  return 'Our order system is not answering right now. Your details are fine – please try again in a minute.';
 }
