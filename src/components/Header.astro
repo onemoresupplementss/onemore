@@ -13,7 +13,7 @@ const main = categoriesWithProducts.slice(0, 5);
   <div class="mx-auto flex h-16 max-w-7xl items-center gap-2 px-4">
     <MobileMenu
       client:load
-      categories={[{ name: 'All products', href: url('/shop/') }, ...categoriesWithProducts.map((c) => ({ name: c.name, href: url(`/shop/${c.slug}/`) }))]}
+      categories={[{ name: 'All products', href: url('/shop/') }, ...(catalog.products.some((p) => p.bestseller) ? [{ name: 'Bestsellers', href: url('/shop/bestsellers/') }] : []), ...categoriesWithProducts.map((c) => ({ name: c.name, href: url(`/shop/${c.slug}/`) }))]}
       pages={[
         { label: 'Home', href: url('/') },
         { label: 'About us', href: url('/about/') },

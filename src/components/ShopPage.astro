@@ -11,6 +11,7 @@ interface Props {
   products: object[];
 }
 const { title, intro, current, products } = Astro.props;
+const hasBestsellers = catalog.products.some((p) => p.bestseller);
 ---
 
 <div class="mx-auto max-w-7xl px-4 py-8">
@@ -22,6 +23,15 @@ const { title, intro, current, products } = Astro.props;
   <nav aria-label="Categories" class="no-scrollbar -mx-4 mt-5 mb-6 overflow-x-auto px-4">
     <ul class="flex gap-2">
       <li><a href={url('/shop/')} class="chip whitespace-nowrap" aria-current={!current ? 'page' : undefined} aria-pressed={!current ? 'true' : 'false'}>All</a></li>
+      {
+        hasBestsellers && (
+          <li>
+            <a href={url('/shop/bestsellers/')} class="chip whitespace-nowrap" aria-current={current === 'bestsellers' ? 'page' : undefined} aria-pressed={current === 'bestsellers' ? 'true' : 'false'}>
+              Bestsellers
+            </a>
+          </li>
+        )
+      }
       {
         categoriesWithProducts.map((c) => (
           <li>

@@ -87,13 +87,17 @@ export default function ProductPhoto({ variants, image, brand, name, labels = []
             </div>
             {/* Arrows on laptops; phones swipe. */}
             {at > 0 && (
-              <button type="button" onClick={() => go(at - 1)} aria-label="Previous picture" class="absolute left-3 top-1/2 hidden size-10 -translate-y-1/2 items-center justify-center rounded-full bg-ink/70 text-2xl font-bold text-white backdrop-blur hover:bg-ink sm:flex">
-                ‹
+              <button type="button" onClick={() => go(at - 1)} aria-label="Previous picture" class="absolute left-3 top-1/2 hidden size-10 -translate-y-1/2 items-center justify-center rounded-full bg-ink/70 text-white backdrop-blur hover:bg-ink sm:flex">
+                <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
               </button>
             )}
             {at < slides.length - 1 && (
-              <button type="button" onClick={() => go(at + 1)} aria-label="Next picture" class="absolute right-3 top-1/2 hidden size-10 -translate-y-1/2 items-center justify-center rounded-full bg-ink/70 text-2xl font-bold text-white backdrop-blur hover:bg-ink sm:flex">
-                ›
+              <button type="button" onClick={() => go(at + 1)} aria-label="Next picture" class="absolute right-3 top-1/2 hidden size-10 -translate-y-1/2 items-center justify-center rounded-full bg-ink/70 text-white backdrop-blur hover:bg-ink sm:flex">
+                <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
               </button>
             )}
           </>
