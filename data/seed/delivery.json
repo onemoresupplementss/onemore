@@ -1,6 +1,265 @@
 [
   {
-    "Area": "All over Tamil Nadu",
+    "Area": "Ariyalur",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Chengalpattu",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Chennai",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Coimbatore",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Cuddalore",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Dharmapuri",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Dindigul",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Erode",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Kallakurichi",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Kancheepuram",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Kanniyakumari",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Karur",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Krishnagiri",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Madurai",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Mayiladuthurai",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Nagapattinam",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Namakkal",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Nilgiris",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Perambalur",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Pudukkottai",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Ramanathapuram",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Ranipet",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Salem",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Sivaganga",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Tenkasi",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Thanjavur",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Theni",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Thoothukudi",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Tiruchirappalli",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Tirunelveli",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Tirupathur",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Tiruppur",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Tiruvallur",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Tiruvannamalai",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Tiruvarur",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Vellore",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Viluppuram",
+    "Pincodes": "",
+    "Fee": "",
+    "ETA": "One day",
+    "Active": true
+  },
+  {
+    "Area": "Virudhunagar",
     "Pincodes": "",
     "Fee": "",
     "ETA": "One day",
