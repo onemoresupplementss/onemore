@@ -93,6 +93,9 @@ test('order: passes business errors through, maps outages to 503', async () => {
   gasReply = () => ({ ok: false, error: 'busy' });
   res = await order({ request: post('/api/order', goodOrder), env });
   assert.equal(res.status, 503);
+  const busy = await res.json();
+  assert.equal(busy.details.reason, 'busy');
+  assert.match(busy.message, /Try again/);
 
   globalThis.fetch = async () => new Response('<html>Google error</html>');
   res = await order({ request: post('/api/order', goodOrder), env });
