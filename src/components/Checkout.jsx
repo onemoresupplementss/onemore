@@ -56,6 +56,48 @@ const PAY_HELP = {
   shop: { en: 'Pay at the counter when you pick up your order.', ta: 'கடையில் பொருளை வாங்கும்போது பணம் செலுத்தலாம்.' },
 };
 
+// Names of the form fields, used to tell the customer exactly what to fix.
+const FIELD_LABELS = {
+  fulfilment: 'Delivery or pickup',
+  name: 'Full name',
+  phone: 'Mobile number',
+  area: 'Area',
+  pincode: 'Pincode',
+  address: 'Address',
+  landmark: 'Landmark',
+  notes: 'Notes',
+};
+
+function fieldList(errs) {
+  return Object.keys(FIELD_LABELS)
+    .filter((k) => errs && typeof errs[k] === 'string' && errs[k])
+    .map((k) => `${FIELD_LABELS[k]}: ${errs[k]}`);
+}
+
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// One try at sending the order. Never throws; always returns a body like the server's.
+async function sendOrder(payload) {
+  let res;
+  try {
+    res = await fetch(url('/api/order'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+  } catch {
+    return { ok: false, error: navigator.onLine === false ? 'offline' : 'network' };
+  }
+  try {
+    return await res.json();
+  } catch {
+    return { ok: false, error: 'unavailable', message: '', details: { reason: `http_${res.status}` } };
+  }
+}
+
+// Failures where sending the same order again may work (the same idemKey never makes a second order).
+const isTransient = (b) => b.error === 'network' || (b.error === 'unavailable' && !Array.isArray(b.details));
+
 export default function Checkout({ settings, delivery, shop }) {
   const lines = useSignal(cart);
   const f = useSignal(feed);
@@ -157,6 +199,7 @@ export default function Checkout({ settings, delivery, shop }) {
     const { value, errors: errs } = validation;
     setErrors(errs);
     if (Object.keys(errs).length) {
+      setProblem({ kind: 'input', message: 'Please fix these and tap Place order again:', ta: 'கீழே உள்ளவற்றைச் சரி செய்து மீண்டும் முயற்சிக்கவும்.', list: fieldList(errs) });
       setTimeout(() => formRef.current?.querySelector('[aria-invalid="true"]')?.focus(), 0);
       return;
     }
@@ -173,17 +216,13 @@ export default function Checkout({ settings, delivery, shop }) {
     const idemKey = idemKeyFor(fp);
     setBusy(true);
     setProblem(null);
-    let res;
-    let body;
-    try {
-      res = await fetch(url('/api/order'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idemKey, items, customer: value, payment, coupon, source: orderSource(), turnstile }),
-      });
-      body = await res.json();
-    } catch {
-      body = { ok: false, error: 'unavailable' };
+    const payload = { idemKey, items, customer: value, payment, coupon, source: orderSource(), turnstile };
+    let body = await sendOrder(payload);
+    // A short network or Google hiccup: try once more by itself before showing an error.
+    if (!body.ok && isTransient(body)) {
+      setBusy('retry');
+      await wait(2500);
+      body = await sendOrder(payload);
     }
     setBusy(false);
 
@@ -226,10 +265,45 @@ export default function Checkout({ settings, delivery, shop }) {
       const d = body.details;
       const fields = d?.fields || (d && typeof d === 'object' && !Array.isArray(d) ? d : null);
       if (fields) setErrors(fields);
-      setProblem({ kind: 'input', message: body.message || 'Please check your details.' });
+      const list = fieldList(fields);
+      setProblem(
+        list.length
+          ? { kind: 'input', message: 'Please fix these and tap Place order again:', ta: 'கீழே உள்ளவற்றைச் சரி செய்து மீண்டும் முயற்சிக்கவும்.', list }
+          : { kind: 'input', message: body.message || 'Please check your details.' },
+      );
+      if (list.length) setTimeout(() => formRef.current?.querySelector('[aria-invalid="true"]')?.focus(), 0);
+    } else if (err === 'offline') {
+      setProblem({
+        kind: 'down',
+        message: 'You are offline. Turn on mobile data or Wi-Fi, then tap Try again.',
+        ta: 'இணைய இணைப்பு இல்லை. மொபைல் டேட்டா அல்லது Wi-Fi-ஐ இயக்கி மீண்டும் முயற்சிக்கவும்.',
+        retry: true,
+      });
+    } else if (err === 'network') {
+      setProblem({
+        kind: 'down',
+        message: 'Your internet connection looks weak, so the order did not reach us. Check your signal and tap Try again.',
+        ta: 'இணைய இணைப்பு பலவீனமாக உள்ளது. சரிபார்த்து மீண்டும் முயற்சிக்கவும்.',
+        retry: true,
+        fallback: notSavedLink(idemKey, value),
+      });
+    } else if (err === 'unavailable' || err === 'forbidden') {
+      // Our side (Google or the server) is not answering: the customer can still send the order by WhatsApp.
+      setProblem({
+        kind: 'down',
+        message: body.message || 'Our order system is not answering right now. Your details are fine – please try again in a minute.',
+        ta: 'எங்கள் பக்கம் சிறு பிரச்சனை. உங்கள் விவரங்கள் சரியாக உள்ளன. சில நொடிகள் கழித்து மீண்டும் முயற்சிக்கவும்.',
+        retry: true,
+        fallback: notSavedLink(idemKey, value),
+      });
     } else {
-      // Google or the network is down: the customer can still send the order by WhatsApp.
-      setProblem({ kind: 'down', message: 'Our order system is not answering right now.', fallback: notSavedLink(idemKey, value) });
+      // Any other answer from the sheet: show its message so the customer knows what happened.
+      setProblem({
+        kind: 'down',
+        message: body.message || 'Something went wrong while saving your order. Please tap Try again.',
+        retry: true,
+        fallback: notSavedLink(idemKey, value),
+      });
     }
   }
 
@@ -384,6 +458,11 @@ export default function Checkout({ settings, delivery, shop }) {
         {problem && (
           <div class={`rounded-lg border p-3 text-sm ${problem.kind === 'down' ? 'border-warn' : 'border-danger'}`} role="alert">
             <p class="font-bold">{problem.message}</p>
+            {problem.ta && (
+              <p lang="ta" class="mt-1 text-xs text-muted">
+                {problem.ta}
+              </p>
+            )}
             {problem.list && (
               <ul class="mt-1 list-disc pl-5">
                 {problem.list.map((x) => (
@@ -403,15 +482,19 @@ export default function Checkout({ settings, delivery, shop }) {
                 Remove them
               </button>
             )}
-            {problem.fallback && (
+            {(problem.retry || problem.fallback) && (
               <div class="mt-3 space-y-2">
-                <button type="submit" class="btn btn-ghost w-full">
-                  Try again
+                <button type="submit" class="btn btn-ghost w-full" disabled={busy}>
+                  {busy ? 'Trying…' : 'Try again'}
                 </button>
-                <a class="btn btn-lime w-full" href={problem.fallback} target="_blank" rel="noopener">
-                  Send order on WhatsApp instead
-                </a>
-                <p class="text-xs text-muted">The message says “NOT SAVED”. We will confirm your order by phone.</p>
+                {problem.fallback && (
+                  <>
+                    <a class="btn btn-lime w-full" href={problem.fallback} target="_blank" rel="noopener">
+                      Send order on WhatsApp instead
+                    </a>
+                    <p class="text-xs text-muted">The message says “NOT SAVED”. We will confirm your order by phone.</p>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -420,7 +503,7 @@ export default function Checkout({ settings, delivery, shop }) {
         {shop.turnstileSiteKey && <div ref={tsBox} class="min-h-16" />}
 
         <button type="submit" class="btn btn-lime w-full text-base" disabled={busy}>
-          {busy ? 'Placing order…' : `Place order · ${formatINR(total)}`}
+          {busy === 'retry' ? 'Still trying…' : busy ? 'Placing order…' : `Place order · ${formatINR(total)}`}
         </button>
         <p class="text-xs text-muted">
           Next you will {payment === 'upi' ? 'see how to pay by UPI and ' : ''}send the order to us on WhatsApp in one tap.
