@@ -159,7 +159,7 @@ which staff can edit):
 These are in **`shop.config.json`** on GitHub (rarely changed, and kept away from the sheet so nobody can tamper with them):
 1. Open the repository on github.com → `shop.config.json` → pencil icon (Edit).
 2. Change the value between the quotes. The WhatsApp number is digits only with 91 in front:
-   `"whatsappNumber": "916385824752"`.
+   `"whatsappNumber": "918015239686"`.
 3. **Commit changes**. Cloudflare rebuilds the site in about 2 minutes.
 
 > Keep `"upiPayLinkTested": false` unless a ₹1 payment through the "Open UPI app" button has worked in
