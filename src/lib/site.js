@@ -36,7 +36,7 @@ export const payWays = ['UPI', codOn && 'on delivery', pickupOn && 'at the shop'
   .join(', ')
   .replace(/, ([^,]*)$/, ' or $1');
 
-export function waHref(text = '') {
+export function waHref(text = 'Hi oneMore, I would like to know more about your products.') {
   return `https://wa.me/${shop.whatsappNumber}${text ? '?text=' + encodeURIComponent(text) : ''}`;
 }
 
