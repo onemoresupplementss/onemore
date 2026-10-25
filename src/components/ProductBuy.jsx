@@ -37,7 +37,7 @@ export default function ProductBuy({ product, settings, shop, swatches = {} }) {
   const f = useSignal(feed);
   const vs = product.variants;
   // Open on an option that is in stock, when there is one.
-  const [id, setId] = useState((vs.find((x) => !x.soldOut) || vs[0]).id);
+  const [id, setId] = useState((vs.find((x) => !x.soldOut && !x.ask) || vs.find((x) => !x.soldOut) || vs[0]).id);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const addedTimer = useRef();
