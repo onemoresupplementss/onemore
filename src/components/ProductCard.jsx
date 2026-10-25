@@ -10,7 +10,10 @@ import { name as shopName, whatsappNumber } from '../../shop.config.json';
  * variant "Add" would add. WhatsApp mode passes no feed: no prices, "Out of stock" from the build.
  */
 export function cardState(p, f) {
-  const vs = p.variants.map((v) => ({ ...v, live: liveVariant(v, f) }));
+  const all = p.variants.map((v) => ({ ...v, live: liveVariant(v, f) }));
+  // Show the price of options that have one; "Ask" options (no price yet) don't drag it down to 0.
+  const priced = all.filter((v) => !v.live.ask);
+  const vs = priced.length ? priced : all;
   const buyable = vs.filter((v) => v.live.buyable);
   const inStock = buyable.filter((v) => v.live.inStock);
   const pool = inStock.length ? inStock : buyable.length ? buyable : vs;
@@ -19,7 +22,7 @@ export function cardState(p, f) {
   return {
     price: cheapest.live.price,
     mrp: cheapest.live.mrp,
-    from: prices.size > 1,
+    from: prices.size > 1 || vs.length < all.length,
     buyable: buyable.length > 0,
     inStock: inStock.length > 0,
     single: inStock.length === 1 && vs.length === 1 ? inStock[0] : null,
