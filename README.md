@@ -99,6 +99,8 @@ The tabs **Pending payments**, **To pack**, **Today** and **Customers** update t
    (Indian brands: just tick it).
 3. Different sizes/flavours of the same product: one row each. The `Group` column joins them on one product page
    (it fills itself in, so leave it alone).
+   Extra columns for your own records (`Landing Price`, `Supplier`, `Supplier Contact`, `Variant Source`) can sit next
+   to the others; the website ignores them.
 4. Fill one row in the **Product info** tab for the same `Group`: ingredients, nutrition, veg/non-veg,
    importer, country of origin, consumer care. The law requires these details on the website.
 5. New products appear on the website after a rebuild: tick **PublishNow** in the **Settings** tab
