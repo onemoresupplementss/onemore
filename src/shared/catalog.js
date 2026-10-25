@@ -155,6 +155,30 @@ function mapRow(row, columns) {
   return out;
 }
 
+// Pack sizes in both units, so nobody has to convert: "1.5 kg (3.3 lbs)", "907 g (2 lbs)", "2.27 kg (5 lbs)".
+// Whatever the sheet says ("1.5 kg", "3.3 LBS", "1.5 kg (3.3 LBS)") gives the same label; extra notes in
+// brackets such as "(60 servings)" are kept. Counts (servings, tablets) and packs under 250 g stay as typed.
+export function sizeLabel(raw) {
+  const s = String(raw ?? '').trim();
+  const m = s.match(/^([\d.]+)\s*(kg|kgs|g|gm|gms|lb|lbs)\b\.?\s*(.*)$/i);
+  if (!m) return s;
+  const n = Number(m[1]);
+  if (!(n > 0)) return s;
+  const u = m[2].toLowerCase();
+  const grams = u.startsWith('k') ? n * 1000 : u.startsWith('g') ? n : n * 453.592;
+  if (grams < 250) return s;
+  let rest = m[3].trim();
+  // drop a bracket that only repeats the weight in the other unit, keep anything else
+  rest = rest.replace(/\(\s*[\d.]+\s*(kg|kgs|g|gm|gms|lb|lbs)\.?\s*\)/gi, '').trim();
+  rest = rest.replace(/^\(\s*(.*?)\s*\)$/, '$1');
+  const trim = (x, d) => String(Number(x.toFixed(d)));
+  const metric = grams < 1000 ? `${Math.round(grams)} g` : `${trim(grams / 1000, 2)} kg`;
+  const pounds = u.startsWith('l') ? n : grams / 453.592; // typed in lbs: keep the number as typed
+  const lbNum = u.startsWith('l') ? String(n) : trim(pounds, pounds < 1 ? 2 : 1);
+  const lbs = `${lbNum} ${Number(lbNum) === 1 ? 'lb' : 'lbs'}`;
+  return `${metric} (${lbs})${rest ? ` · ${rest}` : ''}`;
+}
+
 function text(v) {
   return v === null || v === undefined ? '' : String(v).trim();
 }
@@ -254,7 +278,7 @@ export function normalizeCatalog(raw, { today, requirePrice = true }) {
     const slug = slugify(m.group) || slugify(`${brand} ${name}`);
     const v = {
       id,
-      size: text(m.size),
+      size: sizeLabel(text(m.size)),
       flavour: text(m.flavour),
       price: price ?? 0,
       mrp: mrp ?? price ?? 0,
@@ -299,7 +323,9 @@ export function normalizeCatalog(raw, { today, requirePrice = true }) {
     .filter((g) => g.variants.some((v) => v.active))
     .map((g) => {
       const visible = g.variants.filter((v) => v.visible);
-      const pool = visible.length ? visible : g.variants;
+      // "From" price: cheapest option that has a price; "Ask" options only when nothing is priced yet.
+      const priced = visible.filter((v) => !v.ask);
+      const pool = priced.length ? priced : visible.length ? visible : g.variants;
       const cheapest = pool.reduce((a, b) => (b.price < a.price ? b : a));
       return {
         ...g,
