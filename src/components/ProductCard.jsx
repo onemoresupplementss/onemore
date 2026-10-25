@@ -25,7 +25,7 @@ export function cardState(p, f) {
     from: prices.size > 1 || vs.length < all.length,
     buyable: buyable.length > 0,
     inStock: inStock.length > 0,
-    single: inStock.length === 1 && vs.length === 1 ? inStock[0] : null,
+    single: inStock.length === 1 && all.length === 1 ? inStock[0] : null,
     // No price yet (Price cell "Ask"): enquire on WhatsApp instead of adding to the cart.
     ask: vs.every((v) => v.live.ask),
   };
