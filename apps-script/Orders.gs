@@ -80,7 +80,7 @@ function staleOrderReminder() {
   lines.push('');
   lines.push('Nothing was cancelled. Follow up, then set Status/Payment in the Orders sheet:');
   lines.push(rowLink_(sheet, stale[0] + 1));
-  const sent = sendMailSafely_(settings.AlertEmail, stale.length + ' unpaid order' + (stale.length > 1 ? 's' : '') + ' waiting over ' + STALE_HOURS + ' h', lines.join('\n'));
+  const sent = sendMailSafely_(settings.AlertEmail, stale.length + ' unpaid order' + (stale.length > 1 ? 's' : '') + ' waiting over ' + STALE_HOURS + ' h', lines.join('\n'), ORDER_LABEL);
   if (!sent.ok) return; // try again next time
 
   const mark = 'stale – reminded ' + nowText_();
