@@ -68,7 +68,7 @@ const INFO_COLUMNS = {
 };
 
 const DELIVERY_COLUMNS = {
-  area: ['area', 'town', 'place'],
+  area: ['area', 'district', 'town', 'place'],
   pincodes: ['pincodes', 'pincode', 'pin codes', 'pin'],
   fee: ['fee', 'delivery fee', 'charge'],
   eta: ['eta', 'delivery time', 'when'],
@@ -425,7 +425,7 @@ function validateCustomer(input, settings) {
   if (!PHONE_PATTERN.test(c.phone)) errors.phone = 'Enter a 10-digit mobile number.';
   if (c.fulfilment === 'pickup' && !settings.PickupEnabled) errors.fulfilment = 'Store pickup is not available right now.';
   if (c.fulfilment === 'delivery') {
-    if (!c.area) errors.area = 'Choose your area.';
+    if (!c.area) errors.area = 'Choose your district.';
     const p = pincodeProblem(c.pincode, settings);
     if (p) errors.pincode = p;
     if (c.address.length < 8) errors.address = 'Please enter your full address (door no., street, village).';
