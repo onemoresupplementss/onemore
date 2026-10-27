@@ -499,7 +499,7 @@ function actionNotify_(data) {
   const o = orderFromRow_(row, col);
   const subject = 'New order ' + o.id + ' · ' + formatRupees(o.total) + ' · ' + METHOD_LABELS[o.method] + (o.callFirst ? ' · CALL FIRST' : '');
   const body = orderEmailBody_(o, row, col, rowLink_(sheet, r + 1));
-  const sent = sendMailSafely_(to, subject, body);
+  const sent = sendMailSafely_(to, subject, body, ORDER_LABEL);
   return sent.ok ? { ok: true } : { ok: true, sent: false, message: sent.message };
 }
 
@@ -525,7 +525,7 @@ function orderEmailBody_(o, row, col, link) {
   out.push('WhatsApp: https://wa.me/91' + c.phone);
   if (c.fulfilment === 'pickup') out.push('Pickup from the shop');
   else {
-    out.push('Area: ' + c.area + (c.pincode ? ' – ' + c.pincode : ''));
+    out.push('District: ' + c.area + (c.pincode ? ' – ' + c.pincode : ''));
     out.push('Address: ' + c.address);
     if (c.landmark) out.push('Landmark: ' + c.landmark);
   }
@@ -535,10 +535,24 @@ function orderEmailBody_(o, row, col, link) {
   return out.join('\n');
 }
 
+// Gmail label put on every new-order email and unpaid-order reminder.
+const ORDER_LABEL = 'New order';
+
 // Sends a plain-text email without ever throwing (daily email limits, bad address...).
-function sendMailSafely_(to, subject, body) {
+// With a label, it is sent from Gmail and the thread gets that label in the script owner's Gmail.
+function sendMailSafely_(to, subject, body, label) {
   try {
     if (MailApp.getRemainingDailyQuota() < 1) return { ok: false, message: 'Daily email limit reached.' };
+    if (label) {
+      try {
+        const msg = GmailApp.createDraft(to, subject, body, { name: 'oneMore orders' }).send();
+        const gLabel = GmailApp.getUserLabelByName(label) || GmailApp.createLabel(label);
+        msg.getThread().addLabel(gLabel);
+        return { ok: true };
+      } catch (err) {
+        console.error('Gmail label send failed, using plain email: ' + err);
+      }
+    }
     MailApp.sendEmail({ to: to, subject: subject, body: body, name: 'oneMore orders' });
     return { ok: true };
   } catch (err) {
