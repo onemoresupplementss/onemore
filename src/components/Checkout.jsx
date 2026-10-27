@@ -8,7 +8,7 @@ import { buildWhatsAppText, deliveryFeeFor, formatINR, paymentOptions, PAYMENT_L
 
 const CUSTOMER_KEY = 'om_customer_v1';
 const IDEM_KEY = 'om_idem_v1';
-const OTHER_AREA = 'Other area – please call me';
+const OTHER_AREA = 'Other district – please call me';
 
 function load(key, fallback, store = 'localStorage') {
   try {
@@ -61,7 +61,7 @@ const FIELD_LABELS = {
   fulfilment: 'Delivery or pickup',
   name: 'Full name',
   phone: 'Mobile number',
-  area: 'Area',
+  area: 'District',
   pincode: 'Pincode',
   address: 'Address',
   landmark: 'Landmark',
@@ -349,10 +349,10 @@ export default function Checkout({ settings, delivery, shop }) {
             </Field>
             {c.fulfilment === 'delivery' && (
               <>
-                <Field label="Area" error={err('area')}>
+                <Field label="District" error={err('area')}>
                   {(p) => (
                     <select {...p} class="field" value={c.area} onChange={(e) => set({ area: e.currentTarget.value })}>
-                      <option value="">Choose your area</option>
+                      <option value="">Choose your district</option>
                       {zones.map((z) => (
                         <option value={z.area}>{z.area}</option>
                       ))}
@@ -453,7 +453,7 @@ export default function Checkout({ settings, delivery, shop }) {
             <dd>{formatINR(total)}</dd>
           </div>
         </dl>
-        {c.fulfilment === 'delivery' && c.area === OTHER_AREA && <p class="text-xs text-muted">For other areas we will call you to confirm the delivery fee before packing.</p>}
+        {c.fulfilment === 'delivery' && c.area === OTHER_AREA && <p class="text-xs text-muted">For other districts we will call you to confirm the delivery fee before packing.</p>}
 
         {problem && (
           <div class={`rounded-lg border p-3 text-sm ${problem.kind === 'down' ? 'border-warn' : 'border-danger'}`} role="alert">
