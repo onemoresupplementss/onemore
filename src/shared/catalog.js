@@ -63,7 +63,7 @@ const INFO_COLUMNS = {
 };
 
 const DELIVERY_COLUMNS = {
-  area: ['area', 'town', 'place'],
+  area: ['area', 'district', 'town', 'place'],
   pincodes: ['pincodes', 'pincode', 'pin codes', 'pin'],
   fee: ['fee', 'delivery fee', 'charge'],
   eta: ['eta', 'delivery time', 'when'],
