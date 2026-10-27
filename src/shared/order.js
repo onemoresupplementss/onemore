@@ -75,7 +75,7 @@ export function validateCustomer(input, settings) {
   if (!PHONE_PATTERN.test(c.phone)) errors.phone = 'Enter a 10-digit mobile number.';
   if (c.fulfilment === 'pickup' && !settings.PickupEnabled) errors.fulfilment = 'Store pickup is not available right now.';
   if (c.fulfilment === 'delivery') {
-    if (!c.area) errors.area = 'Choose your area.';
+    if (!c.area) errors.area = 'Choose your district.';
     const p = pincodeProblem(c.pincode, settings);
     if (p) errors.pincode = p;
     if (c.address.length < 8) errors.address = 'Please enter your full address (door no., street, village).';
@@ -130,7 +130,7 @@ export function buildWhatsAppText(order, shop, { utr = '', notSaved = false } = 
   if (c.fulfilment === 'pickup') {
     out.push('Pickup from shop');
   } else {
-    out.push(`Area: ${c.area}${c.pincode ? ' – ' + c.pincode : ''}`);
+    out.push(`District: ${c.area}${c.pincode ? ' – ' + c.pincode : ''}`);
     out.push(`Address: ${c.address}`);
     if (c.landmark) out.push(`Landmark: ${c.landmark}`);
   }
