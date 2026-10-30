@@ -67,10 +67,9 @@ const store = {
       <div class="hb-glow" aria-hidden="true"></div>
       <div class="hb-floor" aria-hidden="true"></div>
       <div class="hb-card">
-        <img src={asset('hero/hero-banner.webp')} alt="Your gains, your budget – affordable supplements from oneMore" width="864" height="1080" fetchpriority="high" decoding="async" />
+        <img src={asset('hero/hero-banner-hd.avif')} alt="Your gains, your budget – affordable supplements from oneMore" width="1080" height="1350" fetchpriority="high" decoding="async" />
         <div class="hb-rim" aria-hidden="true"></div>
-        <div class="hb-uv" aria-hidden="true"></div>
-        <div class="hb-uvline" aria-hidden="true"></div>
+        <div class="hb-packs" id="hb-packs"></div>
         <div class="hb-sheen" aria-hidden="true"></div>
       </div>
     </div>
@@ -108,7 +107,7 @@ const store = {
       background: radial-gradient(closest-side, rgba(198,255,0,.28), transparent); filter: blur(18px); opacity: .6; transition: opacity .6s ease; }
     .hb-card { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .5s cubic-bezier(.2,.7,.2,1);
       transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(var(--s, 1)); }
-    .hb-card img, .hb-rim, .hb-uv, .hb-uvline, .hb-sheen { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .hb-card img, .hb-rim, .hb-sheen, .hb-packs { position: absolute; inset: 0; width: 100%; height: 100%; }
     .hb-card img { object-fit: cover; object-position: 50% 18%; display: block; max-width: none;
       filter: saturate(1.05) contrast(1.04) drop-shadow(0 0 22px rgba(198,255,0,.10)); transition: filter .6s ease; }
     .hb-card img, .hb-rim, .hb-sheen {
@@ -116,30 +115,25 @@ const store = {
       -webkit-mask-composite: source-in;
       mask-image: linear-gradient(to bottom, transparent 0, #000 8%, #000 62%, transparent 98%), linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
       mask-composite: intersect; }
-    .hb-rim, .hb-uv, .hb-uvline, .hb-sheen { pointer-events: none; }
+    .hb-rim, .hb-sheen { pointer-events: none; }
     .hb-rim { mix-blend-mode: screen; opacity: .55; transition: opacity .6s ease;
       background: radial-gradient(60% 40% at var(--mx, 50%) var(--my, 30%), rgba(198,255,0,.20), transparent 60%),
                   linear-gradient(200deg, rgba(139,92,246,.18), transparent 40%, transparent 70%, rgba(198,255,0,.12)); }
-    .hb-uv { opacity: 0; transition: opacity .45s ease; mix-blend-mode: color-dodge;
-      background-image: var(--grain, none), radial-gradient(circle at var(--mx, 50%) var(--my, 60%), rgba(139,92,246,.75) 0, rgba(198,255,0,.35) 9%, transparent 22%);
-      background-size: 180px 180px, 100% 100%;
-      -webkit-mask-image: radial-gradient(circle at var(--mx, 50%) var(--my, 60%), #000 0, #000 90px, transparent 200px);
-      mask-image: radial-gradient(circle at var(--mx, 50%) var(--my, 60%), #000 0, #000 90px, transparent 200px); }
-    .hb-uvline { opacity: 0; transition: opacity .45s ease; mix-blend-mode: screen;
-      background: repeating-linear-gradient(0deg, rgba(198,255,0,.07) 0 1px, transparent 1px 4px);
-      -webkit-mask-image: radial-gradient(circle at var(--mx, 50%) var(--my, 60%), #000 0, transparent 170px);
-      mask-image: radial-gradient(circle at var(--mx, 50%) var(--my, 60%), #000 0, transparent 170px); }
     .hb-sheen { mix-blend-mode: overlay; opacity: 0; background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,.45) 48%, transparent 60%); background-size: 250% 100%; background-position: 120% 0; }
+    .hb-packs { z-index: 3; }
+    :global(.hb-pk) { position: absolute; border-radius: 16%; background-repeat: no-repeat; opacity: 0; cursor: pointer;
+      transition: opacity .25s ease, transform .35s cubic-bezier(.2,.8,.2,1.2), filter .35s ease; will-change: transform; }
+    :global(.hb-pk.pop) { opacity: 1; transform: scale(1.07) translateY(-2%); z-index: 5;
+      filter: brightness(1.08) contrast(1.05) saturate(1.1) drop-shadow(0 14px 22px rgba(0,0,0,.65)) drop-shadow(0 0 16px rgba(198,255,0,.35)); }
     .hb-stage.on .hb-glow { opacity: 1; transform: scale(1.08); animation-play-state: paused; }
     .hb-stage.on .hb-card img { filter: saturate(1.12) contrast(1.06) drop-shadow(0 0 34px rgba(198,255,0,.22)); }
     .hb-stage.on .hb-rim { opacity: .9; }
     .hb-stage.on .hb-floor { opacity: 1; }
-    .hb-stage.on .hb-uv, .hb-stage.on .hb-uvline { opacity: 1; }
     .hb-stage.on .hb-sheen { animation: hb-sweep 1.1s ease forwards; }
     @keyframes hb-sweep { 0% { opacity: 0; background-position: 120% 0; } 20% { opacity: .6; } 100% { opacity: 0; background-position: -30% 0; } }
     .hb-wrap { z-index: 2; margin-top: -96px; padding-bottom: 3rem; }
     @media (min-width: 900px) {
-      .hb { min-height: clamp(560px, 74vh, 700px); display: flex; align-items: center; }
+      .hb { min-height: clamp(560px, 76vh, 900px); display: flex; align-items: center; }
       .hb::before { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(60% 80% at 0% 50%, rgba(10,10,10,.85), transparent 70%); }
       .hb-stage { position: absolute; top: 0; bottom: 0; right: 0; width: 66%; height: 100%; aspect-ratio: auto; max-height: none; perspective: 1600px; }
       .hb-glow { inset: 0 -6% 0 10%; }
@@ -153,7 +147,7 @@ const store = {
     }
     @media (min-width: 900px) and (max-width: 1150px) { .hb-stage { width: 62%; } .hb-copy { max-width: 50%; } }
     @media (prefers-reduced-motion: reduce) {
-      .hb-glow { animation: none; } .hb-card { transition: none; } .hb-stage.on .hb-sheen { animation: none; } .hb-uv, .hb-uvline { transition: none; }
+      .hb-glow { animation: none; } .hb-card { transition: none; } .hb-stage.on .hb-sheen { animation: none; } :global(.hb-pk) { transition: none; }
     }
   </style>
 
@@ -164,12 +158,33 @@ const store = {
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
       const wide = () => window.innerWidth >= 900;
-      try {
-        const c = document.createElement('canvas'); c.width = c.height = 180;
-        const x = c.getContext('2d'); const d = x.createImageData(180, 180);
-        for (let i = 0; i < d.data.length; i += 4) { const v = Math.random() * 255; d.data[i] = v * .75; d.data[i + 1] = v * .55; d.data[i + 2] = v; d.data[i + 3] = 70; }
-        x.putImageData(d, 0, 0); card.style.setProperty('--grain', 'url(' + c.toDataURL() + ')');
-      } catch (e) {}
+      // Product packs in the photo (x, y, w, h in the 1080 x 1350 original)
+      const PACKS = [[0,680,212,112],[0,800,248,322],[248,690,340,300],[552,688,410,500],[906,708,174,226],[878,910,202,292],[0,1080,292,270],[300,930,540,420]];
+      const img = card.querySelector('img');
+      const box = document.getElementById('hb-packs');
+      const els = PACKS.map(() => { const d = document.createElement('div'); d.className = 'hb-pk'; box.appendChild(d); return d; });
+      const layout = () => {
+        const W = card.clientWidth, H = card.clientHeight, iw = 1080, ih = 1350;
+        if (!W || !H) return;
+        const sc = Math.max(W / iw, H / ih), dw = iw * sc, dh = ih * sc;
+        const pos = getComputedStyle(img).objectPosition.split(' ').map((v) => parseFloat(v) / 100);
+        const ox = (W - dw) * (isNaN(pos[0]) ? .5 : pos[0]), oy = (H - dh) * (isNaN(pos[1]) ? .5 : pos[1]);
+        const src = img.currentSrc || img.src;
+        PACKS.forEach(([x, y, w, h], i) => {
+          const l = ox + x * sc, t = oy + y * sc, el = els[i];
+          Object.assign(el.style, { left: l + 'px', top: t + 'px', width: w * sc + 'px', height: h * sc + 'px',
+            backgroundImage: 'url(' + src + ')', backgroundSize: dw + 'px ' + dh + 'px', backgroundPosition: (ox - l) + 'px ' + (oy - t) + 'px' });
+        });
+      };
+      if (img.complete) layout(); else img.addEventListener('load', layout);
+      window.addEventListener('resize', layout);
+      let popTimer;
+      const pop = (el) => { els.forEach((e) => e.classList.toggle('pop', e === el)); };
+      els.forEach((el) => {
+        el.addEventListener('mouseenter', () => { if (fine) pop(el); });
+        el.addEventListener('mouseleave', () => { if (fine) el.classList.remove('pop'); });
+        el.addEventListener('click', (e) => { if (!fine) { e.stopPropagation(); pop(el); clearTimeout(popTimer); popTimer = setTimeout(() => pop(null), 1600); } });
+      });
       const setPos = (cx, cy) => {
         const r = stage.getBoundingClientRect(); const px = (cx - r.left) / r.width, py = (cy - r.top) / r.height;
         card.style.setProperty('--mx', px * 100 + '%'); card.style.setProperty('--my', py * 100 + '%');
