@@ -7,6 +7,8 @@ const g = shop.grievanceOfficer;
 const address = shop.addressLines.map(filled).filter(Boolean);
 const heading = 'mb-4 text-xs font-black uppercase tracking-wider text-muted';
 const link = 'text-[#d4d4cf] hover:text-lime';
+const instagram = shop.instagram || 'https://www.instagram.com/onemoresupplementss/';
+const handle = '@' + instagram.replace(/\/+$/, '').split('/').pop();
 ---
 
 <footer class="mt-16 border-t border-line bg-surface">
@@ -44,6 +46,8 @@ const link = 'text-[#d4d4cf] hover:text-lime';
       <p class="mt-2 text-muted">
         Grievance officer:<br />
         <a class={link} href={`tel:${g.phone.replace(/\s/g, '')}`}>{g.phone}</a>
+        <br />
+        <a class={link} href={instagram} target="_blank" rel="noopener noreferrer">Instagram: {handle}</a>
         {filled(g.email) && (
           <>
             <br />
