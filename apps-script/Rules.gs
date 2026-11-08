@@ -20,6 +20,7 @@ const CATEGORIES = [
   { slug: 'multivitamin', name: 'Multivitamin' },
   { slug: 'minerals', name: 'Minerals' },
   { slug: 'protein-oats', name: 'Protein Oats' },
+  { slug: 'peanut-butter', name: 'Peanut Butter' },
 ];
 
 const UNITS = ['g', 'ml', 'tablets', 'capsules', 'softgels'];
