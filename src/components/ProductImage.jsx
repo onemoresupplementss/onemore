@@ -1,4 +1,4 @@
-// Product photo, or a drawn tub with the brand's initials until the owner adds one.
+// Product photo (on white, so transparent PNGs don't show the dark card through), or a drawn tub with the brand's initials until the owner adds one.
 import { asset } from '../lib/env.js';
 
 export function initials(brand) {
@@ -19,7 +19,7 @@ export default function ProductImage({ src, brand, name, size = '', eager = fals
         loading={eager ? 'eager' : 'lazy'}
         decoding="async"
         fetchpriority={eager ? 'high' : undefined}
-        class={`aspect-square w-full object-contain ${cls}`}
+        class={`aspect-square w-full bg-white object-contain ${cls}`}
       />
     );
   }
