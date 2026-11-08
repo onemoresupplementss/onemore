@@ -1,0 +1,87 @@
+---
+// Page the printed "WEB · INSTA · WHATSAPP" QR code opens. Kept simple: three big buttons, nothing else.
+import { url } from '../lib/env.js';
+import '../styles/global.css';
+import { shop, waHref } from '../lib/site.js';
+
+const instagram = shop.instagram || 'https://www.instagram.com/onemoresupplements/';
+const handle = '@' + instagram.replace(/\/+$/, '').split('/').pop();
+---
+
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{shop.name} – Links</title>
+    <meta name="description" content={`${shop.name} – shop online, follow us on Instagram, or chat on WhatsApp.`} />
+    <meta name="theme-color" content="#0a0a0a" />
+    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
+  </head>
+  <body class="min-h-dvh">
+    <main class="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center px-5 py-10 text-center">
+      <p class="display text-6xl italic text-lime">1+</p>
+      <h1 class="display mt-3 inline-flex items-baseline text-4xl italic">
+        <span class="lowercase">one</span><span class="text-lime">more</span>
+      </h1>
+      <p class="mt-2 text-muted">{shop.tagline}</p>
+
+      <p class="mt-8 text-sm font-bold uppercase tracking-widest text-muted">Tap to open</p>
+
+      <nav class="mt-4 flex w-full flex-col gap-4" aria-label="oneMore links">
+        <a
+          href={instagram}
+          target="_blank"
+          rel="noopener"
+          class="flex items-center gap-4 rounded-2xl px-5 py-5 text-left text-white shadow-lg shadow-black/50 transition-transform active:scale-[0.98]"
+          style="background: linear-gradient(45deg, #f9ce34, #ee2a7b 45%, #6228d7);"
+        >
+          <svg class="size-9 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+            <circle cx="12" cy="12" r="4"></circle>
+            <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle>
+          </svg>
+          <span class="flex-1">
+            <span class="block text-xl font-black">Instagram</span>
+            <span class="block text-sm opacity-90">Follow {handle}</span>
+          </span>
+          <span class="text-2xl font-black" aria-hidden="true">→</span>
+        </a>
+
+        <a
+          href={waHref(`Hi ${shop.name}, I would like to know more about your products.`)}
+          target="_blank"
+          rel="noopener"
+          class="flex items-center gap-4 rounded-2xl bg-[#25d366] px-5 py-5 text-left text-white shadow-lg shadow-black/50 transition-transform active:scale-[0.98]"
+        >
+          <svg class="size-9 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.8 0-1.4.7-2 1-2.3.2-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.6-.1 1.2Z"></path>
+          </svg>
+          <span class="flex-1">
+            <span class="block text-xl font-black">WhatsApp</span>
+            <span class="block text-sm opacity-90">Chat / order: {shop.phoneDisplay}</span>
+          </span>
+          <span class="text-2xl font-black" aria-hidden="true">→</span>
+        </a>
+
+        <a
+          href={url('/shop/')}
+          class="flex items-center gap-4 rounded-2xl bg-lime px-5 py-5 text-left text-ink shadow-lg shadow-black/50 transition-transform active:scale-[0.98]"
+        >
+          <svg class="size-9 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"></path>
+          </svg>
+          <span class="flex-1">
+            <span class="block text-xl font-black">Website</span>
+            <span class="block text-sm opacity-80">Shop all products</span>
+          </span>
+          <span class="text-2xl font-black" aria-hidden="true">→</span>
+        </a>
+      </nav>
+
+      <p class="mt-10 text-xs text-muted">{shop.addressLocality} · {shop.serviceArea}</p>
+    </main>
+  </body>
+</html>
