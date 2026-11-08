@@ -14,6 +14,7 @@ export const CATEGORIES = [
   { slug: 'multivitamin', name: 'Multivitamin', blurb: 'Daily micronutrients' },
   { slug: 'minerals', name: 'Minerals', blurb: 'Magnesium and more' },
   { slug: 'protein-oats', name: 'Protein Oats', blurb: 'High-protein breakfast' },
+  { slug: 'peanut-butter', name: 'Peanut Butter', blurb: 'Protein-packed spreads' },
 ];
 
 const CATEGORY_BY_KEY = new Map();
